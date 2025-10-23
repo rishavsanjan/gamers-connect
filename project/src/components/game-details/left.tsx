@@ -8,8 +8,9 @@ interface LeftSideProps {
 }
 
 const LeftSide: React.FC<LeftSideProps> = ({ game }) => {
+    console.log(game.franchises)
     return (
-        <div className='z-100 w-[70%] flex flex-col gap-4 p-8'>
+        <div className='z-100 md:w-[70%] w-full flex flex-col gap-4 p-8'>
             <div className='bg-white self-start rounded-sm p-0.5 px-2'>
                 <p className='font-extralight text-black text-sm '> {formatUnixDate(game.first_release_date)}</p>
             </div>
@@ -38,7 +39,7 @@ const LeftSide: React.FC<LeftSideProps> = ({ game }) => {
             </div>
             <div className='flex flex-row gap-4'>
                 <div className='flex flex-col gap-2 border-r border-gray-600 pr-4'>
-                    <p className='border border-green-400 text-green-400 px-1 w-fit'>{game.total_rating.toFixed(0)}</p>
+                    <p className='border border-green-400 text-green-400 px-1 w-fit'>{game?.total_rating?.toFixed(0) || 'N/A'}</p>
                     <p className='underline'>{game.rating_count} Ratings</p>
                 </div>
                 <div>
@@ -58,7 +59,7 @@ const LeftSide: React.FC<LeftSideProps> = ({ game }) => {
                     </li>
                     <li className="flex flex-col">
                         <span className='text-gray-500'>Metascore</span>
-                        <span className='border border-green-400 text-green-400 px-1 w-fit'>{game.total_rating.toFixed(0)}</span>
+                        <span className='border border-green-400 text-green-400 px-1 w-fit'>{game?.total_rating?.toFixed(0) || 'N/A'}</span>
                     </li>
                     <li className='flex flex-col'>
                         <span className='text-gray-500'>Genre</span>

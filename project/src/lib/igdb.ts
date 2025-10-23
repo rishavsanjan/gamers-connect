@@ -62,7 +62,22 @@ export async function getTopGamesOfAllTime() {
 export async function getGameDetails(id: string) {
     const response = await axios.post(
         "https://api.igdb.com/v4/games",
-        `fields name, summary, storyline, total_rating, cover.url, genres.name, platforms.name, screenshots.url, videos.video_id, first_release_date, rating_count, involved_companies.company.name, language_supports.language.name, videos, platforms.url, websites.url, websites.type, similar_games, similar_games.name, similar_games.summary, similar_games.total_rating,similar_games.total_rating_count,similar_games.rating,similar_games.rating_count,similar_games.cover.url,similar_games.first_release_date,similar_games.platforms.name,similar_games.platforms.platform_logo.url, similar_games.summary,similar_games.genres.name, franchises.games.name, franchises.games.summary, franchises.games.total_rating,franchises.games.total_rating_count,franchises.games.rating,franchises.games.rating_count,franchises.games.cover.url,franchises.games.first_release_date,franchises.games.platforms.name,franchises.games.platforms.platform_logo.url, franchises.games.summary,franchises.games.genres.name;
+        `fields name, summary, storyline, total_rating, cover.url, genres.name, platforms.name, screenshots.url, videos.video_id, first_release_date, rating_count, involved_companies.company.name, language_supports.language.name, videos, platforms.url, websites.url, websites.type, similar_games, similar_games.name, similar_games.summary, similar_games.total_rating,similar_games.total_rating_count,similar_games.rating,similar_games.rating_count,similar_games.cover.url,similar_games.first_release_date,similar_games.platforms.name,similar_games.platforms.platform_logo.url, similar_games.summary,similar_games.genres.name;
+     where id = ${id};`,
+        {
+            headers: {
+                "Client-ID": CLIENT_ID!,
+                "Authorization": `Bearer ${TOKEN}`,
+            },
+        }
+    );
+    return response.data[0];
+}
+
+export async function getGameDlcs(id: string) {
+    const response = await axios.post(
+        "https://api.igdb.com/v4/games",
+        `fields franchises.games.name, franchises.games.summary, franchises.games.total_rating, franchises.games.total_rating_count, franchises.games.rating, franchises.games.rating_count, franchises.games.cover.url, franchises.games.first_release_date, franchises.games.platforms.name, franchises.games.platforms.platform_logo.url, franchises.games.summary, franchises.games.genres.name, franchises.games.game_type.type;
      where id = ${id};`,
         {
             headers: {

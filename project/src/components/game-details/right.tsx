@@ -10,7 +10,7 @@ interface RightSideProps {
 
 const RightSide: React.FC<RightSideProps> = ({ game }) => {
     return (
-        <div className='z-100 w-[30%] flex flex-col gap-4'>
+        <div className='z-100 md:w-[30%] w-full flex flex-col gap-4 p-8'>
             {
                 game?.videos?.length > 0 &&
                 <div>

@@ -54,4 +54,8 @@ export interface Game {
     franchises: Array<{
         games: Game[]
     }>
+    game_type:{
+        id:number,
+        type:string
+    }
 }
