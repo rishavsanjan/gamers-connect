@@ -8,8 +8,15 @@ import { Game } from '@/app/types/game';
 import axios from 'axios';
 import { getYearFromUnix } from '@/app/utils/date';
 import { RotateLoader } from 'react-spinners';
+import { usePathname } from 'next/navigation';
+import { logout } from '@/lib/auth';
 
 const Navbar = () => {
+    const pathName = usePathname();
+    const isValid = pathName.startsWith('/login');
+    if (isValid) {
+        return null;
+    }
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Game[]>([]);
     const [loading, setLoading] = useState(false);
@@ -91,16 +98,19 @@ const Navbar = () => {
             </div>
             <div ref={searcBarDropdownRef} className='flex items-center gap-4 relative'>
                 <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-xl border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300' placeholder='Search games....' type="text" />
-                <button >
-                    <BiUser className='text-2xl' />
-                </button>
+                <Link href={'/login'}>
+                    <button >
+                        <BiUser className='text-2xl' />
+                    </button>
+                </Link>
+
 
                 {/* Results dropdown */}
                 {query.trim() && (
                     <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border  border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
                         {loading ? (
                             <div className='items-center flex justify-center self-center p-4 py-8'>
-                                <RotateLoader  size={15} color='#ce45da' />
+                                <RotateLoader size={15} color='#ce45da' />
                             </div>
 
                         ) : results.length === 0 ? (
@@ -136,6 +146,9 @@ const Navbar = () => {
                         )}
                     </div>
                 )}
+            </div>
+            <div>
+                <button onClick={() => { logout() }} className='bg-pink-500'>Sign Out button</button>
             </div>
         </div>
     )

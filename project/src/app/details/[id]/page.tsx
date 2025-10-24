@@ -14,7 +14,7 @@ interface GameDetailProps {
 
 
 const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
-  const { id } = params;
+  const { id } = await params;
   const game: Game = await getGameDetails(id);
   const imgUrl = game.cover?.url
     ? `https:${game.cover.url.replace("t_thumb", "t_screenshot_med")}`
@@ -22,13 +22,12 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
   const allGames = await getGameDlcs(id);
   const gamesInFranchise = allGames.franchises[0].games.filter((game: Game) =>
     game.game_type?.id === 0
-  );
+  ) || [];
 
   const dlcs = allGames.franchises[0].games.filter((game: Game) =>
     game.game_type?.id === 2
   );
 
-  console.log(dlcs)
   return (
     <div className='flex flex-col'>
       <div className='relative md:h-screen w-full flex flex-col justify-center items-center gap-6 z-0'>

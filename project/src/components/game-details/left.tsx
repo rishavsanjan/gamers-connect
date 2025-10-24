@@ -2,13 +2,19 @@ import React from 'react'
 import { Game } from '@/app/types/game';
 import { formatUnixDate } from '@/app/utils/date';
 import { IoGameController } from 'react-icons/io5';
+import { AddMyGameButton } from '../AddMyGameButton';
+import { prisma } from "@/lib/prisma";
 
 interface LeftSideProps {
     game: Game
 }
 
-const LeftSide: React.FC<LeftSideProps> = ({ game }) => {
-    console.log(game.franchises)
+const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
+
+
+
+
+
     return (
         <div className='z-100 md:w-[70%] w-full flex flex-col gap-4 p-8'>
             <div className='bg-white self-start rounded-sm p-0.5 px-2'>
@@ -17,25 +23,9 @@ const LeftSide: React.FC<LeftSideProps> = ({ game }) => {
             <div>
                 <p className='text-6xl font-bold'>{game.name}</p>
             </div>
-            <div className='flex flex-row gap-4'>
-                <button className='bg-white rounded-xl p-1 gap-4  flex flex-row  px-8 items-center'>
-                    <div>
-                        <p className='text-gray-400 text-left text-sm'>Add to</p>
-                        <p className='text-black text-lg'>My Games</p>
-                    </div>
-                    <div>
-                        <img className='w-12 h-12' src="https://img.icons8.com/?size=100&id=102544&format=png&color=000000" alt="" />
-                    </div>
-                </button>
-                <button className='bg-transparent rounded-xl p-2 gap-4  flex flex-row justify-between items-center border border-white'>
-                    <div>
-                        <p className='text-gray-400 text-left'>Add to</p>
-                        <p className='text-white '>Playlist</p>
-                    </div>
-                    <div>
-                        <IoGameController className='text-3xl' />
-                    </div>
-                </button>
+            <div className=''>
+                <AddMyGameButton game={game} />
+
             </div>
             <div className='flex flex-row gap-4'>
                 <div className='flex flex-col gap-2 border-r border-gray-600 pr-4'>
