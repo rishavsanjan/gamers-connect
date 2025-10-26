@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from '@/lib/db'
 
@@ -55,13 +54,16 @@ export async function GET(req: Request) {
                 userId: session.user.id,
                 gameId: game.id,
             },
+            select:{
+                user_rating:true
+            }
         });
 
         return NextResponse.json({
             exists: true,
             inMyGames: !!myGame,
             inPlaylist: !!playlist,
-            rated: !!rating,
+            rated: rating,
         });
     } catch (error) {
         console.log(error)

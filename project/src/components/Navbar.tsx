@@ -98,7 +98,7 @@ const Navbar = () => {
             </div>
             <div ref={searcBarDropdownRef} className='flex items-center gap-4 relative'>
                 <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-xl border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300' placeholder='Search games....' type="text" />
-                <Link href={'/login'}>
+                <Link href={'/profile'}>
                     <button >
                         <BiUser className='text-2xl' />
                     </button>

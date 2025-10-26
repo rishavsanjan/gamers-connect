@@ -54,8 +54,26 @@ export interface Game {
     franchises: Array<{
         games: Game[]
     }>
-    game_type:{
-        id:number,
-        type:string
+    game_type: {
+        id: number,
+        type: string
     }
+}
+
+export interface ProfileGame {
+    id: number,
+    name: string,
+    first_release_date: number,
+    storyline: string
+    summary: string
+    genres: Array<{
+        id: number
+        name: string
+    }>,
+    total_rating: number,
+    cover: string
+    platforms: Array<{
+        id: string,
+        name: string,
+    }>
 }

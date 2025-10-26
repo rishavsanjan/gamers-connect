@@ -20,13 +20,20 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
     ? `https:${game.cover.url.replace("t_thumb", "t_screenshot_med")}`
     : "/placeholder.jpg";
   const allGames = await getGameDlcs(id);
-  const gamesInFranchise = allGames.franchises[0].games.filter((game: Game) =>
-    game.game_type?.id === 0
-  ) || [];
+  console.log(allGames)
+  let gamesInFranchise;
+  let dlcs;
+  if (allGames?.franchises?.length || 0 > 0) {
+    gamesInFranchise = allGames?.franchises[0].games.filter((game: Game) =>
+      game.game_type?.id === 0
+    ) || [];
 
-  const dlcs = allGames.franchises[0].games.filter((game: Game) =>
-    game.game_type?.id === 2
-  );
+    dlcs = allGames.franchises[0].games.filter((game: Game) =>
+      game.game_type?.id === 2
+    );
+  }
+
+
 
   return (
     <div className='flex flex-col'>

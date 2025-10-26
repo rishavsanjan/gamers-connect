@@ -4,6 +4,7 @@ import { formatUnixDate } from '@/app/utils/date';
 import { IoGameController } from 'react-icons/io5';
 import { AddMyGameButton } from '../AddMyGameButton';
 import { prisma } from "@/lib/prisma";
+import RatingSlider from '../RatingSlider';
 
 interface LeftSideProps {
     game: Game
@@ -27,6 +28,7 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
                 <AddMyGameButton game={game} />
 
             </div>
+           
             <div className='flex flex-row gap-4'>
                 <div className='flex flex-col gap-2 border-r border-gray-600 pr-4'>
                     <p className='border border-green-400 text-green-400 px-1 w-fit'>{game?.total_rating?.toFixed(0) || 'N/A'}</p>
@@ -35,6 +37,7 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
                 <div>
                     <p className='text-2xl'>{game.total_rating > 80 && 'Exceptional🎯'}</p>
                 </div>
+
             </div>
             <div>
                 <p className='text-3xl font-bold'>About</p>
