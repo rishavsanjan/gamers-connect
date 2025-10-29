@@ -58,6 +58,9 @@ export interface Game {
         id: number,
         type: string
     }
+    owned_platform: string
+    hours_played: number
+    status: string
 }
 
 export interface ProfileGame {

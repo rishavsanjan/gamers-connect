@@ -60,12 +60,12 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                 if (!isDragging) return;
                 e.preventDefault();
                 const x = e.pageX - e.currentTarget.offsetLeft;
-                const walk = (x - startX) * 2; // scroll-fast factor
+                const walk = (x - startX) * 2;
                 e.currentTarget.scrollLeft = scrollLeft - walk;
             }}
         >
             {
-                gamesList.map((game, index) => {
+                gamesList?.map((game, index) => {
                     const imgUrl = game.cover?.url
                         ? `https:${game.cover.url.replace("t_thumb", "t_screenshot_med")}`
                         : "/placeholder.jpg";
@@ -101,7 +101,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                                     <div className='flex flex-row gap-2 '>
                                         {
                                             game?.platforms?.map((platform) => {
-                                                let platformLogo = `https:${platform.platform_logo.url}`;
+                                                let platformLogo = `https:${platform?.platform_logo?.url}`;
 
                                                 if (platform.id === 6) {
                                                     platformLogo = 'https://img.icons8.com/?size=100&id=38805&format=png&color=FFFFFF'

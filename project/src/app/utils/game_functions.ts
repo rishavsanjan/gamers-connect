@@ -3,7 +3,10 @@ import axios from "axios"
 import { Game } from "../types/game"
 
 interface gameStatus {
-    inMyGames: boolean,
+    inMyGames: {
+        status: string,
+        owned_platform: string
+    } | null,
     inPlaylist: boolean,
     rated: {
         user_rating: number
@@ -12,10 +15,10 @@ interface gameStatus {
 
 
 
-export const addToMyGames = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const addToMyGames = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, owned_platform: string, status: string) => {
 
     setLoading(true)
-
+    console.log(status)
     const response = await axios({
         url: '/api/private/addgame',
         method: 'post',
@@ -30,12 +33,20 @@ export const addToMyGames = async (game: Game, model: string, setStatus: React.D
             game_type: game.game_type.type,
             genres: game.genres,
             platforms: game.platforms,
-            model
+            model,
+            owned_platform,
+            status
+
         }
     })
 
     if (response.data.success) {
-        setStatus(prev => ({ ...prev, inMyGames: true }))
+        setStatus(prev => ({
+            ...prev, inMyGames: {
+                status: status,
+                owned_platform: owned_platform
+            }
+        }))
     }
     setLoading(false)
 
@@ -55,7 +66,7 @@ export const removeFromMyGame = async (game: Game, model: string, setStatus: Rea
     })
 
     if (response.data.success) {
-        setStatus(prev => ({ ...prev, inMyGames: false }))
+        setStatus(prev => ({ ...prev, inMyGames: null }))
 
     }
     setLoading(false)
@@ -144,4 +155,18 @@ export const addRating = async (game: Game, model: string, setStatus: React.Disp
 
     console.log(response.data)
 }
+
+export function pickPlatformColor(name: string): string {
+  const colors: Record<string, string> = {
+    WINDOWS: "#3b82f6",
+    Nintendo: "#00000",
+    IOS: "#60a5fa",
+    Android: "#84cc16",
+    PLAYSTATION: "#ef4444",
+    "Apple Macintosh": "#e5e5e5",
+
+  };
+  return colors[name] || "#9ca3af"; // default gray if not found
+}
+
 

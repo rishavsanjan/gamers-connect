@@ -22,6 +22,8 @@ export async function GET(req: Request) {
             }
         })
 
+      //  const ownedGames = profile?.MyGame.map
+
         return NextResponse.json({ profile }, { status: 201 })
     } catch (error) {
         console.log(error)

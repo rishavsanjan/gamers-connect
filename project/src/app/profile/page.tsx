@@ -2,8 +2,7 @@ import { auth } from '@/auth'
 import ProfileTabs from '@/components/ProfileTabs';
 import { prisma } from '@/lib/prisma';
 import React from 'react';
-import { PlaylistTab, ProfileTabsData, RatingTab } from '../types/profile';
-import { ProfileGame } from '../types/game';
+import { ProfileTabsData } from '../types/profile';
 
 const Profile = async () => {
   const session = await auth();
@@ -29,9 +28,9 @@ const Profile = async () => {
         game: {
           include: {
             genres: true,
-            platforms: true
-          }
-        }
+            platforms: true,
+          },
+        },
       },
     }),
     prisma.playlist.findMany({
@@ -59,8 +58,7 @@ const Profile = async () => {
   ]);
 
 
-  console.log(playlist)
-  
+
   const profileData: ProfileTabsData = { ratings, mygames, playlist, collection };
 
 
@@ -74,7 +72,6 @@ const Profile = async () => {
       </div>
       <h1 className='text-5xl'>{session?.user.username}</h1>
       <ProfileTabs {...profileData} />
-
     </div>
   )
 }

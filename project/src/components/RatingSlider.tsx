@@ -6,7 +6,10 @@ import { Game } from "@/app/types/game";
 import { FadeLoader } from "react-spinners";
 
 interface gameStatus {
-    inMyGames: boolean,
+    inMyGames: {
+        status: string,
+        owned_platform: string
+    } | null,
     inPlaylist: boolean,
     rated: {
         user_rating: number
@@ -52,7 +55,7 @@ const RatingSlider: React.FC<RatingModelProps> = ({ ratingStatus, game, setStatu
                     !ratingLoading ?
                         'Submit'
                         :
-                    <FadeLoader color="purple"/>
+                        <FadeLoader color="purple" />
 
                 }
 

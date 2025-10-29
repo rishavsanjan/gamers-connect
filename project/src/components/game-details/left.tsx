@@ -47,7 +47,7 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
                 <ul className='grid grid-cols-2 gap-4'>
                     <li className="flex flex-col">
                         <span className='text-gray-500'>Platforms</span>
-                        <span className='text-white'>{game.platforms.map((platform) => platform.name).join(', ')}</span>
+                        <span className='text-white'>{game?.platforms?.map((platform) => platform.name).join(', ')}</span>
 
                     </li>
                     <li className="flex flex-col">
@@ -56,7 +56,7 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
                     </li>
                     <li className='flex flex-col'>
                         <span className='text-gray-500'>Genre</span>
-                        <span className='text-white'>{game.genres.map((genre) => genre.name).join(', ')}</span>
+                        <span className='text-white'>{game?.genres?.map((genre) => genre.name).join(', ')}</span>
                     </li>
                     <li className='flex flex-col'>
                         <span className='text-gray-500'>Release date</span>
@@ -64,7 +64,7 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
                     </li>
                     <li className='flex flex-col'>
                         <span className='text-gray-500'>Publisher</span>
-                        <span className='text-white'>{game.involved_companies.map((company) => company?.company?.name || 'N/A').join(', ')}</span>
+                        <span className='text-white'>{game?.involved_companies?.map((company) => company?.company?.name || 'N/A').join(', ')}</span>
                     </li>
                 </ul>
             </div>

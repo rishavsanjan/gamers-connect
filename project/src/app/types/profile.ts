@@ -12,6 +12,9 @@ export interface MyGameTab {
     userId: string;
     gameId: string;
     game: Game;
+    owned_platform: string | null,
+    status:string
+    
 }
 
 export interface PlaylistTab {

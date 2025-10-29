@@ -10,8 +10,8 @@ export async function POST(req: Request) {
         const session = await auth();
         if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         const body = await req.json();
-        const { name, igdb_id, summary, storyline, first_release_date, total_rating, cover, game_type, genres, platforms, model, user_rating } = body;
-
+        const { name, igdb_id, summary, storyline, first_release_date, total_rating, cover, game_type, genres, platforms, model, user_rating, owned_platform, status } = body;
+        console.log(status)
         let game = await prisma.game.findUnique({
             where: {
                 igdb_id: igdb_id
@@ -57,6 +57,8 @@ export async function POST(req: Request) {
                 data: {
                     userId: session.user.id,
                     gameId: game.id,
+                    owned_platform,
+                    status
                 },
             });
         } else if (model === 'playlist') {

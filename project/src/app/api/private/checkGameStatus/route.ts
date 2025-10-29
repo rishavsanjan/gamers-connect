@@ -38,6 +38,10 @@ export async function GET(req: Request) {
                 userId: session.user.id,
                 gameId: game.id,
             },
+            select:{
+                status:true,
+                owned_platform:true
+            }
         });
 
         // ✅ 3. Check if user has this game in "Playlist"
@@ -58,10 +62,10 @@ export async function GET(req: Request) {
                 user_rating:true
             }
         });
-
+        
         return NextResponse.json({
             exists: true,
-            inMyGames: !!myGame,
+            inMyGames: myGame,
             inPlaylist: !!playlist,
             rated: rating,
         });
