@@ -13,8 +13,8 @@ export interface MyGameTab {
     gameId: string;
     game: Game;
     owned_platform: string | null,
-    status:string
-    
+    status: string
+
 }
 
 export interface PlaylistTab {
@@ -33,11 +33,21 @@ export interface CollectionTab {
     games: Game[];
 }
 
+export interface Stats {
+    owned_platform: string,
+    status: string
+    game: Game
+}
+
+
+
 
 export interface ProfileTabsData {
     ratings: RatingTab[];
     mygames: MyGameTab[];
     playlist: PlaylistTab[];
     collection: CollectionTab[];
+    stats: Stats[];
+    currentlyPlaying:MyGameTab[]
 }
 

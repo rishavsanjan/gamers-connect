@@ -4,7 +4,7 @@ import { LuGamepad2 } from "react-icons/lu";
 
 const HeroHomepage = () => {
   return (
-    <div className="relative h-[80vh] w-full flex flex-col justify-center items-center gap-6">
+    <div className="relative h-[80vh] w-full flex flex-col justify-center items-center gap-6 p-4 sm:p-0">
       {/* Background Image */}
       <img
         src="https://cdn.pixabay.com/photo/2024/05/24/16/40/ai-generated-8785420_1280.jpg"
@@ -16,7 +16,7 @@ const HeroHomepage = () => {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
 
       {/* Gaming Tag */}
-      <div className="relative z-10 border-purple-400 border flex flex-row rounded-full p-2 px-4 gap-2 items-center">
+      <div className="relative z-10 border-purple-400 border flex flex-row rounded-full p-2 px-4 gap-2 items-center ">
         <LuGamepad2 className="text-2xl text-purple-500" />
         <p className="text-white font-medium">Your ultimate gaming companion</p>
       </div>

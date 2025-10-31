@@ -13,6 +13,7 @@ const Profile = async () => {
   let [ratings, mygames, playlist, collection] = await Promise.all([
     prisma.rating.findMany({
       where: { userId: session.user.id },
+      take: 10,
       include: {
         game: {
           include: {
@@ -24,6 +25,7 @@ const Profile = async () => {
     }),
     prisma.myGame.findMany({
       where: { userId: session.user.id },
+      take: 10,
       include: {
         game: {
           include: {
@@ -35,6 +37,7 @@ const Profile = async () => {
     }),
     prisma.playlist.findMany({
       where: { userId: session.user.id },
+      take: 10,
       include: {
         game: {
           include: {
@@ -57,13 +60,41 @@ const Profile = async () => {
     }),
   ]);
 
+  const allMyGamesForStats = await prisma.myGame.findMany({
+    where: { userId: session.user.id },
+    select: {
+      owned_platform: true,
+      status: true,
+      game: {
+        select: {
+          id: true,
+          first_release_date: true,
+          genres: { select: { name: true } },
+          platforms: { select: { name: true } },
+        },
+      },
+    },
+  });
+
+  const currentlyPlaying = await prisma.myGame.findMany({
+    where: { userId: session.user.id, status: 'PLAYING' },
+    include: {
+      game: {
+        include: {
+          genres: true,
+          platforms: true
+        }
+      }
+    },
+  })
+
+  //@ts-ignore
+  const profileData: ProfileTabsData = { ratings, mygames, playlist, collection, stats: allMyGamesForStats, currentlyPlaying };
 
 
-  const profileData: ProfileTabsData = { ratings, mygames, playlist, collection };
 
 
-
-  console.log(ratings, mygames, playlist, collection)
+  console.log(allMyGamesForStats)
 
   return (
     <div>

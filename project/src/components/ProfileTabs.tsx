@@ -13,12 +13,12 @@ import GameGenreChart from './graphs/HorizontalGraph';
 interface Props extends ProfileTabsData { }
 
 
-const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection }) => {
+const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const playlistGames = playlist.map(item => item.game);
     const ownedgames = mygames.map(item => item.game);
     const ratedgames = ratings.map(item => item.game);
-    const yearCount = mygames.reduce<Record<number, number>>((acc, item) => {
+    const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
         if (!item.game.first_release_date) return acc;
 
         const year = getYearFromUnix(parseInt(item.game.first_release_date));
@@ -27,7 +27,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection }
         return acc;
     }, {});
 
-    const platformCount = mygames.reduce<Record<string, number>>((acc, item) => {
+    const platformCount = stats.reduce<Record<string, number>>((acc, item) => {
         if (!item.owned_platform) return acc;
 
         acc[item.owned_platform] = (acc[item.owned_platform] || 0) + 1;
@@ -41,7 +41,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection }
         color: pickPlatformColor(name),
     }));
 
-    const genreCount = mygames.reduce<Record<string, number>>((acc, item) => {
+    const genreCount = stats.reduce<Record<string, number>>((acc, item) => {
         //@ts-ignore
         item.game.genres.map((c) => {
             acc[c.name] = (acc[c.name] || 0) + 1;
@@ -54,8 +54,8 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection }
         .map(([name, count]) => ({ name, count }))
         .sort((a, b) => b.count - a.count);
 
-    const currentlyPlayingData = mygames.filter((item) => item.status === 'PLAYING');
-    const currentlyPlaying = currentlyPlayingData.map((item) => { return item.game })
+    const currentlyPlayingData = currentlyPlaying.filter((item) => item.status === 'PLAYING');
+    const playing = currentlyPlayingData.map((item) => { return item.game })
 
 
     return (
@@ -112,11 +112,11 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection }
                     <div className='p-4 px-8  flex flex-col gap-2'>
                         <span>Currently Playing</span>
                         {
-                            currentlyPlaying.length > 0 ?
+                            playing.length > 0 ?
                                 <>
                                     {/* @ts-ignore */}
 
-                                    < ProfileGameList gamesList={currentlyPlaying} />
+                                    < ProfileGameList gamesList={playing} />
 
                                 </>
                                 :

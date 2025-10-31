@@ -15,6 +15,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
+    const [selectedId, setSelectedId] = useState(0);
 
     useEffect(() => {
         const container = scrollRef.current;
@@ -43,12 +44,13 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
         };
         return date.toLocaleDateString("en-US", options);
     }
+    console.log(selectedId)
 
     return (
         <div
             ref={scrollRef}
             className='flex flex-row overflow-x-auto space-x-4 p-4 scrollbar-hide rounded-xl hide-scrollbar  Z-100'
-            
+
             onMouseDown={(e) => {
                 setIsDragging(true);
                 setStartX(e.pageX - e.currentTarget.offsetLeft);
@@ -72,14 +74,14 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                     let xboxCount = 0;
                     let playStationCount = 0;
                     return (
-                        <div onMouseEnter={() => { setHoverId(game.id) }} onMouseLeave={() => { setHoverId(0) }} key={game.id} className='flex flex-col min-w-[335px] overflow-hidden shadow-lg shrink-0 rounded-xl hover:scale-105 duration-300 ease-in-out'>
+                        <div onMouseEnter={() => { setHoverId(game.id) }} onMouseLeave={() => { setHoverId(0) }} key={game.id} className='flex flex-col min-w-[335px] overflow-hidden shadow-lg shrink-0 rounded-sm hover:scale-105 duration-300 ease-in-out'>
                             <div>
                                 {
                                     game?.videos?.length > 0 && hoverId === game.id &&
                                     <div className='relative'>
                                         <YouTubePlayer videoId={game?.videos[0].video_id || 'N/A'} />
 
-                                        <div className='absolute bottom-2 border border-white left-3 rounded-md p-0.5  hover:bg-white/30 ease-in-out transition-all duration-300'>
+                                        <div className='absolute bottom-2 border border-white left-3 rounded-xl p-0.5  hover:bg-white/30 ease-in-out transition-all duration-300'>
                                             <Link href={`https://www.youtube.com/embed/${game?.videos[0].video_id}`} target='_blank'>
                                                 <button className='cursor-pointer'>Play Full Video</button>
                                             </Link>
@@ -137,8 +139,51 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
 
                                 </div>
                                 {
+                                    selectedId !== game.id ?
+                                        <button
+                                            onClick={   () => setSelectedId(game.id)}
+                                            className='border-b border-gray-400 self-center text-sm sm:hidden '>
+                                            View More
+                                        </button>
+
+                                        :
+
+                                        <button
+                                            onClick={   () => setSelectedId(0)}
+                                            className='border-b border-gray-400 self-center text-sm sm:hidden '>
+                                            View Less
+                                        </button>
+
+                                }
+
+                                {
+                                    selectedId === game.id &&
+                                    <div className='flex  flex-col gap-4 w-80'>
+                                        <div className='transition-opacity duration-300 opacity-100 '>
+                                            <span className='line-clamp-3  text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
+                                        </div>
+                                        <div>
+                                            <ul className='grid grid-rows-1'>
+                                                <li>
+                                                    <span className='text-gray-400  text-xs font-mono'>Release Date : </span>
+
+                                                    <span className='text-white  text-xs font-mono'>{formatUnixDate(game.first_release_date)}</span>
+
+                                                </li>
+                                                <li>
+                                                    <span className='text-gray-400  text-xs font-mono'>Genres : </span>
+                                                    <span className='text-white text-xs font-mono '>  {game?.genres?.map((genre) => genre.name).join(', ')}</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                }
+
+
+                                {
                                     hoverId === game.id &&
-                                    <div className='flex flex-col gap-4 w-80'>
+                                    <div className='md:flex hidden flex-col gap-4 w-80'>
                                         <div className='transition-opacity duration-300 opacity-100 '>
                                             <span className='line-clamp-3  text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
                                         </div>

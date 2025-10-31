@@ -10,8 +10,12 @@ import { getYearFromUnix } from '@/app/utils/date';
 import { RotateLoader } from 'react-spinners';
 import { usePathname } from 'next/navigation';
 import { logout } from '@/lib/auth';
-
+import { useSession } from 'next-auth/react';
+import { AiOutlineMenu } from "react-icons/ai";
 const Navbar = () => {
+    const { data: session, status } = useSession();
+    const isLogin = status === 'authenticated';
+    console.log(isLogin)
     const pathName = usePathname();
     const isValid = pathName.startsWith('/login');
     if (isValid) {
@@ -69,7 +73,7 @@ const Navbar = () => {
     }, [debouncedQuery])
 
     return (
-        <div className='flex flex-row justify-around p-4 border-b-2  border-gray-600 shadow-2xl '>
+        <div className='flex flex-row  p-4 md:border-b  border-gray-600 shadow-2xl gap-4 items-center'>
             <div className='flex flex-row items-center gap-2  '>
                 <LuGamepad2 className='text-2xl text-purple-500' />
                 <Link href={'/'}>
@@ -77,7 +81,7 @@ const Navbar = () => {
                 </Link>
 
             </div>
-            <div className='flex flex-row gap-8'>
+            <div className='md:flex hidden flex-row gap-8'>
                 <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
                     <BiSearch className="text-2xl hover:text-blue-400 cursor-pointer" />
                     <p>Browse</p>
@@ -96,13 +100,28 @@ const Navbar = () => {
                     <p>Community</p>
                 </div>
             </div>
-            <div ref={searcBarDropdownRef} className='flex items-center gap-4 relative'>
-                <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-xl border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300' placeholder='Search games....' type="text" />
-                <Link href={'/profile'}>
-                    <button >
-                        <BiUser className='text-2xl' />
-                    </button>
-                </Link>
+            <div ref={searcBarDropdownRef} className='flex  items-center gap-4 relative'>
+                <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm w-44' placeholder='Search for games' type="text" />
+                <BiSearch className='absolute left-2 ' size={20} />
+                <div className='md:flex hidden'>
+                    {
+                        isLogin ?
+                            <Link href={'/profile'}>
+                                <button >
+                                    <BiUser className='text-2xl' />
+                                </button>
+                            </Link>
+                            :
+                            <Link href={'/login'}>
+                                <button >
+                                    Login/Signup
+                                </button>
+                            </Link>
+
+                    }
+                </div>
+
+
 
 
                 {/* Results dropdown */}
@@ -148,6 +167,9 @@ const Navbar = () => {
                 )}
             </div>
             <div>
+                <AiOutlineMenu color='white' size={32} />
+            </div>
+            <div className='md:flex hidden'>
                 <button onClick={() => { logout() }} className='bg-pink-500'>Sign Out button</button>
             </div>
         </div>
