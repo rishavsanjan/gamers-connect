@@ -17,7 +17,7 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
 
 
     return (
-        <div className='z-100 md:w-[70%] w-full flex flex-col gap-4 p-8'>
+        <div className='z-100 md:w-[60%] w-full flex flex-col gap-4 p-8'>
             <div className='bg-white self-start rounded-sm p-0.5 px-2'>
                 <p className='font-extralight text-black text-sm '> {formatUnixDate(game.first_release_date)}</p>
             </div>

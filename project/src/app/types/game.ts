@@ -79,4 +79,6 @@ export interface ProfileGame {
         id: string,
         name: string,
     }>
+    igdb_id: number
+
 }

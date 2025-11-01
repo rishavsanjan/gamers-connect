@@ -59,7 +59,6 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
         };
         fetchStatus();
     }, [game]);
-    console.log(status)
     useEffect(() => {
         if (collectionModal) {
             // Lock scroll
@@ -84,7 +83,6 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
         }
     }, [collectionModal]);
 
-    console.log(ownGame.status)
     return (
         <>
             <div className="flex flex-col gap-4">

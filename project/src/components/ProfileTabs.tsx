@@ -9,14 +9,19 @@ import { getYearFromUnix } from '@/app/utils/date';
 import { pickPlatformColor } from '@/app/utils/game_functions';
 import { PlatformBar } from './graphs/GamePlatform';
 import GameGenreChart from './graphs/HorizontalGraph';
-
+import axios from 'axios';
+import { ClipLoader } from 'react-spinners';
+import { Game, MyGame } from '@prisma/client';
 interface Props extends ProfileTabsData { }
 
 
 const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying }) => {
     const [activeTab, setActiveTab] = useState('overview');
+    const [loading, setLoading] = useState(false)
     const playlistGames = playlist.map(item => item.game);
-    const ownedgames = mygames.map(item => item.game);
+    const [ownedGames, setOwnedGames] = useState(mygames.map(item => item.game));
+
+   // const ownedgames = mygames.map(item => item.game);
     const ratedgames = ratings.map(item => item.game);
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
         if (!item.game.first_release_date) return acc;
@@ -26,6 +31,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
         return acc;
     }, {});
+    const [nextPage, setNextPage] = useState(1);
 
     const platformCount = stats.reduce<Record<string, number>>((acc, item) => {
         if (!item.owned_platform) return acc;
@@ -55,7 +61,22 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
         .sort((a, b) => b.count - a.count);
 
     const currentlyPlayingData = currentlyPlaying.filter((item) => item.status === 'PLAYING');
-    const playing = currentlyPlayingData.map((item) => { return item.game })
+    const playing = currentlyPlayingData.map((item) => { return item.game });
+
+    const loadMore = async (tab: string) => {
+
+        setLoading(true);
+        const response = await axios({
+            url: `/api/private/fetchgames?page=${nextPage}&tab=${tab}`,
+            method: 'get'
+        });
+        const games =response.data.mygames.map((item:any) => {return item.game})
+        setOwnedGames(prev => [...prev, ...games])
+        console.log(response.data)
+        setLoading(false);
+    }
+
+    console.log(ownedGames)
 
 
     return (
@@ -89,8 +110,27 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             }
             {
                 activeTab === 'owned' &&
-                //@ts-ignore
-                <ProfileGameList gamesList={ownedgames} />
+                <div className='pb-8 flex flex-col items-center'>
+                    {/* @ts-ignore */}
+                    <ProfileGameList gamesList={ownedGames} />
+                    <div className='hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all'>
+                        {
+                            loading ?
+
+                                <ClipLoader color='gray' />
+                                :
+                                <button onClick={() => {
+                                    setNextPage(prev => prev + 1);
+                                    loadMore('myGames');
+                                }}>
+                                    Load More
+                                </button>
+                        }
+                    </div>
+
+
+                </div>
+
             }
             {
                 activeTab === 'ratings' &&

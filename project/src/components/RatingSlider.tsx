@@ -27,7 +27,6 @@ interface RatingModelProps {
 const RatingSlider: React.FC<RatingModelProps> = ({ ratingStatus, game, setStatus }) => {
     const [value, setValue] = useState([0]);
     const [ratingLoading, setRatingLoading] = useState(false)
-    console.log(value[0])
     return (
         <div className="flex flex-row items-center gap-2 p-2 bg-transparent backdrop-blur-xl rounded-2xl border border-gray-200/20 text-white w-full mx-auto">
             <h2 className="text-lg font-semibold">Rate</h2>

@@ -37,6 +37,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                         : "/placeholder.jpg";
                     let xboxCount = 0;
                     let playStationCount = 0;
+                    console.log(game)
                     return (
                         <div onMouseEnter={() => { setHoverId(game.id) }} onMouseLeave={() => { setHoverId(0) }} key={game.id} className='flex flex-col min-w-[335px] overflow-hidden shadow-lg shrink-0 rounded-xl hover:scale-105 duration-300 ease-in-out'>
                             {/* <div>
@@ -98,7 +99,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                                 </div>
 
                                 <div className=''>
-                                    <Link href={`/details/${game.id}`} key={game.id}>
+                                    <Link href={`/details/${game.igdb_id}`} key={game.id}>
                                         <p onClick={() => { }} className='text-xl w-80 font-[var(--font-dm-sans)] font-bold hover:text-gray-400 hover:cursor-pointer'>{index + 1}.{' '} {game?.name || 'N/A'}</p>
                                     </Link>
 

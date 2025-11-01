@@ -44,7 +44,6 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
         };
         return date.toLocaleDateString("en-US", options);
     }
-    console.log(selectedId)
 
     return (
         <div

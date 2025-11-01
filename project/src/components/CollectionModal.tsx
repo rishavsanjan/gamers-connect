@@ -28,7 +28,6 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
             url: `/api/private/getcollection?gameId=${game.id}`,
             method: 'GET'
         })
-        console.log(response.data);
         setCollection(response.data.collections)
     }
 
@@ -51,7 +50,6 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
             }
         })
 
-        console.log(response.data)
 
         setCollection(prev => prev?.map((item) => {
             if (item.id === collectionId) {

@@ -94,8 +94,6 @@ const Profile = async () => {
 
 
 
-  console.log(allMyGamesForStats)
-
   return (
     <div>
       <div className='bg-purple-500 w-fit m-4 p-4 rounded-full'>

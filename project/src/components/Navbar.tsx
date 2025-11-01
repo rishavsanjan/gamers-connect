@@ -73,7 +73,7 @@ const Navbar = () => {
     }, [debouncedQuery])
 
     return (
-        <div className='flex flex-row  p-4 md:border-b  border-gray-600 shadow-2xl gap-4 items-center'>
+        <div className='flex flex-row  p-4 md:border-b  border-gray-600 shadow-2xl gap-4 items-center justify-around'>
             <div className='flex flex-row items-center gap-2  '>
                 <LuGamepad2 className='text-2xl text-purple-500' />
                 <Link href={'/'}>
@@ -101,7 +101,7 @@ const Navbar = () => {
                 </div>
             </div>
             <div ref={searcBarDropdownRef} className='flex  items-center gap-4 relative'>
-                <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm w-44' placeholder='Search for games' type="text" />
+                <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm w-44 sm:w-full' placeholder='Search for games' type="text" />
                 <BiSearch className='absolute left-2 ' size={20} />
                 <div className='md:flex hidden'>
                     {
@@ -166,10 +166,10 @@ const Navbar = () => {
                     </div>
                 )}
             </div>
-            <div>
+            <div className='md:hidden'>
                 <AiOutlineMenu color='white' size={32} />
             </div>
-            <div className='md:flex hidden'>
+            <div className=' hidden'>
                 <button onClick={() => { logout() }} className='bg-pink-500'>Sign Out button</button>
             </div>
         </div>

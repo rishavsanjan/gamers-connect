@@ -6,6 +6,7 @@ import RightSide from '@/components/game-details/right';
 import GamesList from '@/components/GamesList';
 import { getStreamsByGameName } from '@/lib/streams';
 import GameStreams from '@/components/GameStreams';
+import Link from 'next/link';
 interface GameDetailProps {
   params: { id: string };
 
@@ -37,15 +38,19 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
 
   return (
     <div className='flex flex-col'>
-      <div className='relative md:h-screen w-full flex flex-col justify-center items-center gap-6 z-0'>
+      <div className='relative w-full flex flex-col justify-center items-center gap-6 z-0'>
         <img
           src={`${imgUrl}`}
           alt="Hero Background"
-          className="absolute inset-0 w-full h-full object-cover z-0 md:flex hidden"
+          className="absolute inset-0 w-full h-full object-cover z-0 "
         />
         <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
 
-        <span className='text-xs font-extralight text-gray-300 z-100 self-start ml-8 mt-4'> <span className='hover:cursor-pointer hover:text-white'>HOME</span> / <span className='hover:cursor-pointer hover:text-white'>GAME</span> / {game.name}</span>
+        <span className='text-xs font-extralight text-gray-300 z-100 self-start ml-8 mt-4'>
+          <Link href={'/'}>
+            <span  className='hover:cursor-pointer hover:text-white'>HOME</span>
+          </Link>
+          / <span className='hover:cursor-pointer hover:text-white'>GAME</span> / {game.name}</span>
         <div className='flex md:flex-row flex-col justify-between '>
           <LeftSide game={game} />
           <RightSide game={game} />

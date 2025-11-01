@@ -8,7 +8,6 @@ interface Props {
 
 
 const ProfileCollection: React.FC<Props> = ({ collections }) => {
-    console.log(collections)
     return (
         <div className='grid grid-cols-2 gap-8 p-8'>
             {
@@ -16,7 +15,6 @@ const ProfileCollection: React.FC<Props> = ({ collections }) => {
                     const imgUrl = item.games[0]?.cover
                         ? `https:${item.games[0]?.cover.replace("t_thumb", "t_screenshot_med")}`
                         : "/placeholder.jpg";
-                    console.log(imgUrl)
                     return (
                         <div className="relative flex flex-col items-center justify-center gap-4 overflow-hidden rounded-2xl shadow-lg h-64">
                             <img
