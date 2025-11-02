@@ -12,6 +12,7 @@ import GameGenreChart from './graphs/HorizontalGraph';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { Game, MyGame } from '@prisma/client';
+
 interface Props extends ProfileTabsData { }
 
 
@@ -31,7 +32,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
         return acc;
     }, {});
-    const [nextPage, setNextPage] = useState(1);
+    const [nextPage, setNextPage] = useState(2);
 
     const platformCount = stats.reduce<Record<string, number>>((acc, item) => {
         if (!item.owned_platform) return acc;
@@ -110,7 +111,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             }
             {
                 activeTab === 'owned' &&
-                <div className='pb-8 flex flex-col items-center'>
+                <div className='pb-8 flex flex-col items-center '>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={ownedGames} />
                     <div className='hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all'>

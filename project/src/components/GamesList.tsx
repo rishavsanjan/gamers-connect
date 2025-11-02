@@ -12,26 +12,26 @@ interface GameProps {
 const GamesList: React.FC<GameProps> = ({ gamesList }) => {
     const [hoverId, setHoverId] = useState<number>(0);
     const scrollRef = useRef<HTMLDivElement>(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
+   // const [isDragging, setIsDragging] = useState(false);
+   // const [startX, setStartX] = useState(0);
+   // const [scrollLeft, setScrollLeft] = useState(0);
     const [selectedId, setSelectedId] = useState(0);
 
-    useEffect(() => {
-        const container = scrollRef.current;
-        if (!container) return;
+    // useEffect(() => {
+    //     const container = scrollRef.current;
+    //     if (!container) return;
 
-        const handleWheel = (e: WheelEvent) => {
-            // If user scrolls mostly vertically, let the page handle it
-            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-                e.preventDefault(); // prevent page scroll
-                container.scrollLeft += e.deltaY; // scroll horizontally instead
-            }
-        };
+    //     const handleWheel = (e: WheelEvent) => {
+    //         // If user scrolls mostly vertically, let the page handle it
+    //         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+    //             e.preventDefault(); // prevent page scroll
+    //             container.scrollLeft += e.deltaY; // scroll horizontally instead
+    //         }
+    //     };
 
-        container.addEventListener("wheel", handleWheel, { passive: false });
-        return () => container.removeEventListener("wheel", handleWheel);
-    }, []);
+    //     container.addEventListener("wheel", handleWheel, { passive: false });
+    //     return () => container.removeEventListener("wheel", handleWheel);
+    // }, []);
 
 
 
@@ -48,22 +48,22 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
     return (
         <div
             ref={scrollRef}
-            className='flex flex-row overflow-x-auto space-x-4 p-4 scrollbar-hide rounded-xl hide-scrollbar  Z-100'
+            className='grid grid-cols-1 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2  gap-8 p-4   rounded-xl  '
 
-            onMouseDown={(e) => {
-                setIsDragging(true);
-                setStartX(e.pageX - e.currentTarget.offsetLeft);
-                setScrollLeft(e.currentTarget.scrollLeft);
-            }}
-            onMouseLeave={() => setIsDragging(false)}
-            onMouseUp={() => setIsDragging(false)}
-            onMouseMove={(e) => {
-                if (!isDragging) return;
-                e.preventDefault();
-                const x = e.pageX - e.currentTarget.offsetLeft;
-                const walk = (x - startX) * 2;
-                e.currentTarget.scrollLeft = scrollLeft - walk;
-            }}
+            // onMouseDown={(e) => {
+            //     setIsDragging(true);
+            //     setStartX(e.pageX - e.currentTarget.offsetLeft);
+            //     setScrollLeft(e.currentTarget.scrollLeft);
+            // }}
+            // onMouseLeave={() => setIsDragging(false)}
+            // onMouseUp={() => setIsDragging(false)}
+            // onMouseMove={(e) => {
+            //     if (!isDragging) return;
+            //     e.preventDefault();
+            //     const x = e.pageX - e.currentTarget.offsetLeft;
+            //     const walk = (x - startX) * 2;
+            //     e.currentTarget.scrollLeft = scrollLeft - walk;
+            // }}
         >
             {
                 gamesList?.map((game, index) => {
@@ -73,14 +73,19 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                     let xboxCount = 0;
                     let playStationCount = 0;
                     return (
-                        <div onMouseEnter={() => { setHoverId(game.id) }} onMouseLeave={() => { setHoverId(0) }} key={game.id} className='flex flex-col min-w-[335px] overflow-hidden shadow-lg shrink-0 rounded-sm hover:scale-105 duration-300 ease-in-out'>
+                        <div
+                            onMouseEnter={() => { setHoverId(game.id) }}
+                            onMouseLeave={() => { setHoverId(0) }}
+                            key={game.id}
+                            className='flex flex-col min-w-[335px] overflow-visible shadow-lg shrink-0 rounded-xl hover:scale-105 duration-300 ease-in-out relative z-10 hover:z-50'
+                        >
                             <div>
                                 {
                                     game?.videos?.length > 0 && hoverId === game.id &&
                                     <div className='relative'>
                                         <YouTubePlayer videoId={game?.videos[0].video_id || 'N/A'} />
 
-                                        <div className='absolute bottom-2 border border-white left-3 rounded-xl p-0.5  hover:bg-white/30 ease-in-out transition-all duration-300'>
+                                        <div className='absolute bottom-2 border border-white left-3 rounded-md p-0.5  hover:bg-white/30 ease-in-out transition-all duration-300 text-sm p-1'>
                                             <Link href={`https://www.youtube.com/embed/${game?.videos[0].video_id}`} target='_blank'>
                                                 <button className='cursor-pointer'>Play Full Video</button>
                                             </Link>
@@ -90,7 +95,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                                 }
                                 {
                                     hoverId !== game.id &&
-                                    <img className='w-full h-[188px] ' src={`${imgUrl}`} alt="" />
+                                    <img className='w-full h-[200px] rounded-t-xl' src={`${imgUrl}`} alt="" />
                                 }
 
 
@@ -118,7 +123,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                                                     return;
                                                 }
                                                 return (
-                                                    <div className='' key={platform.id}>
+                                                    <div key={platform.id}>
                                                         <img className='w-5 h-5 object-fill' src={`${platformLogo}`} alt="" />
                                                     </div>
                                                 )
@@ -140,7 +145,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                                 {
                                     selectedId !== game.id ?
                                         <button
-                                            onClick={   () => setSelectedId(game.id)}
+                                            onClick={() => setSelectedId(game.id)}
                                             className='border-b border-gray-400 self-center text-sm sm:hidden '>
                                             View More
                                         </button>
@@ -148,7 +153,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                                         :
 
                                         <button
-                                            onClick={   () => setSelectedId(0)}
+                                            onClick={() => setSelectedId(0)}
                                             className='border-b border-gray-400 self-center text-sm sm:hidden '>
                                             View Less
                                         </button>
@@ -180,30 +185,29 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                                 }
 
 
-                                {
-                                    hoverId === game.id &&
-                                    <div className='md:flex hidden flex-col gap-4 w-80'>
-                                        <div className='transition-opacity duration-300 opacity-100 '>
-                                            <span className='line-clamp-3  text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
+                                <div className='relative '>
+                                    {hoverId === game.id && (
+                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[385px] -left-2'>
+                                            <div className='flex flex-col gap-4 w-full'>
+                                                <div className='transition-opacity duration-300 opacity-100'>
+                                                    <span className='line-clamp-3 text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
+                                                </div>
+                                                <div>
+                                                    <ul className='grid grid-rows-1'>
+                                                        <li>
+                                                            <span className='text-gray-400 text-xs font-mono'>Release Date : </span>
+                                                            <span className='text-white text-xs font-mono'>{formatUnixDate(game.first_release_date)}</span>
+                                                        </li>
+                                                        <li>
+                                                            <span className='text-gray-400 text-xs font-mono'>Genres : </span>
+                                                            <span className='text-white text-xs font-mono'>{game?.genres?.map((genre) => genre.name).join(', ')}</span>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <ul className='grid grid-rows-1'>
-                                                <li>
-                                                    <span className='text-gray-400  text-xs font-mono'>Release Date : </span>
-
-                                                    <span className='text-white  text-xs font-mono'>{formatUnixDate(game.first_release_date)}</span>
-
-                                                </li>
-                                                <li>
-                                                    <span className='text-gray-400  text-xs font-mono'>Genres : </span>
-                                                    <span className='text-white text-xs font-mono '>  {game?.genres?.map((genre) => genre.name).join(', ')}</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-
-                                }
+                                    )}
+                                </div>
                             </div>
 
                         </div>

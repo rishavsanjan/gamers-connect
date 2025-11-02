@@ -12,6 +12,8 @@ import { usePathname } from 'next/navigation';
 import { logout } from '@/lib/auth';
 import { useSession } from 'next-auth/react';
 import { AiOutlineMenu } from "react-icons/ai";
+
+
 const Navbar = () => {
     const { data: session, status } = useSession();
     const isLogin = status === 'authenticated';
