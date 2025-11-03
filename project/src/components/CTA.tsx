@@ -4,15 +4,15 @@ import SideBar from './SideBar'
 import GamesList from './GamesList'
 import axios from 'axios'
 import { ClipLoader, FadeLoader } from 'react-spinners'
+import { Game } from '@/app/types/game'
 
 export default function CTA() {
-    const [games, setGames] = useState<any[]>([])
+    const [games, setGames] = useState<Game[]>([])
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const [category, setCategory] = useState('trending')
     const [genreCategory, setGenreCategory] = useState(0);
-    const [selectedGenreId, setSelectedGenreId] = useState(0);
 
     const observerRef = useRef<HTMLDivElement | null>(null)
 

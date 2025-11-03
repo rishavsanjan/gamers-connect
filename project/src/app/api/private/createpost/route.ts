@@ -1,0 +1,95 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/auth";
+import { prisma } from '@/lib/db'
+
+export async function POST(req: Request) {
+
+    try {
+        const session = await auth();
+        if (!session?.user?.id) {
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
+
+        const { description, name, igdb_id,
+            summary, storyline, first_release_date, total_rating,
+            cover, game_type, genres, platforms,
+            type, tags } = await req.json();
+
+
+        let game;
+        if (igdb_id) {
+            game = await prisma.game.findUnique({
+                where: {
+                    igdb_id: igdb_id
+                }
+            })
+        }
+
+
+        console.log(tags)
+
+        if (!game && igdb_id) {
+            game = await prisma.game.create({
+                data: {
+                    name,
+                    igdb_id,
+                    summary,
+                    storyline,
+                    first_release_date: first_release_date ? String(first_release_date) : null,
+                    total_rating,
+                    cover: cover?.url || null,
+                    game_type: game_type === "Main Game" ? "Main_Game" :
+                        game_type === "Expansion" ? "Expansion" :
+                            game_type === "Expanded Game" ? "Expanded_Game" : "Main_Game",
+                    genres: {
+                        connectOrCreate: genres?.map((g: any) => ({
+                            where: { name: g.name },
+                            create: { name: g.name },
+                        })) || [],
+                    },
+                    platforms: {
+                        connectOrCreate: platforms?.map((p: any) => ({
+                            where: { name: p.name },
+                            create: { name: p.name },
+                        })) || [],
+                    },
+                },
+            });
+        }
+
+        const postData: any = {
+            description,
+            type,
+            userId: session.user.id,
+            gameId: game?.id,
+        };
+
+        if (Array.isArray(tags) && tags.length > 0) {
+            postData.tags = {
+                connectOrCreate: tags.map((tag: string) => ({
+                    where: { name: tag },
+                    create: { name: tag },
+                })),
+            };
+        }
+
+        const post = await prisma.post.create({
+            data: postData,
+            include: {
+                tags: true,
+                game: true,
+                user: true,
+            },
+        });
+
+
+
+        return NextResponse.json({ post }, { status: 201 })
+
+
+
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json('Server Problem', { status: 500 })
+    }
+}

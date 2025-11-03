@@ -34,6 +34,9 @@ model User {
   Playlist      Playlist[]
   Collection    Collection[]
   Favourite     Favourite[]
+  Post          Post[]
+  Like          Like[]
+  Comment       Comment[]
 }
 
 model Account {
@@ -89,6 +92,7 @@ model Game {
   playlists          Playlist[]
   collections        Collection[] @relation("CollectionGames")
   Favourite          Favourite[]
+  Post               Post[]
 }
 
 model Rating {
@@ -161,6 +165,76 @@ model Genre {
   games Game[] @relation("GameGenres")
 }
 
+model Hashtag {
+  id    String @id @default(cuid())
+  name  String @unique
+  posts Post[] @relation("PostHashtags")
+}
+
+model Post {
+  id           String   @id @default(cuid())
+  description  String
+  userId       String
+  type         PostType @default(GENERAL)
+  gameId       String?
+  mediaUrls    String[] @default([])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  likeCount    Int      @default(0)
+  commentCount Int      @default(0)
+
+  user    User      @relation(fields: [userId], references: [id])
+  game    Game?     @relation(fields: [gameId], references: [id])
+  tags    Hashtag[] @relation("PostHashtags")
+  Like    Like[]
+  Comment Comment[]
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
+
+  @@unique([userId, postId])
+}
+
+model Comment {
+  id        String      @id @default(cuid())
+  userId    String
+  postId    String
+  parentId  String? // ✅ points to another Comment if this is a reply
+  createdAt DateTime    @default(now())
+  content   String // ✅ actual comment text
+  type      CommentType @default(COMMENT)
+
+  user    User      @relation(fields: [userId], references: [id])
+  post    Post      @relation(fields: [postId], references: [id])
+  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentReplies")
+
+  @@index([postId])
+  @@index([parentId])
+}
+
+enum CommentType {
+  COMMENT
+  REPLY
+}
+
+enum PostType {
+  QUERY
+  REVIEW
+  SCREENSHOT
+  NEWS
+  GENERAL
+  GUIDE
+  HELP
+}
+
 enum GameType {
   Main_Game
   Expansion
@@ -191,4 +265,3 @@ enum CollectionVisibility {
   PRIVATE
   PUBLIC
 }
-

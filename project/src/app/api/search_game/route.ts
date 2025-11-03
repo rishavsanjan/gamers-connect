@@ -18,7 +18,7 @@ export async function POST(req: Request) {
             "https://api.igdb.com/v4/games",
             `
       search "${query}";
-      fields name, cover.url, first_release_date, total_rating, genres.name;
+      fields name, cover.url, first_release_date, total_rating, genres.name, storyline, summary;
       limit 10;
       `,
             {

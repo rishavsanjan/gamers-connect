@@ -28,7 +28,6 @@ const Navbar = () => {
     const [loading, setLoading] = useState(false);
     const [debouncedQuery, setDebouncedQuery] = useState(query);
     const searcBarDropdownRef = useRef<HTMLDivElement>(null);
-
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (searcBarDropdownRef.current && !searcBarDropdownRef.current.contains(e.target as Node)) {
@@ -38,7 +37,7 @@ const Navbar = () => {
 
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
-    })
+    }, [])
 
     useEffect(() => {
         setLoading(true)
@@ -72,7 +71,8 @@ const Navbar = () => {
         }
 
         fetchGames();
-    }, [debouncedQuery])
+    }, [debouncedQuery]);
+
 
     return (
         <div className='flex flex-row  p-4 md:border-b  border-gray-600 shadow-2xl gap-4 items-center justify-around'>
@@ -99,29 +99,47 @@ const Navbar = () => {
                 </div>
                 <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
                     <CgCommunity className="text-2xl hover:text-blue-400 cursor-pointer" />
-                    <p>Community</p>
+                    <Link href='/community'>
+                        <p>Community</p>
+                    </Link>
+
                 </div>
             </div>
             <div ref={searcBarDropdownRef} className='flex  items-center gap-4 relative'>
                 <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm w-44 sm:w-full' placeholder='Search for games' type="text" />
                 <BiSearch className='absolute left-2 ' size={20} />
-                <div className='md:flex hidden'>
-                    {
-                        isLogin ?
-                            <Link href={'/profile'}>
-                                <button >
-                                    <BiUser className='text-2xl' />
-                                </button>
-                            </Link>
-                            :
-                            <Link href={'/login'}>
-                                <button >
-                                    Login/Signup
-                                </button>
-                            </Link>
+                <div className="md:flex hidden relative">
+                    {isLogin ? (
+                        <div className="relative group">
+                            {/* Profile Icon */}
+                            <div className="w-10 h-10 rounded-full overflow-hidden cursor-pointer bg-[#202020] flex items-center justify-center group-hover:bg-white transition-all duration-200">
+                                <BiUser className="text-2xl text-white group-hover:text-black transition-colors" />
+                            </div>
 
-                    }
+                            {/* Dropdown */}
+                            <div className="absolute right-0 mt-2 w-48 bg-[#1f1f1f] text-white rounded-lg shadow-lg opacity-0 scale-95 transform transition-all duration-200 group-hover:opacity-100 group-hover:scale-100 z-50">
+                                <Link
+                                    href="/profile"
+                                    className="block px-4 py-2 hover:bg-white hover:text-black rounded-t-lg"
+                                >
+                                    My Profile
+                                </Link>
+
+                                <button
+                                    onClick={() => logout()}
+                                    className="w-full text-left px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
+                                >
+                                    Sign Out
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <Link href="/login">
+                            <button>Login/Signup</button>
+                        </Link>
+                    )}
                 </div>
+
 
 
 
