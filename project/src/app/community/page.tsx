@@ -9,11 +9,15 @@ import { timeAgo } from '../utils/date';
 import Link from 'next/link';
 import { HashTag } from '../types/post';
 import { User } from '@prisma/client';
+import { BsHeartFill } from 'react-icons/bs';
+import { ClipLoader } from 'react-spinners';
+import { handleLike, handleRemoveLike } from '../utils/community_functions';
 export default function GamelyCommunity() {
     const [showPostModal, setShowPostModal] = useState(false);
     const [posts, setPosts] = useState<Post[]>([]);
     const [topTags, setTopTags] = useState<HashTag[]>([]);
     const [topUsers, setTopUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
 
     const getGames = async () => {
         const response = await axios({
@@ -25,6 +29,7 @@ export default function GamelyCommunity() {
         setPosts(response.data.posts)
         setTopTags(response.data.topTags)
         setTopUsers(response.data.topUsersByPosts);
+        setLoading(false)
     }
 
     useEffect(() => {
@@ -32,13 +37,6 @@ export default function GamelyCommunity() {
     }, []);
 
     console.log(posts)
-
-
-    // const handleLike = (postId: number) => {
-    //     setPosts(posts.map(post =>
-    //         post.id === postId ? { ...post, likes: post.likes + 1 } : post
-    //     ));
-    // };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
@@ -131,68 +129,97 @@ export default function GamelyCommunity() {
                         </div>
 
                         {/* Posts */}
-                        {posts.map(post => (
-                            <div key={post.id} className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg transition hover:border-purple-500/40">
-                                {/* Post Header */}
-                                <div className="mb-4 flex items-start justify-between">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-2xl">
-                                            <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
-                                        </div>
-                                        <div>
-                                            <p className="font-bold">{post.user.name}</p>
-                                            <p className="text-sm text-gray-400">
-                                                {
-                                                    post.game &&
-                                                    <>
-                                                        {/* @ts-ignore */}
-                                                        <Link href={`/details/${post.game.igdb_id}`} key={post.game.igdb_id}>
-                                                            <span className="text-purple-400">{post.game.name}</span>
-                                                        </Link>
-                                                    </>
-                                                }
-
-                                                {' '}  • {timeAgo(post.createdAt)}
-                                            </p>
-                                        </div>
-                                    </div>
-
+                        {
+                            loading ?
+                                <div className=' flex flex-row justify-center'>
+                                    <ClipLoader size={40} color='white' />
                                 </div>
 
-                                {/* Post Content */}
-                                <p className="mb-4 leading-relaxed text-gray-200">{post.description}</p>
+                                :
+                                <>
+                                    {
+                                        posts.map(post => (
+                                            <div key={post.id} className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg transition hover:border-purple-500/40">
+                                                {/* Post Header */}
+                                                <div className="mb-4 flex items-start justify-between">
+                                                    <div className="flex items-center space-x-3">
+                                                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-2xl">
+                                                            <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-bold">{post.user.name}</p>
+                                                            <p className="text-sm text-gray-400">
+                                                                {
+                                                                    post.game &&
+                                                                    <>
+                                                                        {/* @ts-ignore */}
+                                                                        <Link href={`/details/${post.game.igdb_id}`} key={post.game.igdb_id}>
+                                                                            <span className="text-purple-400">{post.game.name}</span>
+                                                                        </Link>
+                                                                        {' '}  • {' '}
+                                                                    </>
+                                                                }
 
-                                {/* Post Image Placeholder */}
-                                {post.mediaUrls.length > 0 && (
-                                    <div className="mb-4 flex h-64 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-6xl">
-                                        {
-                                            post.mediaUrls.map((image) => (
-                                                <img src={`${image}`} alt="" />
-                                            ))
-                                        }
-                                    </div>
-                                )}
+                                                                {timeAgo(post.createdAt)}
+                                                            </p>
+                                                        </div>
+                                                    </div>
 
-                                {/* Post Actions */}
-                                <div className="flex items-center space-x-6 border-t border-white/10 pt-4">
-                                    <button
-                                        // onClick={() => handleLike(post.id)}
-                                        className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500"
-                                    >
-                                        <Heart className="h-5 w-5" />
-                                        <span>{post.likeCount}</span>
-                                    </button>
-                                    <button className="flex items-center space-x-2 text-gray-400 transition hover:text-purple-400">
-                                        <MessageCircle className="h-5 w-5" />
-                                        <span>{post.commentCount}</span>
-                                    </button>
-                                    <button className="flex items-center space-x-2 text-gray-400 transition hover:text-blue-400">
-                                        <Share2 className="h-5 w-5" />
-                                        <span>Share</span>
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
+                                                </div>
+
+                                                {/* Post Content */}
+                                                <Link href={`/community/post_details/${post.id}`} key={post.id}>
+                                                    <p className="mb-4 leading-relaxed text-gray-200">{post.description}</p>
+                                                </Link>
+
+                                                {/* Post Image Placeholder */}
+                                                {post.mediaUrls.length > 0 && (
+                                                    <div className="mb-4 flex h-64 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-6xl">
+                                                        {
+                                                            post.mediaUrls.map((image) => (
+                                                                <img src={`${image}`} alt="" />
+                                                            ))
+                                                        }
+                                                    </div>
+                                                )}
+
+                                                {/* Post Actions */}
+                                                <div className="flex items-center space-x-6 border-t border-white/10 pt-4">
+                                                    {
+                                                        post.hasLiked ?
+                                                            <button
+                                                                onClick={() => handleRemoveLike(post.id, setPosts)}
+                                                                className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500"
+                                                            >
+                                                                <BsHeartFill className="h-5 w-5" color='#B4157D' />
+                                                                <span>{post.likeCount}</span>
+                                                            </button>
+
+                                                            :
+                                                            <button
+                                                                onClick={() => handleLike(post.id, setPosts)}
+                                                                className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500"
+                                                            >
+                                                                <Heart className="h-5 w-5" />
+                                                                <span>{post.likeCount}</span>
+                                                            </button>
+                                                    }
+
+                                                    <button className="flex items-center space-x-2 text-gray-400 transition hover:text-purple-400">
+                                                        <MessageCircle className="h-5 w-5" />
+                                                        <span>{post.commentCount}</span>
+                                                    </button>
+                                                    <button className="flex items-center space-x-2 text-gray-400 transition hover:text-blue-400">
+                                                        <Share2 className="h-5 w-5" />
+                                                        <span>Share</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </>
+                        }
+
                     </div>
 
                     {/* Right Sidebar */}
@@ -219,22 +246,7 @@ export default function GamelyCommunity() {
                         {/* Suggested Groups */}
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
                             <h3 className="mb-4 text-lg font-bold">Suggested Groups</h3>
-                            <div className="space-y-3">
-                                {['RPG Lovers', 'FPS Masters', 'Indie Games'].map((group, idx) => (
-                                    <div key={idx} className="flex items-center justify-between rounded-lg p-3 transition hover:bg-white/10">
-                                        <div className="flex items-center space-x-3">
-                                            <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500" />
-                                            <div>
-                                                <p className="text-sm font-medium">{group}</p>
-                                                <p className="text-xs text-gray-400">{Math.floor(Math.random() * 5000 + 1000)} members</p>
-                                            </div>
-                                        </div>
-                                        <button className="rounded-lg bg-purple-600 px-3 py-1 text-sm transition hover:bg-purple-700">
-                                            Join
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
+
                         </div>
                     </div>
                 </div>

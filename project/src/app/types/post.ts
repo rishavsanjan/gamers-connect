@@ -15,6 +15,7 @@ export interface Post {
     tags: Hashtag
     likeCount: number
     commentCount: number
+    hasLiked:boolean
 }
 
 export interface HashTag {

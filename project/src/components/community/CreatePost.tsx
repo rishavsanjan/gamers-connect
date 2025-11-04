@@ -24,6 +24,8 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
     const searcBarDropdownRef = useRef<HTMLDivElement>(null);
     const [selectedGame, setSelectedGame] = useState<Game | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [images, setImages] = useState<File[]>([]);
+    const [previews, setPreviews] = useState<string[]>([]);
 
     useEffect(() => {
         setLoading(true)
@@ -108,7 +110,26 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
         setShowPostModal(false);
     }
 
-    console.log(selectedGame)
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(e.target.files || []);
+        if (files.length === 0) return;
+
+        setImages((prev) => [...prev, ...files]);
+
+        const newPreviews = files.map((file) => URL.createObjectURL(file));
+        setPreviews((prev) => [...prev, ...newPreviews]);
+    }
+
+    const handleRemoveImage = async (index: number) => {
+        const newImages = [...images];
+        const newPreviews = [...previews];
+
+        newImages.splice(index, 1);
+        newPreviews.splice(index, 1);
+
+        setImages(newImages);
+        setPreviews(newPreviews);
+    }
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
@@ -140,6 +161,41 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
                         placeholder="Share your gaming achievements, tips, or just chat with the community..."
                         className="h-40 w-full resize-none rounded-xl border border-purple-500/20 bg-white/10 px-4 py-3 outline-none transition focus:border-purple-500/60 placeholder:text-gray-400"
                     />
+                </div>
+                <div className='mb-6'>
+                    <label className="mb-2 block text-sm text-gray-400">Select Images</label>
+
+                    <label className="cursor-pointer bg-gray-800 text-white px-4 py-2 rounded-md self-start hover:bg-gray-700">
+                        Add Images
+                        <input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            className="hidden"
+                            onChange={handleImageChange}
+                        />
+                    </label>
+                    {/* image previews */}
+                    {previews.length > 0 && (
+                        <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mt-4">
+                            {previews.map((src, index) => (
+                                <div key={index} className="relative group">
+                                    <img
+                                        src={src}
+                                        alt={`preview-${index}`}
+                                        className="w-full h-32 object-cover rounded-md border border-gray-700"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => handleRemoveImage(index)}
+                                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                                    >
+                                        ✕
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
                 {
                     selectedGame ?

@@ -24,9 +24,25 @@ export async function GET(req: Request) {
                         id: true,
 
                     }
+                },
+                Like: {
+                    where: { userId: session.user.id }
                 }
-            }
+            },
+
         });
+
+        const result = posts.map((post) => ({
+            id: post.id,
+            description: post.description,
+            likeCount: post.likeCount,
+            commentCount: post.commentCount,
+            hasLiked: post.Like.length > 0, 
+            user: post.user,
+            game: post.game,
+            createdAt: post.createdAt,
+            mediaUrls:post.mediaUrls
+        }))
 
         const topTags = await prisma.hashtag.findMany({
             take: 5,
@@ -56,8 +72,12 @@ export async function GET(req: Request) {
             },
         });
 
+        posts.map((post) => {
 
-        return NextResponse.json({ posts, topTags, topUsersByPosts }, { status: 200 })
+        })
+
+
+        return NextResponse.json({ posts:result, topTags, topUsersByPosts }, { status: 200 })
     } catch (error) {
         console.log(error)
         return NextResponse.json('Server Problem', { status: 500 })

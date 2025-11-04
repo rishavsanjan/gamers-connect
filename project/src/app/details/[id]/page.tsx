@@ -15,6 +15,7 @@ interface GameDetailProps {
 
 
 const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
+    
   const { id } = await params;
   const game: Game = await getGameDetails(id);
   const imgUrl = game.cover?.url

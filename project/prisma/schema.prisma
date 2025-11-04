@@ -17,26 +17,27 @@ datasource db {
 }
 
 model User {
-  id            String       @id @default(cuid())
-  username      String       @unique
-  name          String?
-  email         String       @unique
-  emailVerified DateTime? // Add this field
-  password      String?
-  image         String?
-  provider      String?
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  Account       Account[]
-  Session       Session[]
-  Rating        Rating[]
-  MyGame        MyGame[]
-  Playlist      Playlist[]
-  Collection    Collection[]
-  Favourite     Favourite[]
-  Post          Post[]
-  Like          Like[]
-  Comment       Comment[]
+  id              String            @id @default(cuid())
+  username        String            @unique
+  name            String?
+  email           String            @unique
+  emailVerified   DateTime? // Add this field
+  password        String?
+  image           String?
+  provider        String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  Account         Account[]
+  Session         Session[]
+  Rating          Rating[]
+  MyGame          MyGame[]
+  Playlist        Playlist[]
+  Collection      Collection[]
+  Favourite       Favourite[]
+  Post            Post[]
+  Like            Like[]
+  Comment         Comment[]
+  CommentReaction CommentReaction[]
 }
 
 model Account {
@@ -210,14 +211,28 @@ model Comment {
   createdAt DateTime    @default(now())
   content   String // ✅ actual comment text
   type      CommentType @default(COMMENT)
+  likeCount Int         @default(0)
 
-  user    User      @relation(fields: [userId], references: [id])
-  post    Post      @relation(fields: [postId], references: [id])
-  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
-  replies Comment[] @relation("CommentReplies")
+  user            User              @relation(fields: [userId], references: [id])
+  post            Post              @relation(fields: [postId], references: [id])
+  parent          Comment?          @relation("CommentReplies", fields: [parentId], references: [id])
+  replies         Comment[]         @relation("CommentReplies")
+  CommentReaction CommentReaction[]
 
   @@index([postId])
   @@index([parentId])
+}
+
+model CommentReaction {
+  id        String   @id @default(cuid())
+  userId    String
+  commentId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id])
+  comment Comment @relation(fields: [commentId], references: [id])
+
+  @@unique([userId, commentId])
 }
 
 enum CommentType {

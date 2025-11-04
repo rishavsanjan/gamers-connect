@@ -1,11 +1,15 @@
 // /app/api/igdb/fetchgames/route.ts
 import { NextResponse } from "next/server";
 import axios from "axios";
+import https from "https";
 
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID!;
 const TOKEN = process.env.TWITCH_ACCESS_TOKEN!;
 
 export async function POST(req: Request) {
+    const agent = new https.Agent({
+        rejectUnauthorized: false, // bypass SSL verification
+    });
     const { page = 1, genreId, category, limit = 10 } = await req.json();
 
     const offset = (page - 1) * 10;
@@ -109,6 +113,8 @@ export async function POST(req: Request) {
                 "Client-ID": CLIENT_ID,
                 "Authorization": `Bearer ${TOKEN}`,
             },
+            httpsAgent: agent,
+            timeout: 15000,
         }
     );
 

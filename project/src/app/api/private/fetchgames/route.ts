@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
+   
     try {
         const { searchParams } = new URL(req.url);
         const page = parseInt(searchParams.get('page') || '1');
@@ -27,7 +28,7 @@ export async function GET(req: Request) {
         }
 
 
-        return NextResponse.json({mygames}, {status:201});
+        return NextResponse.json({ mygames }, { status: 201 });
     } catch (error) {
         console.log(error);
         return NextResponse.json('Server Error', { status: 500 })
