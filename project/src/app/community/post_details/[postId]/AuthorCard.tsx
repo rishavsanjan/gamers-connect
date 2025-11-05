@@ -1,8 +1,30 @@
 'use client';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import { useState } from 'react';
+import { ClipLoader } from 'react-spinners';
 
-export default function AuthorCard({ author,gameCount, postCount,collectionCount }: { author: string | null;  gameCount:number; postCount:number; collectionCount:number }) {
-    const [following, setFollowing] = useState(false);
+export default function AuthorCard({ author, authorId, gameCount, postCount, collectionCount, following }: { author: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean }) {
+    const { data: session, status } = useSession()
+    const [isFollowing, setIsFollowing] = useState(following);
+    const [loading, setLoading] = useState(false);
+    
+
+    const addFollow = async () => {
+        setLoading(true)
+        const response = await axios({
+            url: `/api/private/addfollow`,
+            method: 'post',
+            data: {
+                followerId: session?.user.id,
+                followingId: authorId
+            }
+        })
+
+        setIsFollowing(prev => !prev)
+
+        setLoading(false)
+    }
 
     return (
         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
@@ -30,13 +52,24 @@ export default function AuthorCard({ author,gameCount, postCount,collectionCount
                 </div>
             </div>
             <button
-                onClick={() => setFollowing(!following)}
-                className={`w-full rounded-lg py-3 font-semibold transition ${following
-                        ? 'border border-purple-500 bg-transparent hover:bg-purple-500/10'
-                        : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                onClick={() => addFollow()}
+                disabled={loading}
+                className={`w-full rounded-lg py-3 font-semibold transition ${isFollowing
+                    ? 'border border-purple-500 bg-transparent hover:bg-purple-500/10'
+                    : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
                     }`}
             >
-                {following ? 'Following' : 'Follow'}
+                {
+                    loading ?
+                        <ClipLoader color='white' size={20} />
+                        :
+                        <>
+                            {isFollowing ? 'Following' : 'Follow'}
+                        </>
+
+                }
+
+
             </button>
         </div>
     );

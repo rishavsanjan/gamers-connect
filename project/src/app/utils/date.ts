@@ -39,7 +39,7 @@ export function timeAgo(dateString: any) {
 }
 
 
-export function getTimeAgoFormatted(dateString: string): string {
+export function getTimeAgoFormatted(dateString: Date): string {
     const now = new Date();
     const past = new Date(dateString);
     const seconds = Math.floor((now.getTime() - past.getTime()) / 1000);

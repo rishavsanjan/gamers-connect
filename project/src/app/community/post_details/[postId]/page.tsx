@@ -6,8 +6,6 @@ import CommentSection from './CommentSection';
 import AuthorCard from './AuthorCard';
 import { getTimeAgoFormatted, timeAgo } from '@/app/utils/date';
 import { auth } from '@/auth';
-import { BsHeartFill } from 'react-icons/bs';
-import { handleLike, handleRemoveLike } from '@/app/utils/community_functions';
 import LikeButton from './LikeButton';
 
 interface Props {
@@ -80,28 +78,41 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         }
     })
 
-    console.log(gameCount)
+    // const comment = await prisma.comment.findMany({
+    //     where: { postId },
+    //     include: {
+    //         user: {
+    //             select: {
+    //                 name: true,
+    //                 id: true
+    //             }
+    //         }, CommentReaction: {
+    //             where: { userId: session?.user.id }
+    //         }
 
-
+    //     }, orderBy: { createdAt: 'asc' }
+    // })
 
     const comment = await prisma.comment.findMany({
-        where: { postId },
+        where: { postId, parentId: null },
         include: {
-            user: {
-                select: {
-                    name: true,
-                    id: true
-                }
-            }, CommentReaction: {
+            user: { select: { id: true, name: true } },
+            _count: { select: { replies: true } },
+            CommentReaction: {
                 where: { userId: session?.user.id }
-            },
-            
-        }
+            }
+        },
+        orderBy: { createdAt: 'asc' },
     })
 
-    console.log(comment)
-
-    
+    const following = !!await prisma.follow.findUnique({
+        where: {
+            followerId_followingId: {
+                followerId: session!.user.id,
+                followingId: post.user.id
+            }
+        }
+    })
 
     const comments = comment.map((item) => ({
         id: item.id,
@@ -111,13 +122,18 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         userId: item.userId,
         createdAt: item.createdAt,
         hasLiked: item.CommentReaction.length > 0,
-        likeCount:item.likeCount
+        likeCount: item.likeCount,
+        parentId: item.parentId,
+        _count: { replies: item._count.replies },
+
 
     }))
 
+    //const nestedComments = buildCommentTree(comments);
+
+    //console.log(nestedComments)
 
 
-    console.log(post)
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
             {/* Header */}
@@ -221,7 +237,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                     {/* Right Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-4">
-                        <AuthorCard author={post.user.name} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} />
+                        <AuthorCard author={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} />
                         {/* 
                        //related posts
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">

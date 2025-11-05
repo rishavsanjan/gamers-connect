@@ -3,12 +3,16 @@ export interface Comment {
     id: string
     content: string
     userId: string
-    postId:string
+    postId: string
     user: {
-        id:string,
-        name:string | null
+        id: string,
+        name: string | null
     }
-    hasLiked : boolean
+    hasLiked: boolean
     createdAt: Date
-    likeCount:number
+    likeCount: number
+    replies?: Comment[],
+    _count: {
+        replies: number
+    }
 }

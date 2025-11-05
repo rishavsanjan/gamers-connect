@@ -6,16 +6,22 @@ export interface Post {
     description: string,
     userId: string,
     type: string,
-    gameId: string,
+    gameId: string | null,
     mediaUrls: string[],
     createdAt: Date,
     updatedAt: Date,
-    user: User
-    game: Game
-    tags: Hashtag
+    user: {
+        id: string,
+        name: string | null
+    }
+    game: {
+        name: string | null
+        igdb_id: number
+    } | null
+    tags?: Hashtag
     likeCount: number
     commentCount: number
-    hasLiked:boolean
+    hasLiked: boolean
 }
 
 export interface HashTag {

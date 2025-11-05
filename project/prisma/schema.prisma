@@ -38,6 +38,9 @@ model User {
   Like            Like[]
   Comment         Comment[]
   CommentReaction CommentReaction[]
+
+  followers Follow[] @relation("Followers")
+  following Follow[] @relation("Following")
 }
 
 model Account {
@@ -233,6 +236,18 @@ model CommentReaction {
   comment Comment @relation(fields: [commentId], references: [id])
 
   @@unique([userId, commentId])
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String // the user who follows
+  followingId String // the user being followed
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("Following", fields: [followerId], references: [id])
+  following User @relation("Followers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId]) // prevent duplicate follows
 }
 
 enum CommentType {
