@@ -1,15 +1,59 @@
 'use client'
 import CommentItem from './CommentItem'
 import axios from 'axios'
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Comment } from '@/app/types/comment'
 import { Send } from 'lucide-react'
 import { ClipLoader } from 'react-spinners'
 
 export default function CommentSection({ postId, initialComments }: { postId: string, initialComments: Comment[] }) {
-  const [comments, setComments] = useState<Comment[]>(initialComments)
+
+  const [comments, setComments] = useState<Comment[]>(initialComments);
   const [commentText, setCommentText] = useState('');
   const [commentUploading, setCommentUploading] = useState(false);
+  const [page, setPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+
+  const observer = useRef<IntersectionObserver | null>(null);
+
+  const lastPostRef = useCallback((node: HTMLDivElement) => {
+    if (loading) return
+    if (observer.current) observer.current.disconnect()
+
+    observer.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setPage(prev => prev + 1)
+      }
+    })
+
+    if (node) observer.current.observe(node)
+  }, []);
+
+
+  const getComments = async () => {
+    const response = await axios({
+      url: `/api/getcomment?page=${page}`,
+      method: 'post',
+      data: {
+        postId
+      }
+    });
+    const newComments = response.data.comments;
+    setComments(prev => [...prev, ...newComments]);
+    if (newComments.length === 0) setHasMore(false);
+    setLoading(false);
+
+  }
+
+
+  useEffect(() => {
+    if (page === 1) return;
+    setLoading(true);
+    getComments();
+
+
+  }, [page, hasMore])
 
   function addReply(comments: Comment[], parentId: string, newReply: Comment): Comment[] {
     return comments.map(comment => {
@@ -83,6 +127,10 @@ export default function CommentSection({ postId, initialComments }: { postId: st
       {comments.map(c => (
         <CommentItem key={c.id} comment={c} postId={postId} onReply={handleAddComment} />
       ))}
+      <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
+        {loading && <ClipLoader color='white' size={40} />}
+        {!hasMore && <p className="text-gray-500">No more comments</p>}
+      </div>
     </div>
   )
 }

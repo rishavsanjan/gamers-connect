@@ -1,4 +1,3 @@
-'use client';
 
 import React, { useEffect, useState } from 'react';
 import { Heart, MessageCircle, Share2, TrendingUp, Users, Award, Image, Video, FileText, Send, Filter, Search, Tag } from 'lucide-react';
@@ -13,34 +12,89 @@ import { BsHeartFill } from 'react-icons/bs';
 import { ClipLoader } from 'react-spinners';
 import { handleLike, handleRemoveLike } from '../utils/community_functions';
 import Posts from '@/components/community/Posts';
-export default function GamelyCommunity() {
-    const [showPostModal, setShowPostModal] = useState(false);
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [topTags, setTopTags] = useState<HashTag[]>([]);
-    const [topUsers, setTopUsers] = useState<User[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
+import InfiniteHomePostsFeed from '@/components/community/InfinitePostsHomeFeed';
+import { prisma } from '@/lib/prisma';
+import { auth } from '@/auth';
+import AddPostModal from '@/components/community/AddPostModal';
+export default async function GamelyCommunity() {
 
-    const getGames = async () => {
-        const response = await axios({
-            url: `/api/private/getposts`,
-            method: 'get',
+    const session = await auth();
 
-        })
-        console.log(response.data)
-        setPosts(response.data.posts)
-        setTopTags(response.data.topTags)
-        setTopUsers(response.data.topUsersByPosts);
-        setLoading(false)
-    }
+    const getposts = await prisma.post.findMany({
+        take: 2,
+        include: {
 
-    useEffect(() => {
-        getGames();
-    }, []);
+            game: {
+                select: {
+                    name: true,
+                    igdb_id: true
+                }
+            },
+            user: {
+                select: {
+                    name: true,
+                    id: true,
 
-    console.log(posts)
+                }
+            },
+            Like: {
+                where: { userId: session!.user.id }
+            }
+        },
+
+        orderBy:{createdAt:'desc'}
+
+    });
+
+    const posts = getposts.map((post) => ({
+        id: post.id,
+        description: post.description,
+        likeCount: post.likeCount,
+        commentCount: post.commentCount,
+        hasLiked: post.Like.length > 0,
+        user: post.user,
+        game: post.game,
+        createdAt: post.createdAt,
+        mediaUrls: post.mediaUrls,
+        gameId: post.gameId,
+        userId: post.userId,
+        updatedAt: post.updatedAt,
+        type: post.type,
+    }));
+
+
+    const topTags = await prisma.hashtag.findMany({
+        take: 5,
+        orderBy: {
+            posts: {
+                _count: 'desc',
+            },
+        },
+        include: {
+            _count: {
+                select: { posts: true },
+            },
+        },
+    });
+
+
+    const topUsers = await prisma.user.findMany({
+        take: 5,
+        orderBy: {
+            Post: {
+                _count: 'desc',
+            },
+        },
+        include: {
+            _count: {
+                select: { Post: true },
+            },
+        },
+    });
+
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
+        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white z-0">
             {/* Header */}
             <header className="sticky top-0 z-50 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
@@ -63,15 +117,7 @@ export default function GamelyCommunity() {
                     {/* Left Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-3">
                         {/* Create Post Card */}
-                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                            <button
-                                onClick={() => setShowPostModal(true)}
-                                className="flex w-full items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 py-3 font-semibold transition hover:from-purple-700 hover:to-pink-700"
-                            >
-                                <Send className="h-5 w-5" />
-                                <span>Create Post</span>
-                            </button>
-                        </div>
+                        <AddPostModal />
 
                         {/* Trending Topics */}
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
@@ -102,7 +148,7 @@ export default function GamelyCommunity() {
                             <div className="space-y-3">
                                 {
                                     topUsers.map((user) => (
-                                        <ul className='flex flex-row justify-between'>
+                                        <ul key={user.id} className='flex flex-row justify-between'>
                                             <li className='text-blue-500 cursor-pointer'>@{user.name}</li>
                                             {/* @ts-ignore */}
                                             <li>{user._count.Post}</li>
@@ -132,18 +178,18 @@ export default function GamelyCommunity() {
                         </div>
 
                         {/* Posts */}
-                        {
+                        {/* {
                             loading ?
                                 <div className=' flex flex-row justify-center'>
                                     <ClipLoader size={40} color='white' />
                                 </div>
 
-                                :
-                                <>
-                                    <Posts posts={posts} />
-                                    
-                                </>
-                        }
+                                : */}
+                        <>
+                            <InfiniteHomePostsFeed initialPosts={posts} />
+
+                        </>
+                        {/* } */}
 
                     </div>
 
@@ -178,9 +224,9 @@ export default function GamelyCommunity() {
             </div>
 
             {/* Create Post Modal */}
-            {showPostModal && (
+            {/* {showPostModal && (
                 <CreatePostModal setShowPostModal={setShowPostModal} setPosts={setPosts} />
-            )}
+            )} */}
         </div>
     );
 }

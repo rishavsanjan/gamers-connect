@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState } from 'react'
 import { Heart } from 'lucide-react'
 import { BsHeartFill } from 'react-icons/bs'
 import axios from 'axios'
@@ -14,25 +14,33 @@ interface LikeButtonProps {
 export default function LikeButton({ postId, hasLiked, likeCount }: LikeButtonProps) {
     const [liked, setLiked] = useState(hasLiked)
     const [count, setCount] = useState(likeCount)
-    const [isPending, startTransition] = useTransition()
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleToggle = async () => {
-        setLiked(prev => !prev)
-        setCount(prev => (liked ? prev - 1 : prev + 1))
-
+        const previousLiked = liked
+        const previousCount = count
+        
+        setLiked(!liked)
+        setCount(liked ? count - 1 : count + 1)
+        setIsLoading(true)
+        
+        console.log('yay')
+        
         try {
             await axios.post('/api/private/addorremovereaction', { postId })
         } catch (err) {
-            console.error(err)
-            setLiked(prev => !prev)
-            setCount(prev => (liked ? prev + 1 : prev - 1))
+            console.error('err')
+            setLiked(previousLiked)
+            setCount(previousCount)
+        } finally {
+            setIsLoading(false)
         }
     }
 
     return (
         <button
-            onClick={() => startTransition(handleToggle)}
-            disabled={isPending}
+            onClick={handleToggle}
+            disabled={isLoading}
             className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500"
         >
             {liked ? (

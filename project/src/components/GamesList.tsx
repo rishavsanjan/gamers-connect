@@ -12,31 +12,9 @@ interface GameProps {
 const GamesList: React.FC<GameProps> = ({ gamesList }) => {
     const [hoverId, setHoverId] = useState<number>(0);
     const scrollRef = useRef<HTMLDivElement>(null);
-   // const [isDragging, setIsDragging] = useState(false);
-   // const [startX, setStartX] = useState(0);
-   // const [scrollLeft, setScrollLeft] = useState(0);
     const [selectedId, setSelectedId] = useState(0);
-
-    // useEffect(() => {
-    //     const container = scrollRef.current;
-    //     if (!container) return;
-
-    //     const handleWheel = (e: WheelEvent) => {
-    //         // If user scrolls mostly vertically, let the page handle it
-    //         if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-    //             e.preventDefault(); // prevent page scroll
-    //             container.scrollLeft += e.deltaY; // scroll horizontally instead
-    //         }
-    //     };
-
-    //     container.addEventListener("wheel", handleWheel, { passive: false });
-    //     return () => container.removeEventListener("wheel", handleWheel);
-    // }, []);
-
-
-
     function formatUnixDate(timestamp: number): string {
-        const date = new Date(timestamp * 1000); // Convert seconds → milliseconds
+        const date = new Date(timestamp * 1000); 
         const options: Intl.DateTimeFormatOptions = {
             year: "numeric",
             month: "long",
@@ -50,20 +28,6 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
             ref={scrollRef}
             className='grid grid-cols-1 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-2 md:grid-cols-2  gap-8 p-4   rounded-xl  '
 
-            // onMouseDown={(e) => {
-            //     setIsDragging(true);
-            //     setStartX(e.pageX - e.currentTarget.offsetLeft);
-            //     setScrollLeft(e.currentTarget.scrollLeft);
-            // }}
-            // onMouseLeave={() => setIsDragging(false)}
-            // onMouseUp={() => setIsDragging(false)}
-            // onMouseMove={(e) => {
-            //     if (!isDragging) return;
-            //     e.preventDefault();
-            //     const x = e.pageX - e.currentTarget.offsetLeft;
-            //     const walk = (x - startX) * 2;
-            //     e.currentTarget.scrollLeft = scrollLeft - walk;
-            // }}
         >
             {
                 gamesList?.map((game, index) => {

@@ -6,6 +6,8 @@ import Link from 'next/link'
 import React from 'react'
 import { BsHeartFill } from 'react-icons/bs'
 import PostLikeButton from './PostLikeButton'
+import PostDescription from './PostDescription'
+import PostImages from './PostImages'
 
 interface Props {
     posts: Post[]
@@ -46,18 +48,12 @@ const Posts: React.FC<Props> = ({ posts }) => {
 
                         {/* Post Content */}
                         <Link href={`/community/post_details/${post.id}`} key={post.id}>
-                            <p className="mb-4 leading-relaxed text-gray-200">{post.description}</p>
+                            <PostDescription text={post.description} />
                         </Link>
 
                         {/* Post Image Placeholder */}
                         {post.mediaUrls.length > 0 && (
-                            <div className="mb-4 flex h-64 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-6xl">
-                                {
-                                    post.mediaUrls.map((image) => (
-                                        <img src={`${image}`} alt="" />
-                                    ))
-                                }
-                            </div>
+                            <PostImages mediaUrls={post.mediaUrls} />
                         )}
 
                         {/* Post Actions */}

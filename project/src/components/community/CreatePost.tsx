@@ -1,3 +1,4 @@
+'use client'
 import React, { SetStateAction, useEffect, useRef, useState } from 'react'
 import { Image, Video, FileText, Cross } from 'lucide-react';
 import { Game } from '@/app/types/game';
@@ -6,15 +7,18 @@ import { BiSearch } from 'react-icons/bi';
 import { getYearFromUnix } from '@/app/utils/date';
 import { ClipLoader, RotateLoader } from 'react-spinners';
 import { GrClose } from 'react-icons/gr';
-import { getGameDetails } from '@/lib/igdb';
 import { Post } from '@/app/types/post';
+import { useRouter } from 'next/navigation'
 
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
-    setPosts: React.Dispatch<SetStateAction<Post[]>>
+    setPosts?: React.Dispatch<SetStateAction<Post[]>>
 }
 
 const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
+
+    const router = useRouter();
+
     const [postContent, setPostContent] = useState('');
     const [category, setCategory] = useState('GENERAL');
     const [query, setQuery] = useState('');
@@ -26,6 +30,11 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
     const [uploading, setUploading] = useState(false);
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
+
+    const CLOUDINARY_CLOUD_NAME = "diwmvqto3"; // Replace with your Cloudinary cloud name
+    const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
+
+
 
     useEffect(() => {
         setLoading(true)
@@ -74,6 +83,36 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
 
     console.log(category)
 
+
+    const uploadToCloudinary = async (file: File, type: 'image' | 'video') => {
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET!);
+
+            const res = await fetch(
+                `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${type}/upload`,
+                {
+                    method: 'POST',
+                    body: formData, // ✅ no custom headers
+                }
+            );
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('Cloudinary error response:', text);
+                throw new Error('Upload failed');
+            }
+
+            const data = await res.json();
+            return data.secure_url;
+        } catch (err) {
+            console.error('Cloudinary upload error:', err);
+            throw err;
+        }
+    };
+
+
     const handleCreatePost = async () => {
         setUploading(true)
         const extractHashtags = (text: string): string[] => {
@@ -82,6 +121,13 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
         };
 
         const hashtags = extractHashtags(postContent);
+
+        let uploadedUrls: string[] = [];
+
+        if (images.length > 0) {
+            const uploadPromises = images.map((file) => uploadToCloudinary(file, 'image'));
+            uploadedUrls = await Promise.all(uploadPromises); // wait for all uploads
+        }
 
         const response = await axios({
             url: `/api/private/createpost`,
@@ -99,15 +145,26 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
                 genres: selectedGame?.genres,
                 platforms: selectedGame?.platforms,
                 type: category,
-                tags: hashtags
+                tags: hashtags,
+                mediaUrls: uploadedUrls
             }
-        })
+        });
+
+
+
 
         console.log(response.data);
-        setPosts(prev => [...prev, response.data.post]);
+        if (setPosts) {
+            setPosts(prev => [...prev, response.data.post]);
+        }
 
-        setUploading(false);
-        setShowPostModal(false);
+        router.refresh();
+
+        setTimeout(() => {
+            setUploading(false);
+            setShowPostModal(false);
+        }, 500);
+
     }
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,7 +189,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
     }
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm h-screen w-screen ">
             <div className="w-full max-w-2xl rounded-2xl border border-purple-500/30 bg-gradient-to-br from-gray-900 to-purple-900 p-8">
                 <h2 className="mb-6 text-2xl font-bold">Create a Post</h2>
 

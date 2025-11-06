@@ -38,6 +38,8 @@ export async function GET(req: Request) {
                 }
             },
 
+            orderBy: { createdAt: 'desc' }
+
         });
 
         const result = posts.map((post) => ({
@@ -49,11 +51,7 @@ export async function GET(req: Request) {
             user: post.user,
             game: post.game,
             createdAt: post.createdAt,
-            mediaUrls: post.mediaUrls,
-            gameId: post.gameId,
-            userId: post.userId,
-            updatedAt: post.updatedAt,
-            type: post.type,
+            mediaUrls: post.mediaUrls
         }))
 
         const topTags = await prisma.hashtag.findMany({

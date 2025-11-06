@@ -7,6 +7,8 @@ import AuthorCard from './AuthorCard';
 import { getTimeAgoFormatted, timeAgo } from '@/app/utils/date';
 import { auth } from '@/auth';
 import LikeButton from './LikeButton';
+import PostDescription from '@/components/community/PostDescription';
+import PostImages from '@/components/community/PostImages';
 
 interface Props {
     params: {
@@ -78,22 +80,8 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         }
     })
 
-    // const comment = await prisma.comment.findMany({
-    //     where: { postId },
-    //     include: {
-    //         user: {
-    //             select: {
-    //                 name: true,
-    //                 id: true
-    //             }
-    //         }, CommentReaction: {
-    //             where: { userId: session?.user.id }
-    //         }
-
-    //     }, orderBy: { createdAt: 'asc' }
-    // })
-
     const comment = await prisma.comment.findMany({
+        take: 2,
         where: { postId, parentId: null },
         include: {
             user: { select: { id: true, name: true } },
@@ -169,7 +157,6 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                                                     <span>•</span>
                                                 </>
                                             }
-
                                             <span className="flex items-center space-x-1">
                                                 <Clock className="h-3 w-3" />
                                                 {/* @ts-ignore */}
@@ -187,19 +174,13 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                             {/* Post Content */}
                             <div className="mb-6">
-                                <p className="whitespace-pre-line text-lg leading-relaxed text-gray-100">
-                                    {post.description}
-                                </p>
+                                <PostDescription text={post.description} />
                             </div>
 
                             {/* Post Image */}
                             {post.mediaUrls.length > 0 && (
-                                <div className="mb-6 flex h-96 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 text-8xl">
-                                    {
-                                        post.mediaUrls.map((url) => (
-                                            <img src={`${url}`} alt="" />))
-                                    }
-                                </div>
+                                <PostImages mediaUrls={post.mediaUrls} />
+
                             )}
 
                             {/* Tags */}

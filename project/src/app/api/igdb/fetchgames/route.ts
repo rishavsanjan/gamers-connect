@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const agent = new https.Agent({
         rejectUnauthorized: false, // bypass SSL verification
     });
-    const { page = 1, genreId, category, limit = 10 } = await req.json();
+    const { page, genreId, category, limit = 10 } = await req.json();
 
     const offset = (page - 1) * 10;
     let query;
