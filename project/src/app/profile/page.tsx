@@ -86,7 +86,63 @@ const Profile = async () => {
         }
       }
     },
+  });
+
+  const bookmarks = await prisma.bookmark.findMany({
+    take: 1,
+    where: {
+      userId: session.user.id
+    },
+    select: {
+      post: {
+        include: {
+          user: {
+            select: {
+              name: true,
+              id: true
+            }
+          },
+          game: {
+            select: {
+              name: true,
+              igdb_id: true
+            }
+          },
+          Like: {
+            where: { userId: session.user.id }
+          }
+        },
+
+
+
+      },
+
+    }
   })
+
+  const bookmarkedPosts = bookmarks.map((post) => {
+    return {
+      id: post.post.id,
+      description: post.post.description,
+      likeCount: post.post.likeCount,
+      commentCount: post.post.commentCount,
+      hasLiked: post.post.Like.length > 0,
+      user: post.post.user,
+      game: post.post.game,
+      createdAt: post.post.createdAt,
+      mediaUrls: post.post.mediaUrls,
+      userId: post.post.userId,
+      type: post.post.type,
+      updatedAt: post.post.updatedAt,
+      gameId: post.post.gameId
+    };
+  })
+
+
+
+
+
+  console.log(bookmarks)
 
   //@ts-ignore
   const profileData: ProfileTabsData = { ratings, mygames, playlist, collection, stats: allMyGamesForStats, currentlyPlaying };
@@ -100,7 +156,7 @@ const Profile = async () => {
         <h1 className='text-4xl text-center'>{session?.user.username[0].toUpperCase()}</h1>
       </div>
       <h1 className='text-5xl'>{session?.user.username}</h1>
-      <ProfileTabs {...profileData} />
+      <ProfileTabs {...profileData} bookmarkedPosts={bookmarkedPosts} />
     </div>
   )
 }

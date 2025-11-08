@@ -39,11 +39,6 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                 }
             }, Like: {
                 where: { userId: session?.user.id }
-            },
-            bookmarks: {
-                select: {
-                    id: true
-                }
             }
         }
     });
@@ -62,10 +57,15 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         game: posts.game,
         createdAt: posts.createdAt,
         mediaUrls: posts.mediaUrls,
-        userId: posts.userId
+        userId: posts.userId,
     })
 
-
+    const bookmark = !!await prisma.bookmark.findFirst({
+        where: {
+            userId: session?.user.id,
+            postId
+        }
+    })
 
     const gameCount = await prisma.myGame.count({
         where: {
@@ -122,10 +122,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
     }))
 
-    //const nestedComments = buildCommentTree(comments);
-
-    //console.log(nestedComments)
-
+    console.log(bookmark)
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
@@ -136,7 +133,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                         <ArrowLeft className="h-5 w-5" />
                         <span>Back to Community</span>
                     </a>
-                    <PostActions postId={post.id} bookmark={}/>
+                    <PostActions postId={post.id} bookmark={bookmark} />
                 </div>
             </header>
 

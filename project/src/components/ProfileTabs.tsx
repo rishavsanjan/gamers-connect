@@ -11,18 +11,22 @@ import { PlatformBar } from './graphs/GamePlatform';
 import GameGenreChart from './graphs/HorizontalGraph';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
-import { Game, MyGame } from '@prisma/client';
+import { Post } from '@/app/types/post';
+import InfiniteHomePostsFeed from './community/InfinitePostsHomeFeed';
+import InfiniteProfileBookmarked from './InfiniteProfileBookmarked';
 
-interface Props extends ProfileTabsData { }
+interface Props extends ProfileTabsData {
+    bookmarkedPosts: Post[]
+}
 
 
-const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying }) => {
+const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, bookmarkedPosts }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
     const playlistGames = playlist.map(item => item.game);
     const [ownedGames, setOwnedGames] = useState(mygames.map(item => item.game));
 
-   // const ownedgames = mygames.map(item => item.game);
+    // const ownedgames = mygames.map(item => item.game);
     const ratedgames = ratings.map(item => item.game);
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
         if (!item.game.first_release_date) return acc;
@@ -71,13 +75,13 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             url: `/api/private/fetchgames?page=${nextPage}&tab=${tab}`,
             method: 'get'
         });
-        const games =response.data.mygames.map((item:any) => {return item.game})
+        const games = response.data.mygames.map((item: any) => { return item.game })
         setOwnedGames(prev => [...prev, ...games])
         console.log(response.data)
         setLoading(false);
     }
 
-    console.log(ownedGames)
+    console.log(bookmarkedPosts)
 
 
     return (
@@ -103,7 +107,17 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     onClick={() => { setActiveTab('collection') }}
                     className={`${activeTab === 'collection' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Collection</button>
+                <button
+                    onClick={() => { setActiveTab('bookmark') }}
+                    className={`${activeTab === 'bookmark' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                >Bookmarks</button>
             </div>
+            {
+                activeTab === 'bookmark' &&
+                <div className='p-4'>
+                    <InfiniteProfileBookmarked initialPosts={bookmarkedPosts} />
+                </div>
+            }
             {
                 activeTab === 'playlist' &&
                 //@ts-ignore
@@ -172,6 +186,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     </div>
                 </div>
             }
+
         </div>
 
     )
