@@ -39,8 +39,9 @@ model User {
   Comment         Comment[]
   CommentReaction CommentReaction[]
 
-  followers Follow[] @relation("Followers")
-  following Follow[] @relation("Following")
+  followers Follow[]   @relation("Followers")
+  following Follow[]   @relation("Following")
+  bookmarks Bookmark[]
 }
 
 model Account {
@@ -187,11 +188,24 @@ model Post {
   likeCount    Int      @default(0)
   commentCount Int      @default(0)
 
-  user    User      @relation(fields: [userId], references: [id])
-  game    Game?     @relation(fields: [gameId], references: [id])
-  tags    Hashtag[] @relation("PostHashtags")
-  Like    Like[]
-  Comment Comment[]
+  user      User       @relation(fields: [userId], references: [id])
+  game      Game?      @relation(fields: [gameId], references: [id])
+  tags      Hashtag[]  @relation("PostHashtags")
+  Like      Like[]
+  Comment   Comment[]
+  bookmarks Bookmark[]
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId]) 
 }
 
 model Like {

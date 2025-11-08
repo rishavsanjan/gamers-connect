@@ -39,6 +39,11 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                 }
             }, Like: {
                 where: { userId: session?.user.id }
+            },
+            bookmarks: {
+                select: {
+                    id: true
+                }
             }
         }
     });
@@ -131,7 +136,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                         <ArrowLeft className="h-5 w-5" />
                         <span>Back to Community</span>
                     </a>
-                    <PostActions postId={post.id} />
+                    <PostActions postId={post.id} bookmark={}/>
                 </div>
             </header>
 

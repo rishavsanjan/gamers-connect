@@ -24,7 +24,6 @@ export default function LikeButton({ postId, hasLiked, likeCount }: LikeButtonPr
         setCount(liked ? count - 1 : count + 1)
         setIsLoading(true)
         
-        console.log('yay')
         
         try {
             await axios.post('/api/private/addorremovereaction', { postId })
