@@ -60,7 +60,7 @@ export default function CommentItem({ comment, postId, level = 0, onReply }: Com
                         <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
                     </div>
                     <div>
-                        <p className="font-semibold">{comment.user.name ?? 'Anonymous'}</p>
+                        <p className="font-semibold">{comment.user.name ?? comment.user.username ?? 'Anonymous'}</p>
                         <p className="text-xs text-gray-400 mb-2">{getTimeAgoFormatted(comment.createdAt)}</p>
                     </div>
                 </div>

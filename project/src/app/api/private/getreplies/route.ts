@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const replies = await prisma.comment.findMany({
       where: { parentId },
       include: {
-        user: { select: { id: true, name: true } },
+        user: { select: { id: true, name: true, username:true } },
         _count: { select: { replies: true } },
       },
       orderBy: { createdAt: 'asc' },

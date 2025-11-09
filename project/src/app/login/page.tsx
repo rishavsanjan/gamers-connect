@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { login } from '@/lib/auth';
 import { getUserInformation } from '@/components/UserInformation';
+import { signIn } from 'next-auth/react';
 
 
 const Login = () => {
@@ -62,29 +63,29 @@ const Login = () => {
         console.log(response.data)
     }
 
-    const handleLoginSubmit = async () => {
-        console.log('k')
+    const handleLoginSubmit = async (e:React.FormEvent) => {
+        e.preventDefault();
+        console.log('l')
         if (loginForm.password.length < 8) {
-            setErros(prev => ({ ...prev, password: 'Password must be at least 8 characters long' }));
+            setErros(prev => ({
+                ...prev,
+                password: 'Password must be at least 8 characters long'
+            }));
             return;
         }
 
-        const response = await axios({
-            url: "/api/auth/login",
-            data: {
-                email: loginForm.email,
-                password: loginForm.password
-            },
-            method: 'post'
-        })
-        if (response.data.success) {
-            localStorage.setItem('gametoken', response.data.token);
-            router.push('/');
+        const res = await signIn("credentials", {
+            redirect: false,
+            email: loginForm.email,
+            password: loginForm.password,
+        });
+
+        if (res?.error) {
+            console.error(res.error);
+        } else {
+            router.push("/"); // success
         }
-        console.log(response.data)
-
-
-    }
+    };
 
 
 
@@ -167,8 +168,8 @@ const Login = () => {
                 </div>
                 <div className='self-center'>
                     <button
-                        onClick={() => {
-                            activeTab === 'signup' ? handleSignUpSubmit() : handleLoginSubmit()
+                        onClick={(e) => {
+                            activeTab === 'signup' ? handleSignUpSubmit() : handleLoginSubmit(e)
                         }}
                         className='bg-gradient-to-r from-purple-700 to-pink-400 p-2 px-8 rounded-lg cursor-pointer'>
                         {activeTab === 'login' ? 'Login' : 'Sign Up'}</button>

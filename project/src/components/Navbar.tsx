@@ -15,14 +15,17 @@ import { AiOutlineMenu } from "react-icons/ai";
 
 
 const Navbar = () => {
+
     const { data: session, status } = useSession();
     const isLogin = status === 'authenticated';
-    console.log(isLogin)
+    console.log(isLogin);
+
     const pathName = usePathname();
     const isValid = pathName.startsWith('/login');
-    if (isValid) {
-        return null;
-    }
+
+
+
+
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Game[]>([]);
     const [loading, setLoading] = useState(false);
@@ -72,6 +75,11 @@ const Navbar = () => {
 
         fetchGames();
     }, [debouncedQuery]);
+
+
+    if (isValid) {
+        return <></>;
+    }
 
 
     return (

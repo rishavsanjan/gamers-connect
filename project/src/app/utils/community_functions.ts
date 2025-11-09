@@ -1,5 +1,9 @@
+import { SetStateAction } from "react";
 import { Post } from "../types/post";
 import axios from "axios";
+import { auth } from "@/auth";
+
+
 
 
 
@@ -72,4 +76,23 @@ export function buildCommentTree(comments: any[]) {
     });
 
     return roots;
+}
+
+interface FollowingProps {
+    otherPersonId: string
+    myId: string | undefined
+}
+
+
+export const addFollow = async ({ otherPersonId, myId }: FollowingProps) => {
+
+    const response = await axios({
+        url: `/api/private/addfollow`,
+        method: 'post',
+        data: {
+            followerId: myId,
+            followingId: otherPersonId
+        }
+    })
+    console.log(response.data)
 }

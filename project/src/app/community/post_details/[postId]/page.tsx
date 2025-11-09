@@ -89,7 +89,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         take: 2,
         where: { postId, parentId: null },
         include: {
-            user: { select: { id: true, name: true } },
+            user: { select: { id: true, name: true , username:true} },
             _count: { select: { replies: true } },
             CommentReaction: {
                 where: { userId: session?.user.id }

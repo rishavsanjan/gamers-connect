@@ -14,13 +14,26 @@ import { ClipLoader } from 'react-spinners';
 import { Post } from '@/app/types/post';
 import InfiniteHomePostsFeed from './community/InfinitePostsHomeFeed';
 import InfiniteProfileBookmarked from './InfiniteProfileBookmarked';
+import { User } from '@prisma/client';
+import { Follower } from '@/app/types/follower';
+import FollowingCard from './FollowingCard';
 
 interface Props extends ProfileTabsData {
     bookmarkedPosts: Post[]
+    playlistCount: number
+    ownedGamesCount: number
+    collectionCount: number
+    ratingsCount: number
+    bookmarkCount: number
+    follower: Follower[]
+    following: Follower[]
 }
 
 
-const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, bookmarkedPosts }) => {
+const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, bookmarkedPosts, playlistCount,
+    ownedGamesCount,
+    collectionCount,
+    ratingsCount, bookmarkCount, follower, following }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
     const playlistGames = playlist.map(item => item.game);
@@ -85,32 +98,82 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
 
     return (
-        <div className='flex flex-col'>
+        <div className='flex flex-col bg-transparent z-60'>
             <div className='flex flex-row gap-8 justify-start p-4 '>
-                <button
-                    onClick={() => { setActiveTab('overview') }}
-                    className={`${activeTab === 'overview' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                >Overview</button>
-                <button
-                    onClick={() => { setActiveTab('playlist') }}
-                    className={`${activeTab === 'playlist' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                >Playlist</button>
-                <button
-                    onClick={() => { setActiveTab('owned') }}
-                    className={`${activeTab === 'owned' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                >Owned</button>
-                <button
-                    onClick={() => { setActiveTab('ratings') }}
-                    className={`${activeTab === 'ratings' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                >Ratings</button>
-                <button
-                    onClick={() => { setActiveTab('collection') }}
-                    className={`${activeTab === 'collection' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                >Collection</button>
-                <button
-                    onClick={() => { setActiveTab('bookmark') }}
-                    className={`${activeTab === 'bookmark' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                >Bookmarks</button>
+                <div>
+                    <button
+                        onClick={() => { setActiveTab('overview') }}
+                        className={`${activeTab === 'overview' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >
+                        Overview
+                    </button>
+                </div>
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('playlist') }}
+                        className={`${activeTab === 'playlist' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Playlist</button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{playlistCount || 0}</span>
+                </div>
+
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('owned') }}
+                        className={`${activeTab === 'owned' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Owned</button>
+                    <span className='absolute -top-3 -right-4 text-gray-500 font-extralight'>{ownedGamesCount || 0}</span>
+
+                </div>
+
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('ratings') }}
+                        className={`${activeTab === 'ratings' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Ratings</button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{ratingsCount || 0}</span>
+
+                </div>
+
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('collection') }}
+                        className={`${activeTab === 'collection' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Collection</button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{collectionCount || 0}</span>
+
+                </div>
+
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('bookmark') }}
+                        className={`${activeTab === 'bookmark' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Bookmarks
+                    </button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{bookmarkCount || 0}</span>
+
+                </div>
+
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('follower') }}
+                        className={`${activeTab === 'follower' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Followers
+                    </button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{follower.length || 0}</span>
+
+                </div>
+
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('following') }}
+                        className={`${activeTab === 'following' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Following
+                    </button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{following.length || 0}</span>
+
+                </div>
+
+
             </div>
             {
                 activeTab === 'bookmark' &&
@@ -162,7 +225,14 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 <div className='flex flex-col gap-8'>
                     <div className='p-4 px-8 text-3xl flex flex-col gap-2'>
                         <span>Game Platforms</span>
-                        <PlatformBar data={platformData} />
+                        {
+                            platformData.length > 0 ?
+                                <PlatformBar data={platformData} />
+
+                                :
+                                <span className='text-sm'>Please add games to view data!</span>
+
+                        }
                     </div>
                     <div className='p-4 px-8  flex flex-col gap-2'>
                         <span>Currently Playing</span>
@@ -175,7 +245,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
                                 </>
                                 :
-                                <span>Nothing playing currently!</span>
+                                <span className='text-white'>Nothing playing currently!</span>
 
                         }
 
@@ -184,6 +254,32 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     <div className='p-4 px-8 text-3xl flex flex-col gap-2'>
                         <GameGenreChart data={genreData} />
                     </div>
+                </div>
+            }
+
+            {
+                activeTab === 'follower' &&
+                <div className='p-4 px-8  flex flex-row flex-wrap gap-2'>
+                    {
+                        follower.map((user) => {
+                            return (
+                                <FollowingCard user={user} />
+                            )
+                        })
+                    }
+                </div>
+            }
+
+            {
+                activeTab === 'following' &&
+                <div className='p-4 px-8  flex flex-row flex-wrap gap-2'>
+                    {
+                        following.map((user) => {
+                            return (
+                                <FollowingCard user={user} />
+                            )
+                        })
+                    }
                 </div>
             }
 

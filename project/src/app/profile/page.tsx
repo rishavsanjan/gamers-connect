@@ -136,6 +136,95 @@ const Profile = async () => {
       updatedAt: post.post.updatedAt,
       gameId: post.post.gameId
     };
+  });
+
+  const followersWithoutFormatting = await prisma.follow.findMany({
+    where: {
+      followingId: session.user.id,
+    },
+    include: {
+      follower: {
+        select: {
+          name: true,
+          username: true,
+          id: true
+        }
+      }
+    },
+  });
+
+  const followerIds = followersWithoutFormatting.map(f => f.followerId);
+
+  const myFollows = await prisma.follow.findMany({
+    where: {
+      followerId: session.user.id,
+      followingId: { in: followerIds },
+    },
+    select: { followingId: true },
+  });
+
+  const myFollowingSet = new Set(myFollows.map(f => f.followingId));
+
+
+
+  const followers = followersWithoutFormatting.map(f => ({
+    ...f.follower,
+    isFollowingBack: myFollowingSet.has(f.followerId),
+  }));
+
+  console.log(followers)
+
+
+  const followingWithoutFormatting = await prisma.follow.findMany({
+    where: {
+      followerId: session.user.id,
+    },
+    include: {
+      following: {
+        select: {
+          name: true,
+          username: true,
+          id: true
+        }
+      }
+    },
+  });
+
+  const following = followingWithoutFormatting.map((item) => {
+    return { ...item.following, isFollowingBack: true };
+  })
+
+
+
+  console.log(following)
+
+
+
+  const playlistCount = await prisma.playlist.count({
+    where: {
+      userId: session.user.id
+    }
+  })
+
+  const ownedGamesCount = await prisma.myGame.count({
+    where: {
+      userId: session.user.id
+    }
+  })
+  const collectionCount = await prisma.collection.count({
+    where: {
+      userId: session.user.id
+    }
+  })
+  const ratingsCount = await prisma.rating.count({
+    where: {
+      userId: session.user.id
+    }
+  })
+  const bookmarkCount = await prisma.bookmark.count({
+    where: {
+      userId: session.user.id
+    }
   })
 
 
@@ -152,11 +241,14 @@ const Profile = async () => {
 
   return (
     <div>
-      <div className='bg-purple-500 w-fit m-4 p-4 rounded-full'>
-        <h1 className='text-4xl text-center'>{session?.user.username[0].toUpperCase()}</h1>
+      <div className='flex items-center flex-col mb-8'>
+        <div className='bg-purple-500 p-4 m-4 w-18 h-18 rounded-full'>
+          <h1 className='text-4xl text-center'>{session?.user.username[0].toUpperCase()}</h1>
+        </div>
+        <h1 className='text-5xl'>{session?.user.username}</h1>
       </div>
-      <h1 className='text-5xl'>{session?.user.username}</h1>
-      <ProfileTabs {...profileData} bookmarkedPosts={bookmarkedPosts} />
+
+      <ProfileTabs {...profileData} bookmarkedPosts={bookmarkedPosts} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} collectionCount={collectionCount} ratingsCount={ratingsCount} bookmarkCount={bookmarkCount} follower={followers} following={following} />
     </div>
   )
 }
