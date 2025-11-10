@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ProfileTabsData } from '@/app/types/profile';
 import ProfileGameList from './ProfileGameList';
@@ -16,6 +16,7 @@ import { PlatformBar } from '@/components/graphs/GamePlatform';
 import GamesByYearChart from '@/components/graphs/BarChart';
 import GameGenreChart from '@/components/graphs/HorizontalGraph';
 import FollowingCard from '@/components/FollowingCard';
+import ProfileAchievements from './ProfileAchievements';
 
 interface Props extends ProfileTabsData {
     bookmarkedPosts: Post[]
@@ -91,9 +92,24 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
         setOwnedGames(prev => [...prev, ...games])
         console.log(response.data)
         setLoading(false);
-    }
+    };
 
-    console.log(bookmarkedPosts)
+
+    // const [achievements, setAchievements] = useState([]);
+
+    // const getAchievements = async () => {
+    //     const response = await axios({
+    //         url: `/api/private/user_achievements`,
+    //         method: 'get'
+    //     })
+    //     console.log(response.data)
+    // }
+
+    // useEffect(() => {
+    //     getAchievements();
+    // }, [])
+
+    // console.log(bookmarkedPosts)
 
 
     return (
@@ -167,6 +183,16 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                         onClick={() => { setActiveTab('following') }}
                         className={`${activeTab === 'following' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
                     >Following
+                    </button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{following.length || 0}</span>
+
+                </div>
+
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('achievements') }}
+                        className={`${activeTab === 'achievements' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Achievements
                     </button>
                     <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{following.length || 0}</span>
 
@@ -279,6 +305,12 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                             )
                         })
                     }
+                </div>
+            }
+            {
+                activeTab === 'achievements' &&
+                <div>
+                    <ProfileAchievements/>
                 </div>
             }
 

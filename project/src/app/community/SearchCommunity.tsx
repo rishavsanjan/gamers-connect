@@ -131,33 +131,34 @@ const SearchCommunity = () => {
         if (activeTab === 'all') {
             return (
                 <>
-                    {peopleResult.length > 0 && (
-                        <div className="mb-4">
-                            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">People</div>
-                            {peopleResult.slice(0, 3).map(person => (
-                                <Link href={`/player-profile/${person.id}`} key={person.id}>
-                                    <div
-                                        key={person.id}
-                                        className="px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3"
-                                        
-                                    >
-                                        <img
-                                            src={person.profilePicture}
-                                            alt={person.name}
-                                            className="w-10 h-10 rounded-full object-cover"
-                                        />
-                                        <div className="flex-1">
-                                            <div className="font-semibold text-white">{person.name}</div>
-                                            <div className="text-sm text-gray-400">@{person.username}</div>
+                    {
+                        peopleResult.length > 0 && (
+                            <div className="mb-4">
+                                <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">People</div>
+                                {peopleResult.slice(0, 3).map(person => (
+                                    <Link href={`/player-profile/${person.id}`} key={person.id}>
+                                        <div
+                                            key={person.id}
+                                            className="px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3"
+                                        >
+                                            <img
+                                                src={person.profilePicture}
+                                                alt={person.name}
+                                                className="w-10 h-10 rounded-full object-cover"
+                                            />
+                                            <div className="flex-1">
+                                                <div className="font-semibold text-white">{person.name}</div>
+                                                <div className="text-sm text-gray-400">@{person.username}</div>
+                                            </div>
+                                            <User className="w-4 h-4 text-gray-400" />
                                         </div>
-                                        <User className="w-4 h-4 text-gray-400" />
-                                    </div>
-                                </Link>
+                                    </Link>
 
 
-                            ))}
-                        </div>
-                    )}
+                                ))}
+                            </div>
+                        )
+                    }
                     {postResult.length > 0 && (
                         <div>
                             <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">Posts</div>

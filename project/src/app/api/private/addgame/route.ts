@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { auth } from "@/auth";
 import { prisma } from '@/lib/db'
+import { checkAndUnlockAchievements } from "@/lib/achievements";
 
 export async function POST(req: Request) {
 
@@ -76,6 +77,8 @@ export async function POST(req: Request) {
                     gameId: game.id,
                 },
             });
+            checkAndUnlockAchievements(session.user.id);
+            console.log('i m here')
         }
 
 

@@ -100,7 +100,7 @@ const Profile = async () => {
             select: {
               name: true,
               id: true,
-              username:true
+              username: true
             }
           },
           game: {
@@ -227,7 +227,19 @@ const Profile = async () => {
     where: {
       userId: session.user.id
     }
-  })
+  });
+
+  const achievementsWithoutFormatting = await prisma.userAchievement.findMany({
+    where: {
+      userId: session.user.id
+    },
+    include: {
+      achievement: true
+    }
+  });
+
+  const achievements = achievementsWithoutFormatting.map((achievement) => { return achievement.achievement });
+
 
 
 
