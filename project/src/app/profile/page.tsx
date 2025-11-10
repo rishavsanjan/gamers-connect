@@ -1,8 +1,8 @@
 import { auth } from '@/auth'
-import ProfileTabs from '@/components/ProfileTabs';
 import { prisma } from '@/lib/prisma';
 import React from 'react';
 import { ProfileTabsData } from '../types/profile';
+import ProfileTabs from './ProfileTabs';
 
 const Profile = async () => {
   const session = await auth();
@@ -99,7 +99,8 @@ const Profile = async () => {
           user: {
             select: {
               name: true,
-              id: true
+              id: true,
+              username:true
             }
           },
           game: {
@@ -134,7 +135,8 @@ const Profile = async () => {
       userId: post.post.userId,
       type: post.post.type,
       updatedAt: post.post.updatedAt,
-      gameId: post.post.gameId
+      gameId: post.post.gameId,
+
     };
   });
 

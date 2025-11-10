@@ -17,7 +17,7 @@ const FollowingCard: React.FC<Props> = ({ user }) => {
 
     const handleFollow = async (userId: string) => {
         setLoading(true);
-        addFollow({ otherPersonId: userId, myId:session?.user.id });
+        addFollow({ otherPersonId: userId, myId: session?.user.id });
         setFollowing(prev => !prev)
         setLoading(false);
     }
@@ -56,26 +56,31 @@ const FollowingCard: React.FC<Props> = ({ user }) => {
             </div>
 
             {/* Follow Button */}
-            <button
-                onClick={() => handleFollow(user.id)}
-                className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${following
-                    ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
-                    : 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm hover:shadow items-center justify-center'
-                    }`}
-            >
-                {
-                    loading ?
-                        <>
-                            <ClipLoader color='white' size={20} />
-                        </>
-                        :
-                        <>
-                            {following ? 'Following' : 'Follow'}
-                        </>
+            {
+                user.id !== session?.user.id &&
+                <button
+                    onClick={() => handleFollow(user.id)}
+                    className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${following
+                        ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        : 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm hover:shadow items-center justify-center'
+                        }`}
+                >
+                    {
+                        loading ?
+                            <>
+                                <ClipLoader color='white' size={20} />
+                            </>
+                            :
+                            <>
+                                {following ? 'Following' : 'Follow'}
+                            </>
 
-                }
+                    }
 
-            </button>
+                </button>
+
+            }
+
         </div>
     )
 }

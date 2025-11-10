@@ -12,7 +12,8 @@ export interface Post {
     updatedAt: Date,
     user: {
         id: string,
-        name: string | null
+        name: string | null,
+        username:string
     }
     game: {
         name: string | null

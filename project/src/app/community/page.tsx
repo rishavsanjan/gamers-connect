@@ -16,6 +16,7 @@ import InfiniteHomePostsFeed from '@/components/community/InfinitePostsHomeFeed'
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 import AddPostModal from '@/components/community/AddPostModal';
+import SearchCommunity from './SearchCommunity';
 export default async function GamelyCommunity() {
 
     const session = await auth();
@@ -34,7 +35,7 @@ export default async function GamelyCommunity() {
                 select: {
                     name: true,
                     id: true,
-
+                    username:true
                 }
             },
             Like: {
@@ -105,10 +106,7 @@ export default async function GamelyCommunity() {
                         </h1>
 
                     </div>
-                    <button className="flex items-center space-x-2 rounded-lg bg-white/10 px-4 py-2 transition hover:bg-white/20">
-                        <Search className="h-4 w-4" />
-                        <span>Search</span>
-                    </button>
+                    <SearchCommunity/>
                 </div>
             </header>
 

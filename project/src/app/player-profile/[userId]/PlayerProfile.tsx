@@ -2,38 +2,37 @@
 import React, { useState } from 'react';
 
 import { ProfileTabsData } from '@/app/types/profile';
-import ProfileGameList from './ProfileGameList';
-import ProfileCollection from './ProfileCollection';
-import GamesByYearChart from './graphs/BarChart';
+import GamesByYearChart from '../../../components/graphs/BarChart';
 import { getYearFromUnix } from '@/app/utils/date';
 import { pickPlatformColor } from '@/app/utils/game_functions';
-import { PlatformBar } from './graphs/GamePlatform';
-import GameGenreChart from './graphs/HorizontalGraph';
+import { PlatformBar } from '../../../components/graphs/GamePlatform';
+import GameGenreChart from '../../../components/graphs/HorizontalGraph';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { Post } from '@/app/types/post';
-import InfiniteHomePostsFeed from './community/InfinitePostsHomeFeed';
-import InfiniteProfileBookmarked from './InfiniteProfileBookmarked';
+import InfiniteHomePostsFeed from '../../../components/community/InfinitePostsHomeFeed';
+import InfiniteProfileBookmarked from '../../../components/InfiniteProfileBookmarked';
 import { User } from '@prisma/client';
 import { Follower } from '@/app/types/follower';
-import FollowingCard from './FollowingCard';
+import FollowingCard from '../../../components/FollowingCard';
+import ProfileGameList from '@/app/profile/ProfileGameList';
+import ProfileCollection from '@/app/profile/ProfileCollection';
 
 interface Props extends ProfileTabsData {
-    bookmarkedPosts: Post[]
     playlistCount: number
     ownedGamesCount: number
     collectionCount: number
     ratingsCount: number
-    bookmarkCount: number
     follower: Follower[]
     following: Follower[]
+    userId: string
 }
 
 
-const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, bookmarkedPosts, playlistCount,
+const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, playlistCount,
     ownedGamesCount,
     collectionCount,
-    ratingsCount, bookmarkCount, follower, following }) => {
+    ratingsCount, follower, following, userId }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
     const playlistGames = playlist.map(item => item.game);
@@ -86,7 +85,10 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
         setLoading(true);
         const response = await axios({
             url: `/api/private/fetchgames?page=${nextPage}&tab=${tab}`,
-            method: 'get'
+            method: 'post',
+            data: {
+                userId
+            }
         });
         const games = response.data.mygames.map((item: any) => { return item.game })
         setOwnedGames(prev => [...prev, ...games])
@@ -94,7 +96,6 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
         setLoading(false);
     }
 
-    console.log(bookmarkedPosts)
 
 
     return (
@@ -143,15 +144,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
                 </div>
 
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('bookmark') }}
-                        className={`${activeTab === 'bookmark' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Bookmarks
-                    </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{bookmarkCount || 0}</span>
 
-                </div>
 
                 <div className='relative '>
                     <button
@@ -175,12 +168,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
 
             </div>
-            {
-                activeTab === 'bookmark' &&
-                <div className='p-4'>
-                    <InfiniteProfileBookmarked initialPosts={bookmarkedPosts} />
-                </div>
-            }
+
             {
                 activeTab === 'playlist' &&
                 //@ts-ignore
@@ -288,4 +276,4 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     )
 }
 
-export default ProfileTabs
+export default PlayerProfileTabs
