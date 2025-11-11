@@ -22,13 +22,13 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
                 <p className='font-extralight text-black text-sm '> {formatUnixDate(game.first_release_date)}</p>
             </div>
             <div>
-                <p className='text-6xl font-bold'>{game.name}</p>
+                <p className='sm:text-6xl text-5xl font-bold'>{game.name}</p>
             </div>
             <div className=''>
                 <AddMyGameButton game={game} />
 
             </div>
-           
+
             <div className='flex flex-row gap-4'>
                 <div className='flex flex-col gap-2 border-r border-gray-600 pr-4'>
                     <p className='border border-green-400 text-green-400 px-1 w-fit'>{game?.total_rating?.toFixed(0) || 'N/A'}</p>
@@ -41,13 +41,13 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
             </div>
             <div>
                 <p className='text-3xl font-bold'>About</p>
-                <span className='line-clamp-9  text-white font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
+                <span className='line-clamp-10 text-white font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
             </div>
             <div>
-                <ul className='grid grid-cols-2 gap-4'>
+                <ul className='grid sm:grid-cols-2 grid-cols-1 gap-4'>
                     <li className="flex flex-col">
                         <span className='text-gray-500'>Platforms</span>
-                        <span className='text-white'>{game?.platforms?.map((platform) => platform.name).join(', ')}</span>
+                        <span className='text-white line-clamp-4'>{game?.platforms?.map((platform) => platform.name).join(', ')}</span>
 
                     </li>
                     <li className="flex flex-col">

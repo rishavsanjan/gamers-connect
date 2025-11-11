@@ -29,6 +29,8 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                 select: {
                     name: true,
                     id: true,
+                    username:true,
+                    xp:true
 
                 }
             },
@@ -220,7 +222,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                     {/* Right Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-4">
-                        <AuthorCard author={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} />
+                        <AuthorCard author={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp}/>
                         {/* 
                        //related posts
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">

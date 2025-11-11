@@ -27,13 +27,14 @@ interface Props extends ProfileTabsData {
     bookmarkCount: number
     follower: Follower[]
     following: Follower[]
+    achievementsCount:number
 }
 
 
 const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, bookmarkedPosts, playlistCount,
     ownedGamesCount,
     collectionCount,
-    ratingsCount, bookmarkCount, follower, following }) => {
+    ratingsCount, bookmarkCount, follower, following , achievementsCount}) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
     const playlistGames = playlist.map(item => item.game);
@@ -95,26 +96,11 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     };
 
 
-    // const [achievements, setAchievements] = useState([]);
-
-    // const getAchievements = async () => {
-    //     const response = await axios({
-    //         url: `/api/private/user_achievements`,
-    //         method: 'get'
-    //     })
-    //     console.log(response.data)
-    // }
-
-    // useEffect(() => {
-    //     getAchievements();
-    // }, [])
-
-    // console.log(bookmarkedPosts)
 
 
     return (
-        <div className='flex flex-col bg-transparent z-60'>
-            <div className='flex flex-row gap-8 justify-start p-4 '>
+        <div className='flex  flex-col bg-transparent z-60'>
+            <div className='flex md:flex-row flex-wrap gap-8 justify-start p-4 '>
                 <div>
                     <button
                         onClick={() => { setActiveTab('overview') }}
@@ -194,7 +180,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                         className={`${activeTab === 'achievements' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
                     >Achievements
                     </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{following.length || 0}</span>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{achievementsCount || 0}</span>
 
                 </div>
 
@@ -213,7 +199,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             }
             {
                 activeTab === 'owned' &&
-                <div className='pb-8 flex flex-col items-center '>
+                <div className='pb-8 flex flex-col  '>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={ownedGames} />
                     <div className='hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all'>
@@ -248,7 +234,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             {
                 activeTab === 'overview' &&
                 <div className='flex flex-col gap-8'>
-                    <div className='p-4 px-8 text-3xl flex flex-col gap-2'>
+                    <div className='md:p-4 md:px-8 p-2 text-3xl flex flex-col gap-2'>
                         <span>Game Platforms</span>
                         {
                             platformData.length > 0 ?
@@ -259,8 +245,8 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
                         }
                     </div>
-                    <div className='p-4 px-8  flex flex-col gap-2'>
-                        <span>Currently Playing</span>
+                    <div className='  flex flex-col gap-2 md:px-4 '>
+                        <span className='px-4 text-3xl font-semibold'>Currently Playing</span>
                         {
                             playing.length > 0 ?
                                 <>
@@ -276,7 +262,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
                     </div>
                     <GamesByYearChart yearCount={yearCount} />
-                    <div className='p-4 px-8 text-3xl flex flex-col gap-2'>
+                    <div className='md:p-4 md:px-8 text-3xl flex flex-col gap-2'>
                         <GameGenreChart data={genreData} />
                     </div>
                 </div>

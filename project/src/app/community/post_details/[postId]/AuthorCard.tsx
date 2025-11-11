@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 import { ClipLoader } from 'react-spinners';
 
-export default function AuthorCard({ author, authorId, gameCount, postCount, collectionCount, following }: { author: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean }) {
+export default function AuthorCard({ author, authorId, gameCount, postCount, collectionCount, following, xp }: { author: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean, xp:number }) {
     const { data: session, status } = useSession()
     const [isFollowing, setIsFollowing] = useState(following);
     const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export default function AuthorCard({ author, authorId, gameCount, postCount, col
                 </div>
                 <div className="flex-1">
                     <p className="text-lg font-bold">{author}</p>
-                    <p className="text-sm text-gray-400">Level 47 Gamer</p>
+                    <p className="text-sm text-gray-400">{xp} XP</p>
                 </div>
             </div>
             <div className="mb-4 grid grid-cols-3 gap-4 border-y border-white/10 py-4">

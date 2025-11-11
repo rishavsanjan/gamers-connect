@@ -62,6 +62,7 @@ export async function POST(req: Request) {
                     status
                 },
             });
+            checkAndUnlockAchievements(session.user.id);
         } else if (model === 'playlist') {
             playlist = await prisma.playlist.create({
                 data: {

@@ -31,11 +31,25 @@ export async function GET(req: Request) {
         })
     ]);
 
-    console.log(allAchievements);
+    const genres = await prisma.genre.findMany({
+        where: {
+            games: {
+                some: {
+                    myGames: {
+                        some: { userId },
+                    },
+                },
+            },
+        },
+        select: { id: true },
+    });
+
+    const genreCount = genres.length;
+
+    console.log(genreCount)
 
 
     if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-    console.log(user)
 
     // Get user's unlocked achievements
     const userAchievements = await prisma.userAchievement.findMany({
@@ -62,6 +76,9 @@ export async function GET(req: Request) {
             case "collection":
                 current = user._count.Collection;
                 break;
+            case "genre":
+                current = genreCount;
+                break;
             default:
                 current = 0;
         }
@@ -77,6 +94,8 @@ export async function GET(req: Request) {
             progress,
         };
     });
+
+    console.log(achievementsWithProgress)
 
 
     return NextResponse.json({

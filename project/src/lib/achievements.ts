@@ -10,8 +10,25 @@ export async function checkAndUnlockAchievements(userId: string) {
             Post: true,
             Comment: true,
             userAchievements: { include: { achievement: true } },
+
         },
     });
+
+    const genres = await prisma.genre.findMany({
+        where: {
+            games: {
+                some: {
+                    myGames: {
+                        some: { userId },
+                    },
+                },
+            },
+        },
+        select: { id: true },
+    });
+
+    const genreCount = genres.length;
+
 
     if (!user) return;
 
@@ -55,6 +72,24 @@ export async function checkAndUnlockAchievements(userId: string) {
             goalValue: 10,
             metric: 'comments'
         },
+        {
+            id: 'cmhute26h000404i9f31u9bqx',
+            title: "Explorer I",
+            description: "Play Games from 5 different genres.",
+            xpReward: 75,
+            condition: genreCount >= 10,
+            goalValue: 5,
+            metric: 'genre'
+        },
+        {
+            id: 'cmhutsauk000004i9c14h0qoi',
+            title: "Explorer II",
+            description: "Play Games from 10 different genres.",
+            xpReward: 130,
+            condition: genreCount >= 10,
+            goalValue: 10,
+            metric: 'genre'
+        },
     ];
 
     for (const a of achievements) {
@@ -79,7 +114,7 @@ export async function checkAndUnlockAchievements(userId: string) {
                 data: {
                     userId,
                     achievementId: achievement.id,
-                    
+
                 },
             });
 

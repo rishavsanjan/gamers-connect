@@ -86,7 +86,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
     return (
         <>
             <div className="flex flex-col gap-4">
-                <div className="flex flex-row gap-4">
+                <div className="flex sm:flex-row flex-wrap gap-4">
                     <button
                         onClick={() => {
                             status.inMyGames ? removeFromMyGame(game, 'myGame', setStatus, setLoading) : setShowPlatformModal(true)

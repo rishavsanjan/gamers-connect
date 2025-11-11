@@ -38,7 +38,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                             onMouseEnter={() => { setHoverId(game.id) }}
                             onMouseLeave={() => { setHoverId(0) }}
                             key={game.id}
-                            className='flex flex-col min-w-[335px] overflow-visible shadow-lg shrink-0 rounded-xl hover:scale-105 duration-300 ease-in-out relative z-10 hover:z-50'
+                            className='flex flex-col min-w-[335px] overflow-visible shadow-lg shrink-0 rounded-xl hover:scale-105 duration-300 ease-in-out relative md:z-10 md:hover:z-50'
                         >
                             <img className='w-full h-[188px] rounded-t-xl' src={`${imgUrl}`} alt="" />
 
@@ -83,7 +83,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                                 </div>
                                 <div className='relative '>
                                     {hoverId === game.id && (
-                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[335px] -left-2'>
+                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[342px] -left-2'>
                                             <div className='flex flex-col gap-4 w-full'>
                                                 <div className='transition-opacity duration-300 opacity-100'>
                                                     <span className='line-clamp-3 text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
