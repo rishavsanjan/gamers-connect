@@ -89,3 +89,50 @@ export async function getGameDlcs(id: string) {
     return response.data[0];
 }
 
+export async function anticipatedGames() {
+    const now = Math.floor(Date.now() / 1000);
+    const threeDaysLater = now + 3 * 24 * 60 * 60;
+
+    const query = `
+    fields name, cover.url, first_release_date, hypes, follows, total_rating, total_rating_count, summary, genres.name, platforms.name;
+    sort hypes desc;
+    where hypes != null 
+      & first_release_date >= ${now} 
+      & first_release_date <= ${threeDaysLater};
+    limit 4;
+  `;
+
+    const response = await axios.post("https://api.igdb.com/v4/games", query, {
+        headers: {
+            "Client-ID": CLIENT_ID,
+            "Authorization": `Bearer ${TOKEN}`,
+            "Accept": "application/json",
+        },
+    });
+
+    return response.data;
+}
+
+
+export async function getUpcomingEvents() {
+    const now = Math.floor(Date.now() / 1000);
+
+    const query = `
+    fields checksum,created_at,description,end_time,event_logo,event_networks,games,live_stream_url,name,slug,start_time,time_zone,updated_at,videos, event_logo.url;
+    sort start_time asc;
+    where start_time >= ${now};
+    limit 10;
+  `;
+
+    const response = await axios.post("https://api.igdb.com/v4/events", query, {
+        headers: {
+            "Client-ID": CLIENT_ID,
+            "Authorization": `Bearer ${TOKEN}`,
+            "Accept": "application/json",
+        },
+    });
+
+    return response.data;
+}
+
+

@@ -1,14 +1,17 @@
 'use client'
 import React, { useState } from 'react'
-import { BiBarChart, BiCrown, BiSkipNext, BiSolidFlame, BiStar, BiTrophy } from 'react-icons/bi'
+import { BiBarChart, BiCrown, BiLogoWindows, BiMobile, BiSkipNext, BiSolidFlame, BiStar, BiTrophy, BiWindows } from 'react-icons/bi'
+import { BsAndroid, BsNintendoSwitch, BsPlaystation, BsXbox } from 'react-icons/bs';
 
 interface SideBarProps {
     selectedCategory: string;
     onCategoryChange: (category: string) => void;
     onGenreChange: (id: number) => void;
+    onPlatformChange: (id: number) => void
+    platformId:number
 }
 
-export default function SideBar({ selectedCategory, onCategoryChange, onGenreChange }: SideBarProps) {
+export default function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onPlatformChange , platformId}: SideBarProps) {
 
     return (
         <div className=' flex flex-col gap-4  p-4 pt-10'>
@@ -73,6 +76,8 @@ export default function SideBar({ selectedCategory, onCategoryChange, onGenreCha
                     <p>Top 250</p>
                 </button>
             </div>
+
+
             <div className='flex flex-col gap-2'>
                 <h1 className='text-2xl'>Genres</h1>
                 {/* <button
@@ -146,8 +151,61 @@ export default function SideBar({ selectedCategory, onCategoryChange, onGenreCha
                 </button>
 
             </div>
-            <div>
 
+
+
+            <div className='flex flex-col gap-2'>
+                <h1 className='text-2xl'>Platforms</h1>
+                <button
+                    onClick={() => { onPlatformChange(6) }}
+                    className="flex flex-row items-center gap-2 group">
+                    <div className={`${platformId === 6 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
+                        <BiLogoWindows className={`${platformId === 6 && 'text-black'}`} size={20} />
+
+                    </div>
+                    <p>PC</p>
+
+                </button>
+                <button
+                    onClick={() => { onPlatformChange(48) }}
+                    className="flex flex-row items-center gap-2 group">
+                    <div className={`${platformId === 48 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
+                        <BsPlaystation className={`${platformId === 48 && 'text-black'}`} size={20} />
+
+                    </div>
+                    <p>Play Station</p>
+
+                </button>
+                <button
+                    onClick={() => { onPlatformChange(169) }}
+                    className="flex flex-row items-center gap-2 group">
+                    <div className={`${platformId === 169 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
+                        <BsXbox className={`${platformId === 169 && 'text-black'}`} size={20} />
+
+                    </div>
+                    <p>Xbox</p>
+
+                </button>
+                <button
+                    onClick={() => { onPlatformChange(508) }}
+                    className="flex flex-row items-center gap-2 group">
+                    <div className={`${platformId === 508 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
+                        <BsNintendoSwitch className={`${platformId === 508 && 'text-black'}`} size={20} />
+
+                    </div>
+                    <p>Nitendo</p>
+
+                </button>
+                <button
+                    onClick={() => { onPlatformChange(34) }}
+                    className="flex flex-row items-center gap-2 group">
+                    <div className={`${platformId === 34 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
+                        <BiMobile className={`${platformId === 34 && 'text-black'}`} size={20} />
+
+                    </div>
+                    <p>Mobile</p>
+
+                </button>
             </div>
             <div>
 

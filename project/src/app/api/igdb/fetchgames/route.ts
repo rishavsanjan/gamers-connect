@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     const agent = new https.Agent({
         rejectUnauthorized: false, // bypass SSL verification
     });
-    const { page, genreId, category, limit = 10 } = await req.json();
+    const { page, genreId, category, limit = 10, platformId } = await req.json();
 
     const offset = (page - 1) * 10;
     let query;
@@ -104,6 +104,19 @@ export async function POST(req: Request) {
           sort popularity desc;
         `;
     }
+
+    if (platformId) {
+        query = `
+          fields name, total_rating, hypes, follows, cover.url, first_release_date, rating_count	, platforms.name, platforms.platform_logo.url, storyline, summary, genres.name, videos, videos.video_id;
+          sort hypes desc;
+          where platforms = (${platformId});
+          limit 10;
+          offset ${offset};
+          sort popularity desc;
+        `;
+    }
+
+    console.log(platformId)
 
     const response = await axios.post(
         "https://api.igdb.com/v4/games",

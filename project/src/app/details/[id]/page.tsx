@@ -35,6 +35,8 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
     );
   }
 
+  console.log(game)
+
 
 
   return (

@@ -14,7 +14,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [selectedId, setSelectedId] = useState(0);
     function formatUnixDate(timestamp: number): string {
-        const date = new Date(timestamp * 1000); 
+        const date = new Date(timestamp * 1000);
         const options: Intl.DateTimeFormatOptions = {
             year: "numeric",
             month: "long",
@@ -22,6 +22,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
         };
         return date.toLocaleDateString("en-US", options);
     }
+
 
     return (
         <div
@@ -36,6 +37,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                         : "/placeholder.jpg";
                     let xboxCount = 0;
                     let playStationCount = 0;
+                    let nitendoCount = 0;
                     return (
                         <div
                             onMouseEnter={() => { setHoverId(game.id) }}
@@ -75,14 +77,17 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
 
                                                 if (platform.id === 6) {
                                                     platformLogo = 'https://img.icons8.com/?size=100&id=38805&format=png&color=FFFFFF'
-                                                } else if (platform.id === 130) {
-                                                    platformLogo = 'https://img.icons8.com/?size=100&id=XaIQdSh4y3F9&format=png&color=FFFFFF'
+                                                } else if ((platform.id === 130 || platform.id === 508) && nitendoCount === 0) {
+                                                    platformLogo = 'https://img.icons8.com/?size=100&id=XaIQdSh4y3F9&format=png&color=FFFFFF';
+                                                    nitendoCount++;
                                                 } else if ((platform.id === 9 || platform.id === 48 || platform.id === 167) && playStationCount === 0) {
                                                     platformLogo = 'https://img.icons8.com/?size=100&id=12519&format=png&color=FFFFFF'
                                                     playStationCount++;
                                                 } else if ((platform.id === 49 || platform.id === 169 || platform.id === 12) && xboxCount === 0) {
                                                     platformLogo = 'https://img.icons8.com/?size=100&id=12504&format=png&color=FFFFFF'
                                                     xboxCount++;
+                                                } else if (platform.id === 34) {
+                                                    platformLogo = 'https://img.icons8.com/?size=100&id=fYOJmUjderD8&format=png&color=FFFFFF'
                                                 } else {
                                                     return;
                                                 }

@@ -67,5 +67,40 @@ export function getTimeAgoFormatted(dateString: Date): string {
 }
 
 
+export function getTimeLeft(unixTimestamp: number): string {
+    const releaseDate = unixTimestamp * 1000; // Convert seconds → ms
+    const now = Date.now();
+    const diff = releaseDate - now;
+
+    if (diff <= 0) return "Released";
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+    return `${days}d ${hours}h ${minutes}m`;
+}
+
+
+export function formatTimeLeft(unixTimestamp: number): string {
+    const releaseDate = unixTimestamp * 1000;
+    const now = Date.now();
+    let diff = releaseDate - now;
+
+    if (diff <= 0) return "00:00:00";
+
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    // Format with leading zeros
+    const pad = (num: number) => String(num).padStart(2, "0");
+
+    return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+}
+
+
+
+
 
 

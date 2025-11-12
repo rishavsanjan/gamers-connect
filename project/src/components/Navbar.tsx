@@ -102,7 +102,10 @@ const Navbar = () => {
                 </div>
                 <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
                     <BiTrendingUp className="text-2xl hover:text-blue-400 cursor-pointer" />
-                    <p>Trending</p>
+                    <Link href={'/trending'}>
+                        <p>Trending</p>
+                    </Link>
+
 
                 </div>
                 <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>

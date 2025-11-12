@@ -13,17 +13,25 @@ export default function CTA() {
     const [hasMore, setHasMore] = useState(true)
     const [category, setCategory] = useState('trending')
     const [genreCategory, setGenreCategory] = useState(0);
+    const [platform, setPlatform] = useState('');
+    const [platformId, setPlatformId] = useState(0);
 
     const observerRef = useRef<HTMLDivElement | null>(null)
 
-    const fetchGames = async (pageNum: number, cat: string, genreId?: number) => {
+    const fetchGames = async (pageNum: number, cat?: string, genreId?: number, platformId?: number) => {
+
+        console.log(platformId)
         setLoading(true);
         try {
             const response = await axios.post(`/api/igdb/fetchgames`, {
                 page: pageNum,
                 category: cat,
                 genreId: genreId || null,
+                platformId: platformId || null
+
             });
+
+            console.log(response.data)
 
             const newGames = response.data;
             setGames((prev) => [...prev, ...newGames]);
@@ -53,10 +61,14 @@ export default function CTA() {
     useEffect(() => {
         if (genreCategory) {
             fetchGames(page, category, Number(genreCategory));
+        } else if (platformId) {
+            fetchGames(page, undefined, undefined, platformId);
         } else {
             fetchGames(page, category);
         }
-    }, [page, category, genreCategory]);
+    }, [page, category, genreCategory, platformId]);
+
+    console.log(platformId)
 
 
     const handleCategoryChange = (newCategory: string) => {
@@ -76,6 +88,15 @@ export default function CTA() {
         setGames([])
         setHasMore(true)
     }
+
+    const onPlatformChange = (selectedPlatformId: number) => {
+        setPlatformId(selectedPlatformId)
+        setPlatform('')
+        setPage(1)
+        setGames([])
+        setHasMore(true)
+        setCategory('')
+    }
     console.log(games)
 
     return (
@@ -85,6 +106,8 @@ export default function CTA() {
                     selectedCategory={category}
                     onCategoryChange={handleCategoryChange}
                     onGenreChange={handleGenreChange}
+                    onPlatformChange={onPlatformChange}
+                    platformId={platformId}
                 />
             </div>
             <div className="p-4 overflow-visible w-[85%] flex flex-col">
@@ -102,6 +125,11 @@ export default function CTA() {
                     {genreCategory === 32 && 'Indie Games'}
                     {genreCategory === 33 && 'Arcade Games'}
                     {genreCategory === 9 && 'Puzzle Games'}
+                    {platformId === 6 && 'PC'}
+                    {platformId === 48 && 'Play Station'}
+                    {platformId === 169 && 'Xbox'}
+                    {platformId === 508 && 'Nitendo'}
+                    {platformId === 34 && 'Mobile'}
                 </h1>
                 <span className='px-4'>
                     {genreCategory === 5 && 'Shooter games focus on ranged combat, where players use firearms or projectile weapons to defeat enemies. They test precision, reflexes, and tactical movement. Subgenres include first-person shooters (FPS) like Call of Duty and third-person shooters like Fortnite or Gears of War.'}
