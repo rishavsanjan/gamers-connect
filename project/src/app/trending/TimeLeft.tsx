@@ -2,6 +2,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { Game } from '../types/game'
+import Link from 'next/link'
 
 interface Props {
     game: Game
@@ -34,7 +35,7 @@ export function TimeLeft({ game }: Props) {
         }
 
         updateCountdown()
-        const interval = setInterval(updateCountdown, 60000) 
+        const interval = setInterval(updateCountdown, 60000)
         return () => clearInterval(interval)
     }, [game.first_release_date])
 
@@ -57,7 +58,10 @@ export function TimeLeft({ game }: Props) {
 
             {/* Overlay */}
             <div className="relative z-10 flex flex-col items-center text-center text-white px-4 py-8 sm:px-6 sm:py-12 bg-black/40 hover:bg-black/0">
-                <h2 className="text-xl sm:text-2xl xl:text-3xl font-bold">{game.name}</h2>
+                <Link href={`/details/${game.id}`} key={game.id}>
+                    <h2 className="text-xl sm:text-2xl xl:text-3xl font-bold">{game.name}</h2>
+                </Link>
+
                 <p className="text-base sm:text-lg text-purple-200 mt-1">{formattedDate}</p>
 
                 {/* Countdown */}

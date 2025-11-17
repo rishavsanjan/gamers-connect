@@ -2,9 +2,11 @@
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import { login } from '@/lib/auth';
+import { login, loginWithGoogle } from '@/lib/auth';
 import { getUserInformation } from '@/components/UserInformation';
 import { signIn } from 'next-auth/react';
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 
 
 const Login = () => {
@@ -63,7 +65,7 @@ const Login = () => {
         console.log(response.data)
     }
 
-    const handleLoginSubmit = async (e:React.FormEvent) => {
+    const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         console.log('l')
         if (loginForm.password.length < 8) {
@@ -136,9 +138,9 @@ const Login = () => {
                                     <input value={loginForm.password} onChange={(e) => { setLoginForm(prev => ({ ...prev, password: e.target.value })) }} placeholder='Enter password' className='bg-black/30 w-full p-3 rounded-lg my-2 placeholder:text-gray-500/70' type="password" />
                                 </div>
                             </>
-
+                            
                             :
-
+                                                
                             <>
                                 <div>
                                     <p>Username</p>
@@ -154,7 +156,7 @@ const Login = () => {
                                         className='bg-black/30 w-full p-3 rounded-lg my-2 placeholder:text-gray-500/70' type="email" />
                                 </div>
                                 <div>
-                                    <p>Password</p>
+                                    <p>Passwords</p>
                                     <input value={signUpForm.password} onChange={(e) => { setSignUpForm(prev => ({ ...prev, password: e.target.value })) }} placeholder='Enter password' className='bg-black/30 w-full p-3 rounded-lg my-2 placeholder:text-gray-500/70' type="password" />
                                     <p className='text-red-500'>{errors.password}</p>
                                 </div>
@@ -176,9 +178,16 @@ const Login = () => {
                 </div>
                 <p className='text-center text-gray-300/50'>Or</p>
                 <div className='self-center'>
-                    <button onClick={() => { login() }} className='flex flex-row items-center gap-4 bg-gray-600 p-2 rounded-lg cursor-pointer'>
-                        <img className=' w-8 h-8' src="https://img.icons8.com/?size=100&id=YSWCDCSF4H3N&format=png&color=1A1A1A" alt="" />
-                        <p>SignIn with Github</p>
+                    <button onClick={() => { login() }} className='flex flex-row items-center gap-4 bg-black p-2 rounded-lg cursor-pointer'>
+                        <FaGithub size={30}/>
+                        <p>Continue with Github</p>
+                    </button>
+                </div>
+
+                <div className='self-center'>
+                    <button onClick={() => { loginWithGoogle() }} className='flex flex-row items-center gap-4 bg-white p-2 rounded-lg cursor-pointer'>
+                        <FcGoogle size={30}/>
+                        <p className='text-black'>Continue with Google</p>
                     </button>
                 </div>
             </div>

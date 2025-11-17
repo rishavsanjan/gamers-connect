@@ -118,7 +118,7 @@ export async function getUpcomingEvents() {
     const now = Math.floor(Date.now() / 1000);
 
     const query = `
-    fields checksum,created_at,description,end_time,event_logo,event_networks,games,live_stream_url,name,slug,start_time,time_zone,updated_at,videos, event_logo.url;
+    fields checksum,created_at,description,end_time,event_logo,event_networks,games,live_stream_url,name,slug,start_time,time_zone,updated_at,videos, event_logo.url, event_networks.url;
     sort start_time asc;
     where start_time >= ${now};
     limit 10;
@@ -134,5 +134,68 @@ export async function getUpcomingEvents() {
 
     return response.data;
 }
+
+export async function getPopularRightNow() {
+    const now = Math.floor(Date.now() / 1000);
+
+    const query = `
+    fields checksum,created_at,description,end_time,event_logo,event_networks,games,live_stream_url,name,slug,start_time,time_zone,updated_at,videos, event_logo.url, event_networks.url;
+    sort start_time asc;
+    where start_time >= ${now};
+    limit 10;
+  `;
+
+    const response = await axios.post("https://api.igdb.com/v4/events", query, {
+        headers: {
+            "Client-ID": CLIENT_ID,
+            "Authorization": `Bearer ${TOKEN}`,
+            "Accept": "application/json",
+        },
+    });
+
+    return response.data;
+}
+
+export async function getFranchises() {
+    const now = Math.floor(Date.now() / 1000);
+
+    const query = `
+    fields checksum,created_at,games,name,slug,updated_at,url;
+    
+  `;
+
+    const response = await axios.post("https://api.igdb.com/v4/franchises", query, {
+        headers: {
+            "Client-ID": CLIENT_ID,
+            "Authorization": `Bearer ${TOKEN}`,
+            "Accept": "application/json",
+        },
+    });
+
+    return response.data;
+}
+
+
+export async function getCollections() {
+    const now = Math.floor(Date.now() / 1000);
+
+    const query = `
+   fields as_child_relations,as_parent_relations,checksum,created_at,games,name,slug,type,updated_at,url;
+  `;
+
+    const response = await axios.post("https://api.igdb.com/v4/collections", query, {
+        headers: {
+            "Client-ID": CLIENT_ID,
+            "Authorization": `Bearer ${TOKEN}`,
+            "Accept": "application/json",
+        },
+    });
+
+    return response.data;
+}
+
+
+
+
 
 

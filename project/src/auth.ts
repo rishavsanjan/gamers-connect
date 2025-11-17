@@ -4,6 +4,8 @@ import Credentials from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import Google from "next-auth/providers/google";
+
 
 export const { auth, handlers, signIn, signOut } = NextAuth({
     adapter: {
@@ -39,6 +41,20 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
                     username: profile.login,
                 };
             },
+        }),
+
+        Google({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            profile(profile) {
+                return {
+                    id: profile.sub,
+                    name: profile.name,
+                    email: profile.email,
+                    image: profile.picture,
+                    username: profile.email.split("@")[0],
+                };
+            }
         }),
 
         Credentials({
@@ -92,19 +108,57 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     session: { strategy: "jwt" },
 
     callbacks: {
+        async signIn({ user, account, profile, email, credentials }) {
+
+            if (account?.provider === "google") {
+                // Check if a user already exists with same email but a different provider
+                const existingUser = await prisma.user.findUnique({
+                    where: { email: user.email! }
+                });
+
+                // If exists but Google account is not linked → link it
+                if (existingUser) {
+                    await prisma.account.upsert({
+                        where: {
+                            provider_providerAccountId: {
+                                provider: account.provider,
+                                providerAccountId: account.providerAccountId
+                            }
+                        },
+                        create: {
+                            userId: existingUser.id,
+                            provider: account.provider,
+                            providerAccountId: account.providerAccountId,
+                            type: account.type,
+                            access_token: account.access_token,
+                            token_type: account.token_type,
+                            id_token: account.id_token,
+                            expires_at: account.expires_at,
+                            scope: account.scope
+                        },
+                        update: {
+                            access_token: account.access_token,
+                            id_token: account.id_token
+                        }
+                    });
+                }
+            }
+
+            return true;
+        },
+
         async jwt({ token, user }) {
             if (user) {
-                token.id = user.id!;
+                //@ts-ignore
+                token.id = user.id;
                 token.username = user.username;
             }
             return token;
         },
 
         async session({ session, token }) {
-            if (session.user) {
-                session.user.id = token.id;
-                session.user.username = token.username;
-            }
+            session.user.id = token.id;
+            session.user.username = token.username;
             return session;
         },
     },
