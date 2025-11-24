@@ -7,7 +7,7 @@ export default async function Home() {
 
  
   return (
-    <div className="pb-32">
+    <div className="pb-8">
       <HeroHomepage />
         <CTA/>
 

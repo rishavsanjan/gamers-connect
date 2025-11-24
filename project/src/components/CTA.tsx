@@ -16,7 +16,8 @@ export default function CTA() {
     const [platform, setPlatform] = useState('');
     const [platformId, setPlatformId] = useState(0);
 
-    const observerRef = useRef<HTMLDivElement | null>(null)
+    const observerRef = useRef<HTMLDivElement | null>(null);
+    const contentRef = useRef<HTMLDivElement | null>(null);
 
     const fetchGames = async (pageNum: number, cat?: string, genreId?: number, platformId?: number) => {
 
@@ -73,20 +74,28 @@ export default function CTA() {
 
     const handleCategoryChange = (newCategory: string) => {
         if (newCategory === category) return
+        if (contentRef.current) {
+            contentRef.current.scrollTo({ top: 0, behavior: 'instant' });
+        }
         setCategory(newCategory)
         setGenreCategory(0)
         setPage(1)
         setGames([])
-        setHasMore(true)
+        setHasMore(true);
+
     }
 
     const handleGenreChange = (selectedGenreId: number) => {
 
         setGenreCategory(selectedGenreId)
+        if (contentRef.current) {
+            contentRef.current.scrollTo({ top: 0, behavior: 'instant' });
+        }
         setCategory('')
         setPage(1)
         setGames([])
         setHasMore(true)
+
     }
 
     const onPlatformChange = (selectedPlatformId: number) => {
@@ -96,12 +105,15 @@ export default function CTA() {
         setGames([])
         setHasMore(true)
         setCategory('')
+        if (contentRef.current) {
+            contentRef.current.scrollTo({ top: 0, behavior: 'instant' });
+        }
     }
     console.log(games)
 
     return (
         <div className="flex flex-row ">
-            <div className="w-[15%]">
+            <aside className="w-[15%] h-screen sticky top-0 overflow-y-auto hide-scrollbar">
                 <SideBar
                     selectedCategory={category}
                     onCategoryChange={handleCategoryChange}
@@ -109,9 +121,12 @@ export default function CTA() {
                     onPlatformChange={onPlatformChange}
                     platformId={platformId}
                 />
-            </div>
-            <div className="p-4 overflow-visible w-[85%] flex flex-col">
-                <h1 className="text-5xl font-bold px-4 py-6 capitalize">
+            </aside>
+
+            <main
+                ref={contentRef}
+                className="p-4 w-[85%] flex flex-col h-screen overflow-y-auto hide-scrollbar"
+            >                <h1 className="text-5xl font-bold px-4 py-6 capitalize">
                     {category === 'top250' && 'Top 250'}
                     {category === 'thisweek' && 'This Week'}
                     {category === 'last30days' && 'Last 30 Days'}
@@ -142,13 +157,17 @@ export default function CTA() {
                     {genreCategory === 9 && 'Puzzle games challenge the player’s logic, pattern recognition, and problem-solving skills. They range from relaxing experiences like Tetris and Candy Crush to complex brain-teasers like Portal or The Witness.'}
                 </span>
                 <GamesList gamesList={games} />
-                {loading &&
+                {
+                    loading &&
                     <div className='self-center'>
                         <ClipLoader color='white' />
                     </div>}
-                {!hasMore && <p className="text-center text-gray-500">No more games</p>}
+                {
+                    !hasMore &&
+                    <p className="text-center text-gray-500">No more games</p>
+                }
                 <div ref={observerRef} className="h-1" />
-            </div>
+            </main>
         </div>
     )
 }

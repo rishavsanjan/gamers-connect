@@ -92,13 +92,16 @@ const Navbar = () => {
 
             </div>
             <div className='md:flex hidden flex-row gap-8'>
-                <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
+                {/* <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
                     <BiSearch className="text-2xl hover:text-blue-400 cursor-pointer" />
                     <p>Browse</p>
-                </div>
+                </div> */}
                 <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
                     <LuLibrary className="text-2xl hover:text-blue-400 cursor-pointer" />
-                    <p>Library</p>
+                    <Link href={'/library'}>
+                        <p>Library</p>
+                    </Link>
+
                 </div>
                 <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
                     <BiTrendingUp className="text-2xl hover:text-blue-400 cursor-pointer" />

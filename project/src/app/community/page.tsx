@@ -17,6 +17,7 @@ import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 import AddPostModal from '@/components/community/AddPostModal';
 import SearchCommunity from './SearchCommunity';
+import FilterButtonHomeFeed from './FilterButton';
 export default async function GamelyCommunity() {
 
     const session = await auth();
@@ -35,7 +36,7 @@ export default async function GamelyCommunity() {
                 select: {
                     name: true,
                     id: true,
-                    username:true
+                    username: true
                 }
             },
             Like: {
@@ -43,7 +44,7 @@ export default async function GamelyCommunity() {
             }
         },
 
-        orderBy:{createdAt:'desc'}
+        orderBy: { createdAt: 'desc' }
 
     });
 
@@ -106,7 +107,7 @@ export default async function GamelyCommunity() {
                         </h1>
 
                     </div>
-                    <SearchCommunity/>
+                    <SearchCommunity />
                 </div>
             </header>
 
@@ -146,11 +147,16 @@ export default async function GamelyCommunity() {
                             <div className="space-y-3">
                                 {
                                     topUsers.map((user) => (
-                                        <ul key={user.id} className='flex flex-row justify-between'>
-                                            <li className='text-blue-500 cursor-pointer'>@{user.name}</li>
-                                            {/* @ts-ignore */}
-                                            <li>{user._count.Post}</li>
-                                        </ul>
+                                        <Link href={`/player-profile/${user.id}`} key={user.id}>
+                                            <ul key={user.id} className='flex flex-row justify-between'>
+                                                <li className='text-blue-500 cursor-pointer'>@{user.username || 'Anynomus'}</li>
+                                                {/* @ts-ignore */}
+                                                <li>{user._count.Post}</li>
+
+                                            </ul>
+                                        </Link>
+
+
                                     ))
                                 }
                             </div>
@@ -159,21 +165,6 @@ export default async function GamelyCommunity() {
 
                     {/* Main Feed */}
                     <div className="col-span-12 space-y-6 lg:col-span-6">
-                        {/* Filter Bar */}
-                        <div className="flex items-center space-x-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg">
-                            <Filter className="h-5 w-5 text-purple-400" />
-                            <select className="flex-1 cursor-pointer border-none bg-transparent outline-none">
-                                <option className="bg-gray-900">All Games</option>
-                                <option className="bg-gray-900">Elden Ring</option>
-                                <option className="bg-gray-900">Valorant</option>
-                                <option className="bg-gray-900">Stardew Valley</option>
-                            </select>
-                            <select className="cursor-pointer border-none bg-transparent outline-none">
-                                <option className="bg-gray-900">Latest</option>
-                                <option className="bg-gray-900">Popular</option>
-                                <option className="bg-gray-900">Trending</option>
-                            </select>
-                        </div>
 
                         {/* Posts */}
                         {/* {

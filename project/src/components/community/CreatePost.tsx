@@ -31,7 +31,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
 
-    const CLOUDINARY_CLOUD_NAME = "diwmvqto3"; // Replace with your Cloudinary cloud name
+    const CLOUDINARY_CLOUD_NAME = "diwmvqto3"; 
     const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
 
 

@@ -2,12 +2,13 @@ import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from '@/lib/db';
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
     const { searchParams } = new URL(req.url);
 
     const page = Number(searchParams.get('page') || 1);
-    const limit = Number(searchParams.get('limit') || 2)
+    const limit = Number(searchParams.get('limit') || 2);
     const skip = (page - 1) * limit
+    const { filter } = await req.json();
 
     try {
         const session = await auth();
@@ -15,32 +16,67 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const posts = await prisma.post.findMany({
-            skip,
-            take: limit,
-            include: {
+        let posts;
+        console.log(filter)
+        if (filter === 'popular') {
+            posts = await prisma.post.findMany({
+                skip,
+                take: limit,
+                include: {
 
-                game: {
-                    select: {
-                        name: true,
-                        igdb_id: true
+                    game: {
+                        select: {
+                            name: true,
+                            igdb_id: true
+                        }
+                    },
+                    user: {
+                        select: {
+                            name: true,
+                            id: true,
+
+                        }
+                    },
+                    Like: {
+                        where: { userId: session.user.id }
                     }
                 },
-                user: {
-                    select: {
-                        name: true,
-                        id: true,
 
+                orderBy: { Like: { _count: 'desc' } }
+
+            });
+        } else {
+            posts = await prisma.post.findMany({
+                skip,
+                take: limit,
+                include: {
+
+                    game: {
+                        select: {
+                            name: true,
+                            igdb_id: true
+                        }
+                    },
+                    user: {
+                        select: {
+                            name: true,
+                            id: true,
+
+                        }
+                    },
+                    Like: {
+                        where: { userId: session.user.id }
                     }
                 },
-                Like: {
-                    where: { userId: session.user.id }
-                }
-            },
 
-            orderBy: { createdAt: 'desc' }
+                orderBy: { createdAt: 'desc' }
 
-        });
+            });
+        };
+
+        if (!posts) {
+            return;
+        }
 
         const result = posts.map((post) => ({
             id: post.id,
