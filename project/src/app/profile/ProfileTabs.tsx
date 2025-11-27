@@ -9,7 +9,7 @@ import { pickPlatformColor } from '@/app/utils/game_functions';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { Post } from '@/app/types/post';
-import { User } from '@prisma/client';
+import { Group, User } from '@prisma/client';
 import { Follower } from '@/app/types/follower';
 import InfiniteProfileBookmarked from '@/components/InfiniteProfileBookmarked';
 import { PlatformBar } from '@/components/graphs/GamePlatform';
@@ -17,6 +17,11 @@ import GamesByYearChart from '@/components/graphs/BarChart';
 import GameGenreChart from '@/components/graphs/HorizontalGraph';
 import FollowingCard from '@/components/FollowingCard';
 import ProfileAchievements from './ProfileAchievements';
+import GroupsJoinedCard from './GroupsJoinedCard';
+
+interface GroupsExtended extends Group {
+  hasJoined: boolean
+} 
 
 interface Props extends ProfileTabsData {
     bookmarkedPosts: Post[]
@@ -27,14 +32,16 @@ interface Props extends ProfileTabsData {
     bookmarkCount: number
     follower: Follower[]
     following: Follower[]
-    achievementsCount:number
+    achievementsCount: number
+    groups: GroupsExtended[]
+    groupsCount: number
 }
 
 
 const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, bookmarkedPosts, playlistCount,
     ownedGamesCount,
     collectionCount,
-    ratingsCount, bookmarkCount, follower, following , achievementsCount}) => {
+    ratingsCount, bookmarkCount, follower, following, achievementsCount, groups, groupsCount }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
     const playlistGames = playlist.map(item => item.game);
@@ -183,6 +190,15 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{achievementsCount || 0}</span>
 
                 </div>
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('groups') }}
+                        className={`${activeTab === 'groups' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Groups
+                    </button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{groupsCount || 0}</span>
+
+                </div>
 
 
             </div>
@@ -296,7 +312,13 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             {
                 activeTab === 'achievements' &&
                 <div>
-                    <ProfileAchievements/>
+                    <ProfileAchievements />
+                </div>
+            }
+            {
+                activeTab === 'groups' &&
+                <div>
+                    <GroupsJoinedCard groups={groups}/>
                 </div>
             }
 

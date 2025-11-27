@@ -2,6 +2,7 @@ import { SetStateAction } from "react";
 import { Post } from "../types/post";
 import axios from "axios";
 import { auth } from "@/auth";
+import { GroupsExtended } from "../types/groups";
 
 
 
@@ -95,4 +96,69 @@ export const addFollow = async ({ otherPersonId, myId }: FollowingProps) => {
         }
     })
     console.log(response.data)
+}
+
+interface GroupLeaveProps {
+    groupId: string,
+    setGroupsState: React.Dispatch<React.SetStateAction<GroupsExtended[]>>,
+}
+
+export const handleGroupLeave = async ({ groupId, setGroupsState }: GroupLeaveProps) => {
+    try {
+        const response = await axios({
+            url: `/api/private/group/group-leave`,
+            method: 'post',
+            data: {
+                groupId
+            }
+        })
+
+        setGroupsState(prev =>
+            prev.map((group) => {
+                if (group.id === groupId) {
+                    return {
+                        ...group,
+                        hasJoined: false
+                    }
+                }
+                return group;
+            })
+        )
+        console.log(response.data)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+interface GroupJoinProps {
+    groupId: string,
+    setGroupsState: React.Dispatch<React.SetStateAction<GroupsExtended[]>>,
+}
+
+export const handleGroupJoin = async ({ groupId, setGroupsState }: GroupJoinProps) => {
+    try {
+        const response = await axios({
+            url: `/api/private/group/group-join`,
+            method: 'post',
+            data: {
+                groupId
+            }
+        })
+
+        console.log(response.data);
+        setGroupsState(prev =>
+            prev.map((group) => {
+                if (group.id === groupId) {
+                    return {
+                        ...group,
+                        hasJoined: true
+                    }
+                }
+                return group;
+            })
+        )
+        console.log(response.data)
+    } catch (error) {
+        console.log(error)
+    }
 }

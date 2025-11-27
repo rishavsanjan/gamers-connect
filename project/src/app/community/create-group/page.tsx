@@ -42,7 +42,7 @@ const CreateGroup = () => {
 
         try {
             const response = await axios({
-                url: `/api/private/create-group`,
+                url: `/api/private/group/create-group`,
                 method: 'post',
                 data: {
                     visibility: selectedVisibility,

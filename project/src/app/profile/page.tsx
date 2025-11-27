@@ -203,6 +203,23 @@ const Profile = async () => {
 
   const following = followingWithoutFormatting.map((item) => {
     return { ...item.following, isFollowingBack: true };
+  });
+
+  const groups = await prisma.group.findMany({
+    where: {
+      members: { some: { id: session.user.id } }
+    }
+  })
+
+
+  const formattedGroups = groups.map((group) => {
+    return { ...group, hasJoined: true }
+  })
+
+  const groupsCount = await prisma.group.count({
+    where: {
+      members: { some: { id: session.user.id } }
+    }
   })
 
 
@@ -296,6 +313,8 @@ const Profile = async () => {
         follower={followers}
         following={following}
         achievementsCount={achievementsCount}
+        groups={formattedGroups}
+        groupsCount={groupsCount}
       />
     </div>
   )

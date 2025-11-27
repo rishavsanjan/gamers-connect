@@ -1,23 +1,12 @@
 
-import React, { useEffect, useState } from 'react';
-import { Heart, MessageCircle, Share2, TrendingUp, Users, Award, Image, Video, FileText, Send, Filter, Search, Tag } from 'lucide-react';
-import CreatePostModal from '@/components/community/CreatePost';
-import { Post } from '../types/post';
-import axios from 'axios';
-import { timeAgo } from '../utils/date';
+import React from 'react';
+import { TrendingUp, Users, Award } from 'lucide-react';
 import Link from 'next/link';
-import { HashTag } from '../types/post';
-import { User } from '@prisma/client';
-import { BsHeartFill } from 'react-icons/bs';
-import { ClipLoader } from 'react-spinners';
-import { handleLike, handleRemoveLike } from '../utils/community_functions';
-import Posts from '@/components/community/Posts';
 import InfiniteHomePostsFeed from '@/components/community/InfinitePostsHomeFeed';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
 import AddPostModal from '@/components/community/AddPostModal';
 import SearchCommunity from './SearchCommunity';
-import FilterButtonHomeFeed from './FilterButton';
 import SuggestedGroups from './SuggestedGroups';
 export default async function GamelyCommunity() {
 
@@ -107,6 +96,24 @@ export default async function GamelyCommunity() {
         }
     })
 
+    const suggestedGroups = await prisma.group.findMany({
+        take: 3,
+        where: {
+            AND: [{ visibility: 'VISIBLE' }, { privacy: 'PUBLIC' }],
+            NOT: {
+                members: { some: { id: session?.user.id } }
+            }
+        },
+
+
+    })
+
+    const formattedGroups = suggestedGroups.map((group) => {
+        return {
+            ...group,
+            hasJoined: false
+        }
+    })
     console.log(myStats)
 
 
@@ -219,7 +226,7 @@ export default async function GamelyCommunity() {
                         </div>
 
                         {/* Suggested Groups */}
-                        <SuggestedGroups/>
+                        <SuggestedGroups groups={formattedGroups} />
                     </div>
                 </div>
             </div>
