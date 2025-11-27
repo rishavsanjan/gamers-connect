@@ -17,6 +17,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const [filter, setFilter] = useState('default');
+    const [category, setCategory] = useState('GENERAL');
 
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -39,11 +40,11 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
             const response = await axios({
                 url: `/api/getposts?page=${page}`,
                 method: 'post',
-                data: { filter }
+                data: { filter, category }
             });
 
             const newPosts = response.data.posts;
-            
+            console.log(newPosts)
             if (page === 1) {
                 setPosts(newPosts);
             } else {
@@ -64,26 +65,27 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
         }
     };
 
-    // Handle filter changes
     useEffect(() => {
         if (filter === 'default') return;
 
         setPosts([]);
         setHasMore(true);
         setPage(1);
-        
+
         (async () => {
             setLoading(true);
             try {
                 const response = await axios({
                     url: `/api/getposts?page=1`,
                     method: 'post',
-                    data: { filter }
+                    data: { filter, category }
                 });
 
+                console.log(category)
                 const newPosts = response.data.posts;
+                console.log(newPosts)
                 setPosts(newPosts);
-                
+
                 if (newPosts.length === 0) {
                     setHasMore(false);
                 }
@@ -93,12 +95,14 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
                 setLoading(false);
             }
         })();
-    }, [filter]);
+    }, [filter, category]);
+
+
 
     // Handle page changes (for infinite scroll)
     useEffect(() => {
         if (page === 1) return;
-        
+
         getPosts();
     }, [page]);
 
@@ -107,14 +111,17 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
             {/* Filter Bar */}
             <div className="flex items-center space-x-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg mb-4">
                 <Filter className="h-5 w-5 text-purple-400" />
-                <select className="flex-1 cursor-pointer border-none bg-transparent outline-none">
-                    <option className="bg-gray-900">All Games</option>
-                    <option className="bg-gray-900">Elden Ring</option>
-                    <option className="bg-gray-900">Valorant</option>
-                    <option className="bg-gray-900">Stardew Valley</option>
+                <select onChange={(e) => setCategory(e.target.value)} className="flex-1 cursor-pointer border-none bg-transparent outline-none">
+                    <option value={'GENERAL'} className="bg-gray-900">All</option>
+                    <option value={'QUERY'} className="bg-gray-900">QUERY</option>
+                    <option value={'REVIEW'} className="bg-gray-900">REVIEW</option>
+                    <option value={'SCREENSHOT'} className="bg-gray-900">SCREENSHOT</option>
+                    <option value={'NEWS'} className="bg-gray-900">NEWS</option>
+                    <option value={'GUIDE'} className="bg-gray-900">GUIDE</option>
+                    <option value={'HELP'} className="bg-gray-900">HELP</option>
                 </select>
-                <select 
-                    onChange={(e) => setFilter(e.target.value)} 
+                <select
+                    onChange={(e) => setFilter(e.target.value)}
                     className="cursor-pointer border-none bg-transparent outline-none"
                     value={filter}
                 >

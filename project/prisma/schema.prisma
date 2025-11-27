@@ -44,18 +44,21 @@ model User {
   following        Follow[]          @relation("Following")
   bookmarks        Bookmark[]
   userAchievements UserAchievement[]
+  ownedGroups      Group[]           @relation("GroupOwner")
+  adminInGroups    Group[]           @relation("GroupAdmins")
+  memberInGroups   Group[]           @relation("GroupMembers")
 }
 
 model Achievement {
-  id          String  @id @default(cuid())
+  id          String            @id @default(cuid())
   title       String
   description String?
-  xpReward    Int     @default(10)
+  xpReward    Int               @default(10)
   iconUrl     String?
-  goalValue   Int? 
-  metric      String? 
-  createdAt DateTime          @default(now())
-  users     UserAchievement[]
+  goalValue   Int?
+  metric      String?
+  createdAt   DateTime          @default(now())
+  users       UserAchievement[]
 }
 
 model UserAchievement {
@@ -214,6 +217,9 @@ model Post {
   likeCount    Int      @default(0)
   commentCount Int      @default(0)
 
+  group   Group?  @relation(fields: [groupId], references: [id])
+  groupId String?
+
   user      User       @relation(fields: [userId], references: [id])
   game      Game?      @relation(fields: [gameId], references: [id])
   tags      Hashtag[]  @relation("PostHashtags")
@@ -288,6 +294,36 @@ model Follow {
   following User @relation("Followers", fields: [followingId], references: [id])
 
   @@unique([followerId, followingId]) // prevent duplicate follows
+}
+
+model Group {
+  id String @id @default(cuid())
+
+  groupOwner  User            @relation("GroupOwner", fields: [ownerId], references: [id])
+  ownerId     String
+  admins      User[]          @relation("GroupAdmins")
+  members     User[]          @relation("GroupMembers")
+  posts       Post[]
+  name        String
+  description String?
+
+  memberCount Int             @default(1)
+  postCount   Int             @default(0)
+
+  privacy     GroupPrivacy    @default(PUBLIC)
+  visibility  GroupVisibility @default(VISIBLE)
+
+  createdAt   DateTime        @default(now())
+}
+
+enum GroupPrivacy {
+  PRIVATE
+  PUBLIC
+}
+
+enum GroupVisibility {
+  VISIBLE
+  HIDDEN
 }
 
 enum CommentType {

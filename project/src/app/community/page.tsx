@@ -18,6 +18,7 @@ import { auth } from '@/auth';
 import AddPostModal from '@/components/community/AddPostModal';
 import SearchCommunity from './SearchCommunity';
 import FilterButtonHomeFeed from './FilterButton';
+import SuggestedGroups from './SuggestedGroups';
 export default async function GamelyCommunity() {
 
     const session = await auth();
@@ -93,6 +94,20 @@ export default async function GamelyCommunity() {
             },
         },
     });
+
+    const myStats = await prisma.user.findMany({
+        where: {
+            id: session?.user.id
+        },
+        select: {
+            _count: {
+                select: { Post: true, followers: true }
+            },
+            xp: true
+        }
+    })
+
+    console.log(myStats)
 
 
     return (
@@ -190,24 +205,21 @@ export default async function GamelyCommunity() {
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-400">Posts</span>
-                                    <span className="font-bold text-purple-400">42</span>
+                                    <span className="font-bold text-purple-400">{myStats[0]._count.Post}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-gray-400">Followers</span>
-                                    <span className="font-bold text-purple-400">1.2k</span>
+                                    <span className="font-bold text-purple-400">{myStats[0]._count.followers}</span>
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-gray-400">Reputation</span>
-                                    <span className="font-bold text-purple-400">847</span>
+                                    <span className="text-gray-400">XP</span>
+                                    <span className="font-bold text-purple-400">{myStats[0].xp}</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* Suggested Groups */}
-                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                            <h3 className="mb-4 text-lg font-bold">Suggested Groups</h3>
-
-                        </div>
+                        <SuggestedGroups/>
                     </div>
                 </div>
             </div>

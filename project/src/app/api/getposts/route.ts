@@ -8,8 +8,8 @@ export async function POST(req: Request) {
     const page = Number(searchParams.get('page') || 1);
     const limit = Number(searchParams.get('limit') || 2);
     const skip = (page - 1) * limit
-    const { filter } = await req.json();
-
+    const { filter, category } = await req.json();
+    console.log(category)
     try {
         const session = await auth();
         if (!session?.user?.id) {
@@ -22,6 +22,9 @@ export async function POST(req: Request) {
             posts = await prisma.post.findMany({
                 skip,
                 take: limit,
+                where: {
+                    type: category
+                },
                 include: {
 
                     game: {
@@ -49,6 +52,9 @@ export async function POST(req: Request) {
             posts = await prisma.post.findMany({
                 skip,
                 take: limit,
+                where: {
+                    type: category
+                },
                 include: {
 
                     game: {
