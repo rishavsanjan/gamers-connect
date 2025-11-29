@@ -29,6 +29,9 @@ export default async function GamelyCommunity() {
                     username: true
                 }
             },
+            group: {
+                select: { name: true, id: true }
+            },
             Like: {
                 where: { userId: session!.user.id }
             }
@@ -52,6 +55,7 @@ export default async function GamelyCommunity() {
         userId: post.userId,
         updatedAt: post.updatedAt,
         type: post.type,
+        group: post.group
     }));
 
 

@@ -1,7 +1,5 @@
 'use client'
 
-
-
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import axios from 'axios'
@@ -11,9 +9,10 @@ import { ClipLoader } from 'react-spinners'
 
 interface Props {
     initialPosts: Post[]
+    groupId:string
 }
 
-const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
+const InfiniteGroupPosts: React.FC<Props> = ({ initialPosts, groupId }) => {
     const [posts, setPosts] = useState(initialPosts)
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
@@ -40,9 +39,9 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
         setLoading(true);
         try {
             const response = await axios({
-                url: `/api/getposts?page=${page}`,
+                url: `/api/get-group-posts?page=${page}`,
                 method: 'post',
-                data: { filter, category }
+                data: { filter, category, groupId }
             });
 
             const newPosts = response.data.posts;
@@ -77,9 +76,9 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
             setLoading(true);
             try {
                 const response = await axios({
-                    url: `/api/getposts?page=1`,
+                    url: `/api/get-group-posts?page=1`,
                     method: 'post',
-                    data: { filter, category }
+                    data: { filter, category, groupId }
                 });
 
                 console.log(category)
@@ -96,6 +95,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
                 setLoading(false);
             }
         })();
+
     }, [filter, category]);
 
 
@@ -141,4 +141,4 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
     )
 }
 
-export default InfiniteHomePostsFeed
+export default InfiniteGroupPosts

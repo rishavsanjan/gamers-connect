@@ -13,10 +13,11 @@ import { useRouter } from 'next/navigation'
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
     setPosts?: React.Dispatch<SetStateAction<Post[]>>
+    groupId?:string
 }
 
-const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
-
+const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId }) => {
+    console.log(groupId)
     const router = useRouter();
 
     const [postContent, setPostContent] = useState('');
@@ -146,7 +147,8 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
                 platforms: selectedGame?.platforms,
                 type: category,
                 tags: hashtags,
-                mediaUrls: uploadedUrls
+                mediaUrls: uploadedUrls,
+                groupId
             }
         });
 
@@ -332,19 +334,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts }) => {
                 }
 
 
-                <div className="mb-6 flex items-center justify-between">
-                    <div className="flex space-x-2">
-                        <button className="rounded-xl bg-white/10 p-3 transition hover:bg-white/20">
-                            <Image className="h-5 w-5" />
-                        </button>
-                        <button className="rounded-xl bg-white/10 p-3 transition hover:bg-white/20">
-                            <Video className="h-5 w-5" />
-                        </button>
-                        <button className="rounded-xl bg-white/10 p-3 transition hover:bg-white/20">
-                            <FileText className="h-5 w-5" />
-                        </button>
-                    </div>
-                </div>
+               
 
                 <div className="flex space-x-4">
                     <button

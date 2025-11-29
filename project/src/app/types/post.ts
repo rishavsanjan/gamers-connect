@@ -23,6 +23,10 @@ export interface Post {
     likeCount: number
     commentCount: number
     hasLiked: boolean
+    group?:{
+        name:string,
+        id:string
+    } | null
 }
 
 export interface HashTag {

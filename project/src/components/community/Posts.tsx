@@ -29,7 +29,7 @@ const Posts: React.FC<Props> = ({ posts }) => {
 
                                 </div>
                                 <div>
-                                    <p className="font-bold">{post.user.name ?? post.user.username}</p>
+                                    <p className="font-bold">{post.user.name || post.user.username}</p>
                                     <p className="text-sm text-gray-400">
                                         {
                                             post.game &&
@@ -41,7 +41,15 @@ const Posts: React.FC<Props> = ({ posts }) => {
                                                 {' '}  • {' '}
                                             </>
                                         }
-
+                                        {
+                                            post.group &&
+                                            <>
+                                                <Link href={`/group/${post.group.id}`} key={post.group.id}>
+                                                    <span className="text-purple-400">{post.group.name}</span>
+                                                </Link>
+                                                {' '}  • {' '}
+                                            </>
+                                        }
                                         {timeAgo(post.createdAt)}
                                     </p>
                                 </div>

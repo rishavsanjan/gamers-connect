@@ -2,6 +2,7 @@ import { Group } from '@prisma/client'
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import { handleGroupJoin, handleGroupLeave } from '../utils/community_functions'
+import Link from 'next/link'
 
 interface GroupsExtended extends Group {
   hasJoined: boolean
@@ -15,7 +16,7 @@ const GroupsJoinedCard: React.FC<Props> = ({ groups }) => {
   const [loading, setLoading] = useState(false);
   const [groupsState, setGroupsState] = useState<GroupsExtended[]>(groups);
 
-  const handleLeave = async(groupId: string) => {
+  const handleLeave = async (groupId: string) => {
     setLoading(true)
     try {
       await handleGroupLeave({ groupId, setGroupsState });
@@ -26,7 +27,7 @@ const GroupsJoinedCard: React.FC<Props> = ({ groups }) => {
     }
   }
 
-  const handleJoin = async(groupId: string) => {
+  const handleJoin = async (groupId: string) => {
     setLoading(true)
     try {
       await handleGroupJoin({ groupId, setGroupsState });
@@ -56,14 +57,16 @@ const GroupsJoinedCard: React.FC<Props> = ({ groups }) => {
             </div>
 
             {/* Group Name */}
-            <div className="flex-1 min-w-0">
-              <h3 className="text-white font-semibold text-lg truncate">
-                {group.name}
-              </h3>
-              <p className="text-gray-400 text-sm">
-                {group.hasJoined ? 'Member' : 'Not joined'}
-              </p>
-            </div>
+            <Link href={`./group/${group.id}`} key={group.id}>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-white font-semibold text-lg truncate">
+                  {group.name}
+                </h3>
+                <p className="text-gray-400 text-sm">
+                  {group.hasJoined ? 'Member' : 'Not joined'}
+                </p>
+              </div>
+            </Link>
           </div>
 
           {/* Action Button */}

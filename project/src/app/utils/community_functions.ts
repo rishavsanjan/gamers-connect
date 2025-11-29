@@ -100,7 +100,7 @@ export const addFollow = async ({ otherPersonId, myId }: FollowingProps) => {
 
 interface GroupLeaveProps {
     groupId: string,
-    setGroupsState: React.Dispatch<React.SetStateAction<GroupsExtended[]>>,
+    setGroupsState?: React.Dispatch<React.SetStateAction<GroupsExtended[]>>,
 }
 
 export const handleGroupLeave = async ({ groupId, setGroupsState }: GroupLeaveProps) => {
@@ -112,18 +112,20 @@ export const handleGroupLeave = async ({ groupId, setGroupsState }: GroupLeavePr
                 groupId
             }
         })
-
-        setGroupsState(prev =>
-            prev.map((group) => {
-                if (group.id === groupId) {
-                    return {
-                        ...group,
-                        hasJoined: false
+        if (setGroupsState) {
+            setGroupsState(prev =>
+                prev.map((group) => {
+                    if (group.id === groupId) {
+                        return {
+                            ...group,
+                            hasJoined: false
+                        }
                     }
-                }
-                return group;
-            })
-        )
+                    return group;
+                })
+            )
+        }
+
         console.log(response.data)
     } catch (error) {
         console.log(error)
@@ -132,7 +134,7 @@ export const handleGroupLeave = async ({ groupId, setGroupsState }: GroupLeavePr
 
 interface GroupJoinProps {
     groupId: string,
-    setGroupsState: React.Dispatch<React.SetStateAction<GroupsExtended[]>>,
+    setGroupsState?: React.Dispatch<React.SetStateAction<GroupsExtended[]>>,
 }
 
 export const handleGroupJoin = async ({ groupId, setGroupsState }: GroupJoinProps) => {
@@ -146,17 +148,20 @@ export const handleGroupJoin = async ({ groupId, setGroupsState }: GroupJoinProp
         })
 
         console.log(response.data);
-        setGroupsState(prev =>
-            prev.map((group) => {
-                if (group.id === groupId) {
-                    return {
-                        ...group,
-                        hasJoined: true
+        if (setGroupsState) {
+            setGroupsState(prev =>
+                prev.map((group) => {
+                    if (group.id === groupId) {
+                        return {
+                            ...group,
+                            hasJoined: true
+                        }
                     }
-                }
-                return group;
-            })
-        )
+                    return group;
+                })
+            )
+        }
+
         console.log(response.data)
     } catch (error) {
         console.log(error)

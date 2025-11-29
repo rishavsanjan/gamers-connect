@@ -8,8 +8,7 @@ export async function POST(req: Request) {
     const page = Number(searchParams.get('page') || 1);
     const limit = Number(searchParams.get('limit') || 2);
     const skip = (page - 1) * limit
-    const { filter, category } = await req.json();
-    
+    const { filter, category, groupId } = await req.json();
     console.log(category)
     try {
         const session = await auth();
@@ -18,16 +17,14 @@ export async function POST(req: Request) {
         }
 
         let posts;
-        console.log(filter);
-
-        
-
+        console.log(filter)
         if (filter === 'popular') {
             posts = await prisma.post.findMany({
                 skip,
                 take: limit,
                 where: {
-                    type: category
+                    type: category,
+                    groupId
                 },
                 include: {
 
@@ -61,7 +58,8 @@ export async function POST(req: Request) {
                 skip,
                 take: limit,
                 where: {
-                    type: category
+                    type: category,
+                    groupId
                 },
                 include: {
 
@@ -109,40 +107,7 @@ export async function POST(req: Request) {
             group: post.group
         }))
 
-        const topTags = await prisma.hashtag.findMany({
-            take: 5,
-            orderBy: {
-                posts: {
-                    _count: 'desc',
-                },
-            },
-            include: {
-                _count: {
-                    select: { posts: true },
-                },
-            },
-        });
-
-        const topUsersByPosts = await prisma.user.findMany({
-            take: 5,
-            orderBy: {
-                Post: {
-                    _count: 'desc',
-                },
-            },
-            include: {
-                _count: {
-                    select: { Post: true },
-                },
-            },
-        });
-
-        posts.map((post) => {
-
-        })
-
-
-        return NextResponse.json({ posts: result, topTags, topUsersByPosts }, { status: 200 })
+        return NextResponse.json({ posts: result }, { status: 200 })
     } catch (error) {
         console.log(error)
         return NextResponse.json('Server Problem', { status: 500 })

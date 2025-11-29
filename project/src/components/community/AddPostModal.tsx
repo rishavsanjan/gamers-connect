@@ -4,7 +4,11 @@ import { Send } from 'lucide-react'
 import React, { useState } from 'react'
 import CreatePostModal from './CreatePost';
 
-const AddPostModal = () => {
+interface Props {
+    groupId?: string
+}
+
+const AddPostModal: React.FC<Props> = ({ groupId }) => {
 
     const [showPostModal, setShowPostModal] = useState(false);
     return (
@@ -20,7 +24,7 @@ const AddPostModal = () => {
 
             </div>
             {showPostModal && (
-                <CreatePostModal setShowPostModal={setShowPostModal} />
+                <CreatePostModal groupId={groupId} setShowPostModal={setShowPostModal} />
             )}
         </>
 
