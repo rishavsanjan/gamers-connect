@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     const limit = Number(searchParams.get('limit') || 2);
     const skip = (page - 1) * limit
     const { filter, category } = await req.json();
-    
+
     console.log(category)
     try {
         const session = await auth();
@@ -20,77 +20,46 @@ export async function POST(req: Request) {
         let posts;
         console.log(filter);
 
-        
 
-        if (filter === 'popular') {
+        let whereClause: any = {};
+        const isFirstLoad = !filter && !category;
+
+        if (!isFirstLoad) {
+            if (category) {
+                whereClause.type = category;
+            }
+        }
+
+
+
+        if (filter === 'popular' && !isFirstLoad) {
             posts = await prisma.post.findMany({
                 skip,
                 take: limit,
-                where: {
-                    type: category
-                },
+                where: whereClause,
                 include: {
-
-                    game: {
-                        select: {
-                            name: true,
-                            igdb_id: true
-                        }
-                    },
-                    user: {
-                        select: {
-                            name: true,
-                            id: true,
-                            username:true
-
-                        }
-                    },
-                    group: {
-                        select: { name: true, id: true }
-                    },
-                    Like: {
-                        where: { userId: session.user.id }
-                    }
+                    game: { select: { name: true, igdb_id: true } },
+                    user: { select: { name: true, id: true, username: true } },
+                    group: { select: { name: true, id: true } },
+                    Like: { where: { userId: session.user.id } }
                 },
-
                 orderBy: { Like: { _count: 'desc' } }
-
             });
         } else {
+            // normal (newest) sorting – used for first load OR non-popular with filter
             posts = await prisma.post.findMany({
                 skip,
                 take: limit,
-                where: {
-                    type: category
-                },
+                where: whereClause,
                 include: {
-
-                    game: {
-                        select: {
-                            name: true,
-                            igdb_id: true
-                        }
-                    },
-                    user: {
-                        select: {
-                            name: true,
-                            id: true,
-                            username:true
-
-                        }
-                    },
-                    group: {
-                        select: { name: true, id: true }
-                    },
-                    Like: {
-                        where: { userId: session.user.id }
-                    }
+                    game: { select: { name: true, igdb_id: true } },
+                    user: { select: { name: true, id: true, username: true } },
+                    group: { select: { name: true, id: true } },
+                    Like: { where: { userId: session.user.id } }
                 },
-
                 orderBy: { createdAt: 'desc' }
-
             });
-        };
+        }
 
         if (!posts) {
             return;

@@ -17,8 +17,8 @@ const InfiniteGroupPosts: React.FC<Props> = ({ initialPosts, groupId }) => {
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
-    const [filter, setFilter] = useState('default');
-    const [category, setCategory] = useState('GENERAL');
+    const [filter, setFilter] = useState('');
+    const [category, setCategory] = useState('');
 
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -113,7 +113,7 @@ const InfiniteGroupPosts: React.FC<Props> = ({ initialPosts, groupId }) => {
             <div className="flex items-center space-x-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg mb-4">
                 <Filter className="h-5 w-5 text-purple-400" />
                 <select onChange={(e) => setCategory(e.target.value)} className="flex-1 cursor-pointer border-none bg-transparent outline-none">
-                    <option value={'GENERAL'} className="bg-gray-900">All</option>
+                    <option value={''} className="bg-gray-900">All</option>
                     <option value={'QUERY'} className="bg-gray-900">QUERY</option>
                     <option value={'REVIEW'} className="bg-gray-900">REVIEW</option>
                     <option value={'SCREENSHOT'} className="bg-gray-900">SCREENSHOT</option>

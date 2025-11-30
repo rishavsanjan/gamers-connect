@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Lock} from 'lucide-react';
+import { Lock } from 'lucide-react';
 import GroupTabs from './GroupTabs';
 import { prisma } from '@/lib/db';
 import GroupHeader from './GroupHeader';
@@ -95,7 +95,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         },
         include: {
             members: {
-                select: { username: true }
+                select: { username: true  }
             }
         }
     })
@@ -123,8 +123,28 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         }
     });
 
+    const postWithMedia = await prisma.post.findMany({
+        take:2,
+        where: {
+            groupId,
+            mediaUrls: {
+                isEmpty: false
+            }
+        }
+    })
 
-    console.log(group)
+    const mediaCount = await prisma.post.count({
+        where: {
+            groupId,
+            mediaUrls: {
+                isEmpty: false
+            }
+        }
+    })
+
+    
+
+    console.log(postWithMedia)
 
 
 
@@ -145,64 +165,8 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
                 <GroupHeader group={{ ...group, hasJoined }} members={formattedNames} memberCount={group.memberCount} />
 
                 {/* Navigation Tabs */}
-                <GroupTabs />
+                <GroupTabs groupId={groupId} posts={posts} group={group} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount}/>
 
-                {/* Content Area */}
-                <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5 pb-10">
-                    {/* Main Content */}
-                    <div className="flex flex-col gap-4">
-                        {/* Post Composer */}
-                        <AddPostModal groupId={groupId} />
-
-                        {/* Posts */}
-                        <InfiniteGroupPosts groupId={group.id} initialPosts={posts} />
-                    </div>
-
-                    {/* Sidebar */}
-                    <aside className="flex flex-col gap-4">
-                        {/* About Card */}
-                        <div className="bg-[#242526] rounded-lg p-4">
-                            <h3 className="text-[17px] font-semibold mb-3">About</h3>
-                            <p className="text-sm leading-relaxed text-[#b0b3b8] mb-2">
-                                {
-                                    group.description === null ?
-                                        <>
-                                            No Description!
-                                        </>
-                                        :
-                                        <>
-                                            {group.description}
-                                        </>
-                                }
-                            </p>
-
-                            <div className="flex items-center gap-2 p-3 bg-[#3a3b3c] rounded-md mt-3">
-                                <Lock size={20} />
-                                <div className="flex-1">
-                                    <div className="text-[15px] font-semibold mb-0.5">Private</div>
-                                    <div className="text-[13px] text-[#b0b3b8]">
-                                        Only members can see who's in the group
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Recent Media Card */}
-                        <div className="bg-[#242526] rounded-lg p-4">
-                            <h3 className="text-[17px] font-semibold mb-3">Recent Media</h3>
-                            <p className="text-[#b0b3b8]">2,341 photos · 487 videos</p>
-                        </div>
-
-                        {/* Activity Card */}
-                        <div className="bg-[#242526] rounded-lg p-4">
-                            <h3 className="text-[17px] font-semibold mb-3">Activity</h3>
-                            <p className="mb-2">
-                                <strong>{postCount24hrs} posts today</strong>
-                            </p>
-                            <p className="text-[13px] text-[#b0b3b8]">Last 30 days: {postCount30Days} posts</p>
-                        </div>
-                    </aside>
-                </div>
             </div>
         </div>
     );

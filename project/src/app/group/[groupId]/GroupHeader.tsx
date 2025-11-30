@@ -20,7 +20,7 @@ const GroupHeader: React.FC<Props> = ({ group, members, memberCount }) => {
 
             <div className="flex items-center gap-2 text-[#b0b3b8] text-[15px] mb-5">
                 <Lock size={16} />
-                <span>{group.privacy} · {group.memberCount} Members</span>
+                <span>{group.privacy === 'PRIVATE' ? 'Private Group' : 'Public Group'} · {group.memberCount} Members</span>
             </div>
 
             {/* Member Avatars */}

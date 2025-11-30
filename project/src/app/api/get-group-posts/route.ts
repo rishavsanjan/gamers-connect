@@ -16,83 +16,32 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        let posts;
-        console.log(filter)
-        if (filter === 'popular') {
-            posts = await prisma.post.findMany({
-                skip,
-                take: limit,
-                where: {
-                    type: category,
-                    groupId
-                },
-                include: {
+        let where: any = {};
 
-                    game: {
-                        select: {
-                            name: true,
-                            igdb_id: true
-                        }
-                    },
-                    user: {
-                        select: {
-                            name: true,
-                            id: true,
-                            username:true
-
-                        }
-                    },
-                    group: {
-                        select: { name: true, id: true }
-                    },
-                    Like: {
-                        where: { userId: session.user.id }
-                    }
-                },
-
-                orderBy: { Like: { _count: 'desc' } }
-
-            });
-        } else {
-            posts = await prisma.post.findMany({
-                skip,
-                take: limit,
-                where: {
-                    type: category,
-                    groupId
-                },
-                include: {
-
-                    game: {
-                        select: {
-                            name: true,
-                            igdb_id: true
-                        }
-                    },
-                    user: {
-                        select: {
-                            name: true,
-                            id: true,
-                            username:true
-
-                        }
-                    },
-                    group: {
-                        select: { name: true, id: true }
-                    },
-                    Like: {
-                        where: { userId: session.user.id }
-                    }
-                },
-
-                orderBy: { createdAt: 'desc' }
-
-            });
-        };
-
-        if (!posts) {
-            return;
+        if (category) {
+            where.type = category;
         }
+
+        if (groupId) {
+            where.groupId = groupId;
+        }
+
+        // ⭐ MAIN QUERY
+        const posts = await prisma.post.findMany({
+            skip,
+            take: limit,
+            where,
+            include: {
+                game: { select: { name: true, igdb_id: true } },
+                user: { select: { name: true, id: true, username: true } },
+                group: { select: { name: true, id: true } },
+                Like: { where: { userId: session.user.id } }
+            },
+            orderBy:
+                filter === "popular"
+                    ? { Like: { _count: "desc" } }
+                    : { createdAt: "desc" }
+        });
 
         const result = posts.map((post) => ({
             id: post.id,
@@ -105,9 +54,9 @@ export async function POST(req: Request) {
             createdAt: post.createdAt,
             mediaUrls: post.mediaUrls,
             group: post.group
-        }))
+        }));
 
-        return NextResponse.json({ posts: result }, { status: 200 })
+        return NextResponse.json({ posts: result }, { status: 200 });
     } catch (error) {
         console.log(error)
         return NextResponse.json('Server Problem', { status: 500 })
