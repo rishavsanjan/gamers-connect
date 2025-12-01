@@ -21,13 +21,14 @@ model User {
   username        String            @unique
   name            String?
   email           String            @unique
-  emailVerified   DateTime? // Add this field
+  emailVerified   DateTime?
   password        String?
   avatar          String?
   xp              Int               @default(0)
   provider        String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
+  bio             String?
   Account         Account[]
   Session         Session[]
   Rating          Rating[]
@@ -47,6 +48,7 @@ model User {
   ownedGroups      Group[]           @relation("GroupOwner")
   adminInGroups    Group[]           @relation("GroupAdmins")
   memberInGroups   Group[]           @relation("GroupMembers")
+  socialLinks      SocialLinks[]
 }
 
 model Achievement {
@@ -299,21 +301,44 @@ model Follow {
 model Group {
   id String @id @default(cuid())
 
-  groupOwner  User            @relation("GroupOwner", fields: [ownerId], references: [id])
+  groupOwner  User    @relation("GroupOwner", fields: [ownerId], references: [id])
   ownerId     String
-  admins      User[]          @relation("GroupAdmins")
-  members     User[]          @relation("GroupMembers")
+  admins      User[]  @relation("GroupAdmins")
+  members     User[]  @relation("GroupMembers")
   posts       Post[]
   name        String
   description String?
 
-  memberCount Int             @default(1)
-  postCount   Int             @default(0)
+  memberCount Int @default(1)
+  postCount   Int @default(0)
 
-  privacy     GroupPrivacy    @default(PUBLIC)
-  visibility  GroupVisibility @default(VISIBLE)
+  privacy    GroupPrivacy    @default(PUBLIC)
+  visibility GroupVisibility @default(VISIBLE)
 
-  createdAt   DateTime        @default(now())
+  createdAt DateTime @default(now())
+}
+
+model SocialLinks {
+  id     String     @id @default(cuid())
+  link   String
+  type   SocialType
+  userId String
+  user   User       @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, type])
+}
+
+enum SocialType {
+  TWITCH
+  DISCORD
+  STEAM
+  X
+  INSTAGRAM
+  FACEBOOK
+  YOUTUBE
 }
 
 enum GroupPrivacy {

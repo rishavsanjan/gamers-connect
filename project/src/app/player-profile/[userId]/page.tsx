@@ -4,6 +4,9 @@ import React from 'react';
 import { ProfileTabsData } from '../../types/profile';
 import PlayerProfileTabs from '@/app/player-profile/[userId]/PlayerProfile';
 import FollowCard from './FollowCard';
+import Link from 'next/link';
+import { BsDiscord, BsSteam, BsYoutube } from 'react-icons/bs';
+import { Facebook, Instagram, Twitch, Twitter } from 'lucide-react';
 
 interface Props {
     params: {
@@ -25,7 +28,11 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
         select: {
             name: true,
             username: true,
-            id: true
+            id: true,
+            avatar: true,
+            socialLinks: true,
+            xp: true,
+            bio: true
         }
     });
 
@@ -206,6 +213,14 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
         }
     })
 
+    const socialLinks = user?.socialLinks.filter((item) => {
+        if (item.link) {
+            return {
+                ...item
+            }
+        }
+    })
+
 
     //@ts-ignore
     const profileData: ProfileTabsData = { ratings, mygames, playlist, collection, stats: allMyGamesForStats, currentlyPlaying };
@@ -214,19 +229,134 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
 
 
     return (
-        <div>
-            <div className='flex flex-row items-center gap-16 justify-center'>
-                <div className='flex items-center flex-row '>
-                    <div className='bg-purple-500 p-4 m-4 w-18 h-18 rounded-full'>
-                        <h1 className='text-4xl text-center'>{ user?.username[0].toUpperCase() ?? 'A'}</h1>
-                    </div>
-                    <h1 className='text-5xl'>{user.name ?? user.username ?? 'Anynomus'}</h1>
-                </div>
-                <div>
-                    <FollowCard isFollowing={isFollowing} userId={userId}/>
-                </div>
+        <div className=''>
+            <div className='flex flex-col items-center'>
+                <div className='flex flex-row items-center gap-16 justify-center mt-8 '>
+                    <div className='flex items-center flex-row gap-4'>
+                        <div className={`${user?.avatar ? '' : 'bg-purple-500 p-4 m-4 w-18 h-18 rounded-full'}  `}>
+                            {
+                                user?.avatar ?
+                                    <>
+                                        <img src={user.avatar} alt="" className='rounded-full w-24 h-24' />
+                                    </>
+                                    :
+                                    <>
+                                        <h1 className='text-4xl text-center'>{session?.user.username[0].toUpperCase()}</h1>
+                                    </>
+                            }
 
+                        </div>
+                        <h1 className='text-5xl'>{user.name ?? user.username ?? 'Anynomus'}</h1>
+                    </div>
+                    <div>
+                        <FollowCard isFollowing={isFollowing} userId={userId} />
+                    </div>
+
+                </div>
+                <div className=' flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-full px-6 py-2.5 backdrop-blur-sm w-fit justify-center self-center'>
+                    <div className='flex items-center gap-2  justify-center'>
+                        <svg
+                            className='w-5 h-5 text-yellow-400'
+                            fill='currentColor'
+                            viewBox='0 0 20 20'
+                        >
+                            <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z' />
+                        </svg>
+                        <span className='text-xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent'>
+                            {user?.xp?.toLocaleString() || '0'}
+                        </span>
+                        <span className='text-sm text-gray-400 font-medium'>XP</span>
+                    </div>
+                </div>
             </div>
+
+            {
+                user?.bio !== null &&
+                <>
+
+                    <div className='w-full p-4'>
+                        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Bio</h2>
+                        <div className="bg-white dark:bg-gray-800/50 p-6 rounded-lg shadow-sm">
+                            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{user?.bio}</p>
+                        </div>
+                    </div>
+                </>
+            }
+
+            {
+                socialLinks.length > 0 &&
+                <>
+                    <div className='w-full p-4'>
+                        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Social Links</h2>
+                        <div className="flex flex-row gap-4">
+                            {
+                                socialLinks?.map((item) => (
+                                    <>
+                                        {
+                                            item.type === 'DISCORD' &&
+                                            <Link href={item.link} target='_blank'>
+                                                <BsDiscord size={30} className=" text-[#9a90cb]" />
+                                            </Link>
+
+                                        }
+
+                                        {
+                                            item.type === 'YOUTUBE' &&
+                                            <Link href={item.link} target='_blank'>
+                                                <BsYoutube size={30} className=" text-[#9a90cb]" />
+                                            </Link>
+
+                                        }
+                                        {
+                                            item.type === 'FACEBOOK' &&
+                                            <Link href={item.link} target='_blank'>
+                                                <Facebook size={30} className=" text-[#9a90cb]" />
+                                            </Link>
+
+                                        }
+
+                                        {
+                                            item.type === 'INSTAGRAM' &&
+                                            <Link href={item.link} target='_blank'>
+                                                <Instagram size={30} className=" text-[#9a90cb]" />
+                                            </Link>
+
+                                        }
+                                        {
+                                            item.type === 'TWITCH' &&
+                                            <Link href={item.link} target='_blank'>
+                                                <Twitch size={30} className=" text-[#9a90cb]" />
+                                            </Link>
+
+                                        }
+
+                                        {
+                                            item.type === 'X' &&
+                                            <Link href={item.link} target='_blank'>
+                                                <Twitter size={30} className=" text-[#9a90cb]" />
+                                            </Link>
+
+                                        }
+
+                                        {
+                                            item.type === 'STEAM' &&
+                                            <Link href={item.link} target='_blank'>
+                                                <BsSteam size={30} className=" text-[#9a90cb]" />
+                                            </Link>
+
+                                        }
+
+
+                                    </>
+
+
+                                ))
+                            }
+                        </div>
+                    </div>
+                </>
+            }
+
 
             <PlayerProfileTabs userId={userId} {...profileData} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} collectionCount={collectionCount} ratingsCount={ratingsCount} follower={followers} following={following} />
         </div>

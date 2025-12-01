@@ -22,12 +22,19 @@ const Posts: React.FC<Props> = ({ posts }) => {
                         {/* Post Header */}
                         <div className="mb-4 flex items-start justify-between">
                             <div className="flex items-center space-x-3">
-                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-2xl">
-                                    <Link href={`/player-profile/${post.user.id}`} key={post.user.id}>
-                                        <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
-                                    </Link>
+                                <Link href={`/player-profile/${post.user.id}`} key={post.user.id}>
+                                    {
+                                        post.user.avatar ?
+                                            <div className=' h-12 w-12 rounded-full'>
+                                                <img src={post.user.avatar} alt="" className='rounded-full' />
+                                            </div>
+                                            :
+                                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-2xl">
+                                                <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
+                                            </div>
 
-                                </div>
+                                    }
+                                </Link>
                                 <div>
                                     <p className="font-bold">{post.user.name || post.user.username}</p>
                                     <p className="text-sm text-gray-400">

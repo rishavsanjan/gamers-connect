@@ -39,7 +39,7 @@ export async function POST(req: Request) {
                 where: whereClause,
                 include: {
                     game: { select: { name: true, igdb_id: true } },
-                    user: { select: { name: true, id: true, username: true } },
+                    user: { select: { name: true, id: true, username: true , avatar:true} },
                     group: { select: { name: true, id: true } },
                     Like: { where: { userId: session.user.id } }
                 },
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
                 where: whereClause,
                 include: {
                     game: { select: { name: true, igdb_id: true } },
-                    user: { select: { name: true, id: true, username: true } },
+                    user: { select: { name: true, id: true, username: true , avatar:true} },
                     group: { select: { name: true, id: true } },
                     Like: { where: { userId: session.user.id } }
                 },

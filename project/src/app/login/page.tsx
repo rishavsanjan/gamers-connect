@@ -7,6 +7,7 @@ import { getUserInformation } from '@/components/UserInformation';
 import { signIn } from 'next-auth/react';
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { ClipLoader } from 'react-spinners';
 
 
 const Login = () => {
@@ -28,6 +29,8 @@ const Login = () => {
         password: ''
     })
 
+    const [loading, setLoading] = useState(false)
+
     useEffect(() => {
         const getUserInfo = async () => {
             const info = await getUserInformation();
@@ -40,34 +43,38 @@ const Login = () => {
 
 
     const handleSignUpSubmit = async () => {
-        console.log('k')
         if (signUpForm.password.length < 8) {
             setErros(prev => ({ ...prev, password: 'Password must be at least 8 characters long' }));
             return;
         }
-
         if (signUpForm.password !== signUpForm.confirmpassword) {
             setErros(prev => ({ ...prev, password: "Passwords don't match" }));
             return;
         }
+        setLoading(true)
+        try {
+            const response = await axios({
+                url: "/api/auth/signup",
+                data: {
+                    email: signUpForm.email,
+                    username: signUpForm.username,
+                    password: signUpForm.password
+                },
+                method: 'post'
+            })
 
-        const response = await axios({
-            url: "/api/auth/signup",
-            data: {
-                email: signUpForm.email,
-                username: signUpForm.username,
-                password: signUpForm.password
-            },
-            method: 'post'
-        })
 
+            console.log(response.data)
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
+        }
 
-        console.log(response.data)
     }
 
     const handleLoginSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('l')
         if (loginForm.password.length < 8) {
             setErros(prev => ({
                 ...prev,
@@ -76,17 +83,29 @@ const Login = () => {
             return;
         }
 
-        const res = await signIn("credentials", {
-            redirect: false,
-            email: loginForm.email,
-            password: loginForm.password,
-        });
+        setLoading(true)
 
-        if (res?.error) {
-            console.error(res.error);
-        } else {
-            router.push("/"); // success
+        try {
+            const res = await signIn("credentials", {
+                redirect: false,
+                email: loginForm.email,
+                password: loginForm.password,
+            });
+
+            if (res?.error) {
+                console.error(res.error);
+            } else {
+                router.push("/");
+            }
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setLoading(false)
         }
+
+
+
+
     };
 
 
@@ -138,9 +157,9 @@ const Login = () => {
                                     <input value={loginForm.password} onChange={(e) => { setLoginForm(prev => ({ ...prev, password: e.target.value })) }} placeholder='Enter password' className='bg-black/30 w-full p-3 rounded-lg my-2 placeholder:text-gray-500/70' type="password" />
                                 </div>
                             </>
-                            
+
                             :
-                                                
+
                             <>
                                 <div>
                                     <p>Username</p>
@@ -170,23 +189,33 @@ const Login = () => {
                 </div>
                 <div className='self-center'>
                     <button
+                        disabled={loading}
                         onClick={(e) => {
                             activeTab === 'signup' ? handleSignUpSubmit() : handleLoginSubmit(e)
                         }}
-                        className='bg-gradient-to-r from-purple-700 to-pink-400 p-2 px-8 rounded-lg cursor-pointer'>
-                        {activeTab === 'login' ? 'Login' : 'Sign Up'}</button>
+                        className='bg-gradient-to-r items-center from-purple-700 to-pink-400 p-2 px-8 rounded-lg cursor-pointer disabled:cursor-not-allowed flex'>
+                        {
+                            loading ?
+                                <ClipLoader color='white' size={25} />
+                                :
+                                <>
+                                    {activeTab === 'login' ? 'Login' : 'Sign Up'}
+                                </>
+                        }
+
+                    </button>
                 </div>
                 <p className='text-center text-gray-300/50'>Or</p>
                 <div className='self-center'>
                     <button onClick={() => { login() }} className='flex flex-row items-center gap-4 bg-black p-2 rounded-lg cursor-pointer'>
-                        <FaGithub size={30}/>
+                        <FaGithub size={30} />
                         <p>Continue with Github</p>
                     </button>
                 </div>
 
                 <div className='self-center'>
                     <button onClick={() => { loginWithGoogle() }} className='flex flex-row items-center gap-4 bg-white p-2 rounded-lg cursor-pointer'>
-                        <FcGoogle size={30}/>
+                        <FcGoogle size={30} />
                         <p className='text-black'>Continue with Google</p>
                     </button>
                 </div>

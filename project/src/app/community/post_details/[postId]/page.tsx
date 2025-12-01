@@ -9,6 +9,7 @@ import { auth } from '@/auth';
 import LikeButton from './LikeButton';
 import PostDescription from '@/components/community/PostDescription';
 import PostImages from '@/components/community/PostImages';
+import Link from 'next/link';
 
 interface Props {
     params: {
@@ -29,8 +30,9 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                 select: {
                     name: true,
                     id: true,
-                    username:true,
-                    xp:true
+                    username: true,
+                    xp: true,
+                    avatar: true
 
                 }
             },
@@ -91,7 +93,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         take: 2,
         where: { postId, parentId: null },
         include: {
-            user: { select: { id: true, name: true , username:true} },
+            user: { select: { id: true, name: true, username: true, avatar:true } },
             _count: { select: { replies: true } },
             CommentReaction: {
                 where: { userId: session?.user.id }
@@ -148,11 +150,21 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                             {/* Post Header */}
                             <div className="mb-6 flex items-start justify-between">
                                 <div className="flex items-center space-x-4">
-                                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-3xl">
-                                        <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
-                                    </div>
+                                    <Link href={`/player-profile/${post.user.id}`} key={post.user.id}>
+                                        {
+                                            post.user.avatar ?
+                                                <div className=' h-12 w-12 rounded-full'>
+                                                    <img src={post.user.avatar} alt="" className='rounded-full' />
+                                                </div>
+                                                :
+                                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-2xl">
+                                                    <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
+                                                </div>
+
+                                        }
+                                    </Link>
                                     <div>
-                                        <p className="text-xl font-bold">{post.user.name}</p>
+                                        <p className="text-xl font-bold">{post?.user?.username || post.user.name}</p>
                                         <div className="flex items-center space-x-3 text-sm text-gray-400">
                                             {
                                                 post.game &&
@@ -222,7 +234,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                     {/* Right Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-4">
-                        <AuthorCard author={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp}/>
+                        <AuthorCard name={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp} profilePicture={post?.user?.avatar} username={post.user.username} userId={session?.user.id}/>
                         {/* 
                        //related posts
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">

@@ -31,6 +31,7 @@ const Navbar = () => {
     const [loading, setLoading] = useState(false);
     const [debouncedQuery, setDebouncedQuery] = useState(query);
     const searcBarDropdownRef = useRef<HTMLDivElement>(null);
+    
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (searcBarDropdownRef.current && !searcBarDropdownRef.current.contains(e.target as Node)) {

@@ -22,7 +22,7 @@ export async function POST(req: Request) {
             skip,
             where: { postId, parentId: null },
             include: {
-                user: { select: { id: true, name: true, username: true } },
+                user: { select: { id: true, name: true, username: true, avatar:true } },
                 _count: { select: { replies: true } },
                 CommentReaction: {
                     where: { userId: session?.user.id }

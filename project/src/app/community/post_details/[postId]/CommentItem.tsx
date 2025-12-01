@@ -7,6 +7,7 @@ import { getTimeAgoFormatted } from '@/app/utils/date'
 import { Heart, Send } from 'lucide-react'
 import { BsHeartFill } from 'react-icons/bs'
 import { ClipLoader } from 'react-spinners'
+import Link from 'next/link'
 
 interface CommentItemProps {
     comment: Comment
@@ -41,12 +42,12 @@ export default function CommentItem({ comment, postId, level = 0, onReply }: Com
     const handleReply = async () => {
         setReplyUploading(true);
         await onReply(comment.id, replyText);
-        
+
         const res = await axios.post('/api/private/getreplies', { parentId: comment.id })
         setReplies(res.data.replies)
         setReplyCount(prev => prev + 1)
         setShowReplies(true)
-        
+
         setReplyText('');
         setShowReplyBox(false);
         setReplyUploading(false);
@@ -56,9 +57,19 @@ export default function CommentItem({ comment, postId, level = 0, onReply }: Com
         <div style={{ marginLeft: level * 24 }}>
             <div className="rounded-xl border border-white/10 bg-white/5 p-4 mt-3">
                 <div className='flex flex-row items-center space-x-2'>
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-3xl">
-                        <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
-                    </div>
+                    <Link href={`/player-profile/${comment.user.id}`} key={comment.user.id}>
+                        {
+                            comment.user.avatar ?
+                                <div className=' h-12 w-12 rounded-full'>
+                                    <img src={comment.user.avatar} alt="" className='rounded-full' />
+                                </div>
+                                :
+                                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-2xl">
+                                    <img className='w-8 h-8' src="https://img.icons8.com/?size=100&id=7rcs0z3sdioE&format=png&color=000000" alt="" />
+                                </div>
+
+                        }
+                    </Link>
                     <div>
                         <p className="font-semibold">{comment.user.name ?? comment.user.username ?? 'Anonymous'}</p>
                         <p className="text-xs text-gray-400 mb-2">{getTimeAgoFormatted(comment.createdAt)}</p>

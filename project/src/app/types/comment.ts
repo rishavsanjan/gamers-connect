@@ -7,7 +7,8 @@ export interface Comment {
     user: {
         id: string,
         name: string | null
-        username: string
+        username: string,
+        avatar:string | null
     }
     hasLiked: boolean
     createdAt: Date

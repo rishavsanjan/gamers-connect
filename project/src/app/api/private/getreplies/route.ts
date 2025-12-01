@@ -1,4 +1,3 @@
-// app/api/private/getreplies/route.ts
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
@@ -15,7 +14,7 @@ export async function POST(req: Request) {
     const replies = await prisma.comment.findMany({
       where: { parentId },
       include: {
-        user: { select: { id: true, name: true, username:true } },
+        user: { select: { id: true, name: true, username:true, avatar:true } },
         _count: { select: { replies: true } },
       },
       orderBy: { createdAt: 'asc' },

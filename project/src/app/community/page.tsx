@@ -26,7 +26,8 @@ export default async function GamelyCommunity() {
                 select: {
                     name: true,
                     id: true,
-                    username: true
+                    username: true,
+                    avatar:true
                 }
             },
             group: {

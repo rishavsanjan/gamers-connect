@@ -13,7 +13,8 @@ export interface Post {
     user: {
         id: string,
         name: string | null,
-        username:string
+        username:string,
+        avatar:string | null
     }
     game: {
         name: string | null

@@ -60,6 +60,7 @@ export default function CTA() {
     }, [loading, hasMore])
 
     useEffect(() => {
+        if(page === 1) return;
         if (genreCategory) {
             fetchGames(page, category, Number(genreCategory));
         } else if (platformId) {
