@@ -4,10 +4,11 @@ import AddPostModal from '@/components/community/AddPostModal'
 import React, { useState } from 'react'
 import InfiniteGroupPosts from './InfiniteGroupPosts'
 import { Lock } from 'lucide-react'
-import { Group } from '@prisma/client'
+import { Group, User } from '@prisma/client'
 import InfiniteGroupMedia from './InfiniteGroupMedia'
 import { Post as PostPrisma } from '@prisma/client'
 import GroupAsideBar from './GroupAsideBar'
+import InfiniteGroupMembers from './InfiniteGroupMembers'
 
 interface Props {
     groupId: string
@@ -17,9 +18,15 @@ interface Props {
     postCount30Days: number
     postsWithMedia: PostPrisma[]
     mediaCount: number
+    members : Array<{
+        name:string | null,
+        username:string,
+        id:string,
+        avatar:string | null
+    }>
 }
 
-const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, postCount30Days, postsWithMedia, mediaCount }) => {
+const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members }) => {
     const [activeTab, setActiveTab] = useState('Posts');
 
     const tabs = ['Posts', 'Featured', 'Members', 'Media'];
@@ -64,6 +71,12 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, pos
                     {
                         activeTab === 'Media' &&
                         <InfiniteGroupMedia posts={postsWithMedia} groupId={groupId} />
+                    }
+                    {
+                        activeTab === 'Members' &&
+                        <>
+                        <InfiniteGroupMembers members={members} groupId={groupId} />
+                        </>
                     }
 
                 </div>

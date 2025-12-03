@@ -26,14 +26,13 @@ export async function POST(req: Request) {
             where.groupId = groupId;
         }
 
-        // ⭐ MAIN QUERY
         const posts = await prisma.post.findMany({
             skip,
             take: limit,
             where,
             include: {
                 game: { select: { name: true, igdb_id: true } },
-                user: { select: { name: true, id: true, username: true } },
+                user: { select: { name: true, id: true, username: true, avatar:true } },
                 group: { select: { name: true, id: true } },
                 Like: { where: { userId: session.user.id } }
             },

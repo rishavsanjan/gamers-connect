@@ -50,7 +50,8 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
                 select: {
                     name: true,
                     id: true,
-                    username: true
+                    username: true,
+                    avatar: true
                 }
             },
             group: {
@@ -95,7 +96,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         },
         include: {
             members: {
-                select: { username: true  }
+                select: { username: true, id: true, name: true, avatar: true }
             }
         }
     })
@@ -124,7 +125,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
     });
 
     const postWithMedia = await prisma.post.findMany({
-        take:2,
+        take: 2,
         where: {
             groupId,
             mediaUrls: {
@@ -142,9 +143,12 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         }
     })
 
-    
+    const formattedMembers = members.flatMap(item => item.members);
 
-    console.log(postWithMedia)
+
+
+
+    console.log(formattedMembers)
 
 
 
@@ -165,7 +169,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
                 <GroupHeader group={{ ...group, hasJoined }} members={formattedNames} memberCount={group.memberCount} />
 
                 {/* Navigation Tabs */}
-                <GroupTabs groupId={groupId} posts={posts} group={group} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount}/>
+                <GroupTabs groupId={groupId} posts={posts} group={group} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount} members={formattedMembers} />
 
             </div>
         </div>
