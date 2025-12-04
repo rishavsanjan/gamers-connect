@@ -4,10 +4,14 @@ import { auth } from '@/auth'
 import { ArrowLeft, Filter } from 'lucide-react'
 import InfiniteHashTagFeed from './InfiniteHashTagFeed'
 
-export default async function HashtagPosts({ params }: { params: Promise<{ tagId: string }> }) {
+interface PageProps {
+    params: Promise<{ tagId: string }>
+}
+
+export default async function HashtagPosts({ params }: PageProps) {
     const session = await auth();
 
-    const { tagId: tag } =await params;
+    const { tagId: tag } = await params;
     console.log(tag)
     const hashtagPosts = await prisma.hashtag.findUnique({
         where: { name: tag },
