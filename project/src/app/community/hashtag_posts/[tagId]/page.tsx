@@ -24,7 +24,9 @@ const HashtagPosts: React.FC<Props> = async ({ params }) => {
                     user: {
                         select: {
                             name: true,
-                            id: true
+                            id: true,
+                            username:true,
+                            avatar:true
                         }
                     },
                     game: {

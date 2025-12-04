@@ -18,15 +18,18 @@ interface Props {
     postCount30Days: number
     postsWithMedia: PostPrisma[]
     mediaCount: number
-    members : Array<{
-        name:string | null,
-        username:string,
-        id:string,
-        avatar:string | null
+    members: Array<{
+        name: string | null,
+        username: string,
+        id: string,
+        avatar: string | null,
+        role?: 'admin' | 'member'
     }>
+    currentUserId?:string,
+    currentUserRole?: string
 }
 
-const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members }) => {
+const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members , currentUserId, currentUserRole}) => {
     const [activeTab, setActiveTab] = useState('Posts');
 
     const tabs = ['Posts', 'Featured', 'Members', 'Media'];
@@ -75,7 +78,7 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, pos
                     {
                         activeTab === 'Members' &&
                         <>
-                        <InfiniteGroupMembers members={members} groupId={groupId} />
+                            <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole}/>
                         </>
                     }
 

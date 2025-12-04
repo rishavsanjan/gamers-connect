@@ -97,8 +97,13 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         include: {
             members: {
                 select: { username: true, id: true, name: true, avatar: true }
-            }
-        }
+            },
+            admins: {
+                select: { username: true, id: true, name: true, avatar: true }
+            },
+
+        },
+
     })
 
 
@@ -143,15 +148,52 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         }
     })
 
-    const formattedMembers = members.flatMap(item => item.members);
+    const admins = members.flatMap(item =>
+        item.admins.map(admin => ({
+            ...admin,
+            role: "admin"
+        }))
+    );
 
+    const allMembers = members.flatMap(item =>
+        item.members.map(member => ({
+            ...member,
+            role: "member"
+        }))
+    );
 
+    const roleMap = new Map();
 
+    for (const m of allMembers) {
+        roleMap.set(m.id, m);
+    }
 
-    console.log(formattedMembers)
+    for (const a of admins) {
+        roleMap.set(a.id, a);
+    }
 
+    const finalUsers = Array.from(roleMap.values());
 
+    const currentUserId = session?.user.id;
 
+    let currentUserRole;
+
+    if (group.ownerId === currentUserId) {
+        currentUserRole = 'owner'
+    } else if (await prisma.group.findFirst({
+        where: {
+            id: groupId,
+            admins: {
+                some: { id: currentUserId }
+            }
+        }
+    })) {
+        currentUserRole = 'admin'
+    } else {
+        currentUserRole = 'member'
+    }
+
+    
 
     return (
         <div className="min-h-screen bg-[#18191a] text-[#e4e6eb]">
@@ -169,7 +211,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
                 <GroupHeader group={{ ...group, hasJoined }} members={formattedNames} memberCount={group.memberCount} />
 
                 {/* Navigation Tabs */}
-                <GroupTabs groupId={groupId} posts={posts} group={group} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount} members={formattedMembers} />
+                <GroupTabs groupId={groupId} posts={posts} group={group} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount} members={finalUsers} currentUserId={currentUserId} currentUserRole={currentUserRole} />
 
             </div>
         </div>
