@@ -9,9 +9,7 @@ import { BsDiscord, BsSteam, BsYoutube } from 'react-icons/bs';
 import { Facebook, Instagram, Twitch, Twitter } from 'lucide-react';
 
 interface Props {
-    params: {
-        userId: string
-    }
+    params: Promise<{ userId: string }>
 }
 
 const PlayerProfile: React.FC<Props> = async ({ params }) => {
