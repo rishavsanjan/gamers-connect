@@ -7,7 +7,7 @@ import InfiniteHashTagFeed from './InfiniteHashTagFeed'
 export default async function HashtagPosts({ params }: { params: { tagId: string } }) {
     const session = await auth();
 
-    const { tagId: tag } = await params;
+    const { tagId: tag } =  params;
     console.log(tag)
     const hashtagPosts = await prisma.hashtag.findUnique({
         where: { name: tag },
