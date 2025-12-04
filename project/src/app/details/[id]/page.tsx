@@ -7,12 +7,10 @@ import GamesList from '@/components/GamesList';
 import { getStreamsByGameName } from '@/lib/streams';
 import GameStreams from '@/components/GameStreams';
 import Link from 'next/link';
+
 interface GameDetailProps {
   params: Promise<{id:string}>
-
 }
-
-
 
 const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
     
@@ -37,66 +35,68 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
 
   console.log(game)
 
-
-
   return (
     <div className='flex flex-col'>
-      <div className='relative w-full flex flex-col justify-center items-center gap-6 z-0'>
+      {/* Hero Section with Background Image */}
+      <div className='relative w-full flex flex-col justify-center items-center gap-4 sm:gap-6 z-0'>
         <img
           src={`${imgUrl}`}
           alt="Hero Background"
-          className="absolute inset-0 w-full h-full object-cover z-0 "
+          className="absolute inset-0 w-full h-full object-cover z-0"
         />
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-black/60 sm:bg-black/50 backdrop-blur-sm"></div>
 
-        <span className='text-xs font-extralight text-gray-300 z-100 self-start ml-8 mt-4'>
+        {/* Breadcrumb Navigation */}
+        <nav className='text-xs sm:text-sm font-extralight text-gray-300 z-100 self-start ml-4 sm:ml-6 md:ml-8 mt-3 sm:mt-4 px-2 sm:px-0'>
           <Link href={'/'}>
-            <span  className='hover:cursor-pointer hover:text-white'>HOME</span>
+            <span className='hover:cursor-pointer hover:text-white transition-colors'>HOME</span>
           </Link>
-          / <span className='hover:cursor-pointer hover:text-white'>GAME</span> / {game.name}</span>
-        <div className='flex md:flex-row flex-col justify-between '>
+          <span className='mx-1'>/</span>
+          <span className='hover:cursor-pointer hover:text-white transition-colors'>GAME</span>
+          <span className='mx-1'>/</span>
+          <span className='text-white truncate inline-block max-w-[150px] sm:max-w-none align-bottom'>
+            {game.name}
+          </span>
+        </nav>
+
+        {/* Main Content: Left and Right Sides */}
+        <div className='flex flex-col md:flex-row justify-between w-full'>
           <LeftSide game={game} />
           <RightSide game={game} />
-
         </div>
-
-
       </div>
-      <div className="p-4 overflow-visible pt-8">
 
-        {
-          dlcs?.length > 0 &&
-          <>
-            <h1 className="text-3xl font-bold text-white">DLC's</h1>
-            <GamesList gamesList={dlcs} />
-          </>
+      {/* DLC Section */}
+      {dlcs?.length > 0 && (
+        <section className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 overflow-visible">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">DLC's</h2>
+          <GamesList gamesList={dlcs} />
+        </section>
+      )}
 
-        }
+      {/* Franchise Games Section */}
+      {gamesInFranchise?.length > 0 && (
+        <section className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 overflow-visible">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
+            More Games in the Franchise
+          </h2>
+          <GamesList gamesList={gamesInFranchise} />
+        </section>
+      )}
 
-      </div>
-      <div className="p-4 overflow-visible pt-8">
+      {/* Similar Games Section */}
+      {game.similar_games?.length > 0 && (
+        <section className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 overflow-visible">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Similar Games</h2>
+          <GamesList gamesList={game.similar_games} />
+        </section>
+      )}
 
-        {
-          gamesInFranchise?.length > 0 &&
-          <>
-            <h1 className="text-3xl font-bold text-white">More Games in the franchise</h1>
-            <GamesList gamesList={gamesInFranchise} />
-          </>
-
-        }
-
-      </div>
-      <div className="p-4 overflow-visible pt-8">
-        <h1 className="text-3xl font-bold text-white">Similar Games</h1>
-        <GamesList gamesList={game.similar_games} />
-      </div>
-      <div>
+      {/* Game Streams Section */}
+      <section className="px-4 sm:px-6 md:px-8 py-6 sm:py-8">
         <GameStreams gameName={game.name} />
-      </div>
+      </section>
     </div>
-
-
-
   )
 }
 

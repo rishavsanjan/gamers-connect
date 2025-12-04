@@ -9,7 +9,8 @@ interface User {
     id: string,
     name: string,
     username: string,
-    profilePicture: string
+    profilePicture: string,
+    avatar: string
 }
 
 interface Post {
@@ -106,6 +107,8 @@ const SearchCommunity = () => {
         return `${diffDays} days ago`;
     }
 
+    console.log(postResult)
+
     const renderResults = () => {
         if (loading) {
             return (
@@ -139,13 +142,23 @@ const SearchCommunity = () => {
                                     <Link href={`/player-profile/${person.id}`} key={person.id}>
                                         <div
                                             key={person.id}
-                                            className="px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3"
+                                            className={` px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3 rounded-full`}
                                         >
-                                            <img
-                                                src={person.profilePicture}
-                                                alt={person.name}
-                                                className="w-10 h-10 rounded-full object-cover"
-                                            />
+                                            {
+                                                person.avatar ?
+                                                    <>
+                                                        <img
+                                                            src={person.avatar}
+                                                            alt={person.name}
+                                                            className="w-10 h-10 rounded-full object-cover"
+                                                        />
+                                                    </>
+                                                    :
+                                                    <h1 className='text-2xl text-center  rounded-full'>{person?.username[0].toUpperCase()}</h1>
+
+
+                                            }
+
                                             <div className="flex-1">
                                                 <div className="font-semibold text-white">{person.name}</div>
                                                 <div className="text-sm text-gray-400">@{person.username}</div>
@@ -220,11 +233,20 @@ const SearchCommunity = () => {
                             className="px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3"
 
                         >
-                            <img
-                                src={person.profilePicture}
-                                alt={person.name}
-                                className="w-10 h-10 rounded-full object-cover"
-                            />
+                            {
+                                person.avatar ?
+                                    <>
+                                        <img
+                                            src={person.avatar}
+                                            alt={person.name}
+                                            className="w-10 h-10 rounded-full object-cover"
+                                        />
+                                    </>
+                                    :
+                                    <h1 className='text-2xl text-center  rounded-full'>{person?.username[0].toUpperCase()}</h1>
+
+
+                            }
                             <div className="flex-1">
                                 <div className="font-semibold text-white">{person.name}</div>
                                 <div className="text-sm text-gray-400">@{person.username}</div>
@@ -252,7 +274,7 @@ const SearchCommunity = () => {
                     value={query}
                     onChange={(e) => { setQuery(e.target.value) }}
                     onFocus={() => query.trim() && setIsOpen(true)}
-                    className='w-full flex items-center rounded-lg bg-white/10 pl-10 pr-10 py-2 transition hover:bg-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white placeholder:text-gray-400'
+                    className='w-full flex items-center rounded-lg bg-white/10 pl-10 pr-10 py-2 transition hover:bg-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white placeholder:text-gray-400 placeholder:sm:text-sm'
                     placeholder='Search for posts, people...'
                     type="text"
                 />

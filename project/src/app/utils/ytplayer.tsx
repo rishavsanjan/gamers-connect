@@ -7,7 +7,7 @@ interface YouTubePlayerProps {
 const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId }) => {
     console.log(videoId)
     return (
-        <div className="relative md:w-full h-0 w-[450px]" style={{ paddingBottom: '56.25%' }}>
+        <div className="relative md:w-full h-0 sm:w-[450px]" style={{ paddingBottom: '56.25%' }}>
             <iframe
                 className="absolute top-0 left-0 w-full h-full"
                 src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3`} title="YouTube video player"

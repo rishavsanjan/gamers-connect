@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useRef, useState } from 'react'
-import SideBar from './SideBar'
+import { SideBar } from './SideBar'
 import GamesList from './GamesList'
 import axios from 'axios'
 import { ClipLoader, FadeLoader } from 'react-spinners'
@@ -60,7 +60,7 @@ export default function CTA() {
     }, [loading, hasMore])
 
     useEffect(() => {
-        if(page === 1) return;
+        if (page === 1) return;
         if (genreCategory) {
             fetchGames(page, category, Number(genreCategory));
         } else if (platformId) {
@@ -113,8 +113,8 @@ export default function CTA() {
     console.log(games)
 
     return (
-        <div className="flex flex-row ">
-            <aside className="w-[15%] h-screen sticky top-0 overflow-y-auto hide-scrollbar">
+        <div className="flex sm:flex-row flex-col">
+            <aside className="w-full sm:w-[20%] lg:w-[15%] sm:h-screen sm:sticky sm:top-0 sm:overflow-y-auto hide-scrollbar border-b sm:border-b-0 sm:border-r border-gray-700">
                 <SideBar
                     selectedCategory={category}
                     onCategoryChange={handleCategoryChange}
@@ -126,8 +126,8 @@ export default function CTA() {
 
             <main
                 ref={contentRef}
-                className="p-4 w-[85%] flex flex-col h-screen overflow-y-auto hide-scrollbar"
-            >                <h1 className="text-5xl font-bold px-4 py-6 capitalize">
+                className="p-2 sm:p-4 w-full sm:w-[80%] lg:w-[85%] flex flex-col sm:h-screen sm:overflow-y-auto hide-scrollbar"     >
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2 sm:px-4 py-4 sm:py-6 capitalize">
                     {category === 'top250' && 'Top 250'}
                     {category === 'thisweek' && 'This Week'}
                     {category === 'last30days' && 'Last 30 Days'}
@@ -147,7 +147,7 @@ export default function CTA() {
                     {platformId === 508 && 'Nitendo'}
                     {platformId === 34 && 'Mobile'}
                 </h1>
-                <span className='px-4'>
+                <span className='px-2 sm:px-4 text-sm sm:text-base text-gray-300 mb-4'>
                     {genreCategory === 5 && 'Shooter games focus on ranged combat, where players use firearms or projectile weapons to defeat enemies. They test precision, reflexes, and tactical movement. Subgenres include first-person shooters (FPS) like Call of Duty and third-person shooters like Fortnite or Gears of War.'}
                     {genreCategory === 12 && 'RPGs let players assume the role of a character in a richly detailed world. These games emphasize storytelling, exploration, and character progression, often featuring quests, dialogue choices, and leveling systems. Examples include The Witcher 3, Final Fantasy, and Elden Ring.'}
                     {genreCategory === 31 && 'Adventure games focus on story, exploration, and puzzle-solving rather than fast-paced action. Players uncover narratives, solve mysteries, and interact with characters and environments. Classics include Life is Strange, The Legend of Zelda, and Monkey Island.'}

@@ -27,7 +27,7 @@ export default async function GamelyCommunity() {
                     name: true,
                     id: true,
                     username: true,
-                    avatar:true
+                    avatar: true
                 }
             },
             group: {
@@ -125,11 +125,11 @@ export default async function GamelyCommunity() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white z-0">
             {/* Header */}
-            <header className="sticky top-0 z-50 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+            <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md ">
+                <div className="mx-auto flex max-w-7xl items-center justify-between sm:px-6 px-1 py-4 space-x-4 ">
                     <div className="flex items-center space-x-8">
-                        <h1 className="flex items-center space-x-2 text-2xl font-bold">
-                            <Users className="h-6 w-6 text-purple-400" />
+                        <h1 className="flex items-center space-x-2 sm:text-2xl text-lg font-bold">
+                            <Users className="sm:h-6 h-5 sm:w-6 h-5 text-purple-400" />
                             <span>Community</span>
                         </h1>
 
@@ -190,6 +190,31 @@ export default async function GamelyCommunity() {
                         </div>
                     </div>
 
+                    {/* Right Sidebar */}
+                    <div className="col-span-12 space-y-6 lg:col-span-3  sm:hidden">
+                        {/* Quick Stats */}
+                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
+                            <h3 className="mb-4 text-lg font-bold">Your Stats</h3>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400">Posts</span>
+                                    <span className="font-bold text-purple-400">{myStats[0]._count.Post}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400">Followers</span>
+                                    <span className="font-bold text-purple-400">{myStats[0]._count.followers}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400">XP</span>
+                                    <span className="font-bold text-purple-400">{myStats[0].xp}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Suggested Groups */}
+                        <SuggestedGroups groups={formattedGroups} />
+                    </div>
+
                     {/* Main Feed */}
                     <div className="col-span-12 space-y-6 lg:col-span-6">
 
@@ -210,7 +235,7 @@ export default async function GamelyCommunity() {
                     </div>
 
                     {/* Right Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-3">
+                    <div className="col-span-12 space-y-6 lg:col-span-3 sm:flex flex-col hidden">
                         {/* Quick Stats */}
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
                             <h3 className="mb-4 text-lg font-bold">Your Stats</h3>

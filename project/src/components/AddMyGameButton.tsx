@@ -188,7 +188,8 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                     </button>
 
                 </div>
-                <div className='self-start w-96'>
+                
+                <div className='self-start sm:w-96 w-80'>
                     {
                         status.rated ?
                             <div className="items-center border border-gray-200/50 self-center p-2 px-6 rounded-xl flex flex-col  w-fit bg-gray-200/20">

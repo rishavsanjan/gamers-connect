@@ -18,7 +18,8 @@ export async function POST(req: Request) {
             select: {
                 id: true,
                 name: true,
-                username: true
+                username: true,
+                avatar:true
             }, take: 5
         })
 
@@ -30,7 +31,8 @@ export async function POST(req: Request) {
             },
             select: {
                 id: true,
-                description: true
+                description: true,
+                createdAt:true
             }, take: 5
         })
 

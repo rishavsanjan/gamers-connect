@@ -154,7 +154,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                                 }
 
 
-                                <div className='relative '>
+                                <div className='relative sm:flex hidden'>
                                     {hoverId === game.id && (
                                         <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[385px] -left-2'>
                                             <div className='flex flex-col gap-4 w-full'>
