@@ -12,11 +12,8 @@ import PostImages from '@/components/community/PostImages';
 import Link from 'next/link';
 
 interface Props {
-    params: {
-        postId: string
-    }
+    params: Promise<{ postId: string }>
 }
-
 
 const PostDetails: React.FC<Props> = async ({ params }) => {
     const session = await auth();
@@ -93,7 +90,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         take: 2,
         where: { postId, parentId: null },
         include: {
-            user: { select: { id: true, name: true, username: true, avatar:true } },
+            user: { select: { id: true, name: true, username: true, avatar: true } },
             _count: { select: { replies: true } },
             CommentReaction: {
                 where: { userId: session?.user.id }
@@ -234,7 +231,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                     {/* Right Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-4">
-                        <AuthorCard name={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp} profilePicture={post?.user?.avatar} username={post.user.username} userId={session?.user.id}/>
+                        <AuthorCard name={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp} profilePicture={post?.user?.avatar} username={post.user.username} userId={session?.user.id} />
                         {/* 
                        //related posts
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">

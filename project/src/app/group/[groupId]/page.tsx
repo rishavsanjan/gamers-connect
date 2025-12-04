@@ -8,9 +8,7 @@ import AddPostModal from '@/components/community/AddPostModal';
 import InfiniteGroupPosts from './InfiniteGroupPosts';
 
 interface Props {
-    params: {
-        groupId: string
-    }
+    params : Promise<{groupId:string}>
 }
 
 const GroupPage: React.FC<Props> = async ({ params }) => {

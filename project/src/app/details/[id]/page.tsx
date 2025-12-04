@@ -8,7 +8,7 @@ import { getStreamsByGameName } from '@/lib/streams';
 import GameStreams from '@/components/GameStreams';
 import Link from 'next/link';
 interface GameDetailProps {
-  params: { id: string };
+  params: Promise<{id:string}>
 
 }
 
