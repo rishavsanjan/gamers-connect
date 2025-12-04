@@ -1,7 +1,6 @@
 "use client";
 
 import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
-//@ts-expect-error
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import Navbar from "@/components/Navbar";
