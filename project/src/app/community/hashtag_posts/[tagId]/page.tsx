@@ -1,20 +1,14 @@
 import React from 'react'
 import { prisma } from '@/lib/prisma'
-import Posts from '@/components/community/Posts'
 import { auth } from '@/auth'
 import { ArrowLeft, Filter } from 'lucide-react'
 import InfiniteHashTagFeed from './InfiniteHashTagFeed'
 
-interface Props {
-    params: {
-        tagId: string
-    }
-}
-
-const HashtagPosts: React.FC<Props> = async ({ params }) => {
+export default async function HashtagPosts({ params }: { params: { tagId: string } }) {
     const session = await auth();
 
     const { tagId: tag } = await params;
+    console.log(tag)
     const hashtagPosts = await prisma.hashtag.findUnique({
         where: { name: tag },
         include: {
@@ -25,8 +19,8 @@ const HashtagPosts: React.FC<Props> = async ({ params }) => {
                         select: {
                             name: true,
                             id: true,
-                            username:true,
-                            avatar:true
+                            username: true,
+                            avatar: true
                         }
                     },
                     game: {
@@ -78,7 +72,7 @@ const HashtagPosts: React.FC<Props> = async ({ params }) => {
                 some: { name: tag },
             },
             createdAt: {
-                gte: twentyFourHoursAgo, 
+                gte: twentyFourHoursAgo,
             },
         },
     })
@@ -131,7 +125,7 @@ const HashtagPosts: React.FC<Props> = async ({ params }) => {
                         </div>
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-400">Growth (posts in last 24 hours)</span>
-                            <span className="font-bold text-green-400">{recentPostCount }</span>
+                            <span className="font-bold text-green-400">{recentPostCount}</span>
                         </div>
                     </div>
                 </div>
@@ -141,4 +135,3 @@ const HashtagPosts: React.FC<Props> = async ({ params }) => {
     )
 }
 
-export default HashtagPosts
