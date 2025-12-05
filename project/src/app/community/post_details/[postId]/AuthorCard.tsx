@@ -1,17 +1,26 @@
 'use client';
+import { useLoginModal } from '@/context/LoginModalContext';
+import { useUser } from '@/context/UserContext';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ClipLoader } from 'react-spinners';
 
-export default function AuthorCard({ name, authorId, gameCount, postCount, collectionCount, following, xp, profilePicture, username, userId }: { name: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean, xp: number, profilePicture: string | null , username:string, userId:string | undefined}) {
+export default function AuthorCard({ name, authorId, gameCount, postCount, collectionCount, following, xp, profilePicture, username, userId }: { name: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean, xp: number, profilePicture: string | null, username: string, userId: string | undefined }) {
+    const { isLoggedIn } = useUser();
+    const { openLoginModal } = useLoginModal();
+
     const { data: session, status } = useSession()
     const [isFollowing, setIsFollowing] = useState(following);
     const [loading, setLoading] = useState(false);
 
 
     const addFollow = async () => {
+        if(!isLoggedIn){
+            openLoginModal();
+            return;
+        }
         setLoading(true)
         const response = await axios({
             url: `/api/private/addfollow`,
@@ -62,7 +71,7 @@ export default function AuthorCard({ name, authorId, gameCount, postCount, colle
                     <p className="text-xs text-gray-400">Collections</p>
                 </div>
             </div>
-            
+
             <button
                 onClick={() => addFollow()}
                 disabled={loading || userId === authorId}

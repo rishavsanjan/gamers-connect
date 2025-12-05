@@ -5,9 +5,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Comment } from '@/app/types/comment'
 import { Send } from 'lucide-react'
 import { ClipLoader } from 'react-spinners'
+import { useUser } from '@/context/UserContext'
+import { useLoginModal } from '@/context/LoginModalContext'
 
 export default function CommentSection({ postId, initialComments }: { postId: string, initialComments: Comment[] }) {
-
+  const { isLoggedIn } = useUser();
+  const { openLoginModal } = useLoginModal();
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [commentText, setCommentText] = useState('');
   const [commentUploading, setCommentUploading] = useState(false);
@@ -56,6 +59,7 @@ export default function CommentSection({ postId, initialComments }: { postId: st
   }, [page, hasMore])
 
   function addReply(comments: Comment[], parentId: string, newReply: Comment): Comment[] {
+
     return comments.map(comment => {
       if (comment.id === parentId) {
         return {
@@ -77,6 +81,10 @@ export default function CommentSection({ postId, initialComments }: { postId: st
 
 
   const handleAddComment = async (parentId: string | null, content: string) => {
+    if (!isLoggedIn) {
+      openLoginModal();
+      return;
+    }
     console.log(parentId);
     if (!parentId) {
       setCommentUploading(true)

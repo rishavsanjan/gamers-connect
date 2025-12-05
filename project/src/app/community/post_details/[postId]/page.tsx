@@ -16,7 +16,8 @@ interface Props {
 }
 
 const PostDetails: React.FC<Props> = async ({ params }) => {
-    const session = await auth();
+    const session = await auth().catch(() => null);
+    const userId = session?.user?.id ?? null;
     const { postId } = await params;
     let posts = await prisma.post.findFirst({
         where: {
@@ -38,9 +39,9 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                     name: true,
                     id: true
                 }
-            }, Like: {
-                where: { userId: session?.user.id }
-            }
+            }, Like: userId
+                ? { where: { userId } }
+                : false
         }
     });
 
@@ -53,7 +54,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         description: posts.description,
         likeCount: posts.likeCount,
         commentCount: posts.commentCount,
-        hasLiked: posts.Like.length > 0,
+        hasLiked: userId ? posts.Like.length > 0 : false,
         user: posts.user,
         game: posts.game,
         createdAt: posts.createdAt,
@@ -61,12 +62,16 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         userId: posts.userId,
     })
 
-    const bookmark = !!await prisma.bookmark.findFirst({
-        where: {
-            userId: session?.user.id,
-            postId
-        }
-    })
+    let bookmark = false;
+
+    if (session?.user?.id) {
+        bookmark = !!(await prisma.bookmark.findFirst({
+            where: {
+                userId: session.user.id,
+                postId
+            }
+        }));
+    }
 
     const gameCount = await prisma.myGame.count({
         where: {
@@ -99,14 +104,20 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         orderBy: { createdAt: 'asc' },
     })
 
-    const following = !!await prisma.follow.findUnique({
-        where: {
-            followerId_followingId: {
-                followerId: session!.user.id,
-                followingId: post.user.id
+    let following = false;
+
+    if (userId) {
+        following = !!await prisma.follow.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId: session!.user.id,
+                    followingId: post.user.id
+                }
             }
-        }
-    })
+        })
+    }
+
+
 
     const comments = comment.map((item) => ({
         id: item.id,
@@ -128,7 +139,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
             {/* Header */}
-            <header className="sticky top-0 z-50 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
+            <header className="sticky top-0 z-0 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                     <a href="/community" className="flex items-center space-x-2 rounded-lg px-4 py-2 transition hover:bg-white/10">
                         <ArrowLeft className="h-5 w-5" />

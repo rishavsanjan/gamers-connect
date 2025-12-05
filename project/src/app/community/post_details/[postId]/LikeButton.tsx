@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { Heart } from 'lucide-react'
 import { BsHeartFill } from 'react-icons/bs'
 import axios from 'axios'
+import { useUser } from '@/context/UserContext'
+import { useLoginModal } from '@/context/LoginModalContext'
 
 interface LikeButtonProps {
     postId: string
@@ -12,19 +14,31 @@ interface LikeButtonProps {
 }
 
 export default function LikeButton({ postId, hasLiked, likeCount }: LikeButtonProps) {
+
+    const { isLoggedIn } = useUser();
+    const { openLoginModal } = useLoginModal();
+
+
+    const [loginModal, setLoginModal] = useState()
     const [liked, setLiked] = useState(hasLiked)
     const [count, setCount] = useState(likeCount)
     const [isLoading, setIsLoading] = useState(false)
 
     const handleToggle = async () => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
+
+
         const previousLiked = liked
         const previousCount = count
-        
+
         setLiked(!liked)
         setCount(liked ? count - 1 : count + 1)
         setIsLoading(true)
-        
-        
+
+
         try {
             await axios.post('/api/private/addorremovereaction', { postId })
         } catch (err) {

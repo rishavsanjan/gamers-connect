@@ -3,12 +3,20 @@ import { useState } from 'react';
 import { Share2, MoreHorizontal, Bookmark } from 'lucide-react';
 import axios from 'axios';
 import { BsBookmarkFill } from 'react-icons/bs';
+import { useUser } from '@/context/UserContext';
+import { useLoginModal } from '@/context/LoginModalContext';
 
 export default function PostActions({ postId, bookmark }: { postId: string; bookmark: boolean }) {
     const [bookmarked, setBookmarked] = useState(bookmark);
+    const { isLoggedIn } = useUser();
+    const { openLoginModal } = useLoginModal();
 
 
     const handleBookmark = async () => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
         const response = await axios({
             url: `/api/private/handlebookmarks`,
             method: 'post',

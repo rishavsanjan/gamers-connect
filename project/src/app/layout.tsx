@@ -7,6 +7,10 @@ import Providers from "./providers";
 import { auth } from "@/auth";
 import { UserProvider } from "@/context/UserContext";
 import { Toaster } from 'react-hot-toast';
+import LoginToastClient from "@/components/LoginToastClient";
+import { LoginModalProvider } from "@/context/LoginModalContext";
+import LoginModalClient from "@/components/LoginModalClient";
+
 
 
 const geistSans = Geist({
@@ -44,20 +48,26 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <UserProvider initialUser={initialUser}>
-          <Providers>
-            <NextTopLoader
-              color="#831FB0"
-              height={4}
-              showSpinner={false}
-            />
+        <LoginModalProvider>
+          <UserProvider initialUser={initialUser}>
+            <Providers>
+              <NextTopLoader
+                color="#831FB0"
+                height={4}
+                showSpinner={false}
+              />
 
-            <Navbar />
-            {children}
+              <Navbar />
+              <LoginToastClient />
+              <LoginModalClient/>
+              {children}
 
-          </Providers>
-          <Toaster position="top-right" />
-        </UserProvider>
+            </Providers>
+            <Toaster position="top-right" />
+          </UserProvider>
+
+
+        </LoginModalProvider>
 
 
 
