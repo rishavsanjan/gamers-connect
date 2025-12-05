@@ -155,7 +155,6 @@ const Navbar = () => {
                                         onClick={async () => {
                                             await logout();
                                             setUser(null);
-                                            console.log(user)
                                         }
                                         }
                                         className="w-full text-left px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
@@ -283,8 +282,8 @@ const Navbar = () => {
                             </Link>
 
                             <button
-                                onClick={() => {
-                                    logout();
+                                onClick={async() => {
+                                    await logout();
                                     setUser(null);
                                     setIsMobileMenuOpen(false);
                                 }}

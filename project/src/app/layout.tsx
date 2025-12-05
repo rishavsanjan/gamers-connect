@@ -44,20 +44,22 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Providers>
-          <NextTopLoader
-            color="#831FB0"
-            height={4}
-            showSpinner={false}
-          />
-          
-          <UserProvider initialUser={initialUser}>
+        <UserProvider initialUser={initialUser}>
+          <Providers>
+            <NextTopLoader
+              color="#831FB0"
+              height={4}
+              showSpinner={false}
+            />
+
             <Navbar />
             {children}
-          </UserProvider>
 
-        </Providers>
-        <Toaster position="top-right" />
+          </Providers>
+          <Toaster position="top-right" />
+        </UserProvider>
+
+
 
       </body>
     </html>

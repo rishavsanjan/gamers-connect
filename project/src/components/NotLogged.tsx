@@ -354,20 +354,16 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
         setErrors({});
 
         try {
-            const res = await signIn(provider, {
-                redirect: false,
-                callbackUrl: "/"
-            });
-
-            if (res?.error) {
-                setErrors({ general: `Failed to login with ${provider}` });
-                toast.error(`Failed to login with ${provider}`);
-            } else {
-                toast.success(`Logged in with ${provider}!`);
-                setLoginModal(false);
-                onLoginSuccess?.();
-                router.refresh();
+            if (provider === 'google') {
+                await loginWithGoogle();
             }
+            if (provider === 'github') {
+                await login();
+            }
+            toast.success(`Logged in with ${provider}!`);
+            setLoginModal(false);
+            onLoginSuccess?.();
+            router.refresh();
         } catch (error) {
             setErrors({ general: `Failed to login with ${provider}` });
             toast.error(`Failed to login with ${provider}`);
@@ -640,7 +636,7 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
                         <div className="grid grid-cols-2 gap-3">
                             <button
                                 type="button"
-                                onClick={() => handleSocialLogin('google')}
+                                onClick={() => { handleSocialLogin('google') }}
                                 disabled={socialLoading !== null}
                                 className="flex items-center justify-center px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-900 hover:border-slate-600 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                             >
@@ -660,7 +656,7 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
                             </button>
                             <button
                                 type="button"
-                                onClick={() => handleSocialLogin('github')}
+                                onClick={() => { handleSocialLogin('github') }}
                                 disabled={socialLoading !== null}
                                 className="flex items-center justify-center px-4 py-2.5 bg-slate-900/50 border border-slate-700 rounded-lg text-slate-300 hover:bg-slate-900 hover:border-slate-600 transition disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                             >

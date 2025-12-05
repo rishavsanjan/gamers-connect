@@ -7,7 +7,7 @@ export const login = async () => {
 }
 
 export const logout = async () => {
-    await signOut({ redirectTo: '/' })
+    await signOut({ redirect:false})
 }
 
 export const loginWithGoogle = async () => {
