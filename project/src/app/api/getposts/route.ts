@@ -12,10 +12,8 @@ export async function POST(req: Request) {
 
     console.log(category)
     try {
-        const session = await auth();
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        const session = await auth().catch(() => null);
+        const userId = session?.user?.id ?? null;
 
         let posts;
         console.log(filter);
@@ -39,9 +37,11 @@ export async function POST(req: Request) {
                 where: whereClause,
                 include: {
                     game: { select: { name: true, igdb_id: true } },
-                    user: { select: { name: true, id: true, username: true , avatar:true} },
+                    user: { select: { name: true, id: true, username: true, avatar: true } },
                     group: { select: { name: true, id: true } },
-                    Like: { where: { userId: session.user.id } }
+                    Like: userId
+                        ? { where: { userId } }
+                        : false
                 },
                 orderBy: { Like: { _count: 'desc' } }
             });
@@ -53,9 +53,11 @@ export async function POST(req: Request) {
                 where: whereClause,
                 include: {
                     game: { select: { name: true, igdb_id: true } },
-                    user: { select: { name: true, id: true, username: true , avatar:true} },
+                    user: { select: { name: true, id: true, username: true, avatar: true } },
                     group: { select: { name: true, id: true } },
-                    Like: { where: { userId: session.user.id } }
+                    Like: userId
+                        ? { where: { userId } }
+                        : false
                 },
                 orderBy: { createdAt: 'desc' }
             });
@@ -70,7 +72,7 @@ export async function POST(req: Request) {
             description: post.description,
             likeCount: post.likeCount,
             commentCount: post.commentCount,
-            hasLiked: post.Like.length > 0,
+            hasLiked: userId ? post.Like.length > 0 : false,
             user: post.user,
             game: post.game,
             createdAt: post.createdAt,

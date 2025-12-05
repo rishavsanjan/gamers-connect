@@ -65,9 +65,9 @@ const CreateGroup = () => {
 
     console.log(groupName)
     return (
-        <div className='flex flex-row'>
-            <div className='w-[25%]'>
-                <div className="min-h-screen bg-gray-900 text-white p-6 border-r border-gray-400">
+        <div className='flex sm:flex-row flex-col'>
+            <div className='sm:w-[25%]'>
+                <div className="min-h-screen bg-gray-900 text-white sm:p-6 p-2 border-r border-gray-400">
                     {/* Header */}
                     <div className="flex items-center gap-4 mb-6">
                         <button className="p-2 hover:bg-gray-800 rounded-full">

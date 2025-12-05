@@ -8,12 +8,14 @@ import { BsHeartFill } from 'react-icons/bs'
 import PostLikeButton from './PostLikeButton'
 import PostDescription from './PostDescription'
 import PostImages from './PostImages'
+import { auth } from '@/auth'
 
 interface Props {
     posts: Post[]
 }
 
 const Posts: React.FC<Props> = ({ posts }) => {
+
     return (
         <div className='space-y-4'>
             {

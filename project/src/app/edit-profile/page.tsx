@@ -105,7 +105,7 @@ const EditProfilePage: React.FC = () => {
             }
             try {
                 const response = await axios({
-                    url: `/api/private/get-username-availablity`,
+                    url: `/api/get-username-availablity`,
                     method: 'post',
                     data: {
                         username: debouncedQuery

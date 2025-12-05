@@ -8,10 +8,12 @@ import { signIn } from 'next-auth/react';
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { ClipLoader } from 'react-spinners';
+import { useUser } from '@/context/UserContext';
 
 
 const Login = () => {
     const router = useRouter();
+    const { setUser } = useUser();
     const [activeTab, setActiveTab] = useState('login');
     const [loginForm, setLoginForm] = useState({
         email: "",
@@ -38,7 +40,7 @@ const Login = () => {
         }
 
         getUserInfo()
-    }, [])
+    }, []);
 
 
 
@@ -95,6 +97,9 @@ const Login = () => {
             if (res?.error) {
                 console.error(res.error);
             } else {
+                const userRes = await fetch("/api/me");
+                const data = await userRes.json();
+                setUser(data.user);
                 router.push("/");
             }
         } catch (error) {

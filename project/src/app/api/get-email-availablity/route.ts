@@ -4,20 +4,14 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
     try {
-        const session = await auth()
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-        }
 
-        const {username} = await req.json();
+        const { email } = await req.json();
 
         const available = !!!await prisma.user.findFirst({
-            where:{
-                username:username
+            where: {
+                email: email
             }
         })
-        console.log(username)
-        console.log(available)
 
         return NextResponse.json({ available })
     } catch (err) {

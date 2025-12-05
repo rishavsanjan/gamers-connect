@@ -9,8 +9,8 @@ interface Props {
 
 const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVisibility }) => {
     return (
-        <div className='w-[75%]'>
-            <div className="min-h-screen bg-gray-900 text-white p-6">
+        <div className='sm:w-[75%]'>
+            <div className="min-h-screen bg-gray-900 text-white sm:p-6 p-2">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-lg font-semibold">Preview</h2>
@@ -52,7 +52,7 @@ const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVis
                         </div>
 
                         {/* Content Area */}
-                        <div className="flex gap-6 cursor-not-allowed">
+                        <div className="flex sm:flex-row flex-col gap-6 cursor-not-allowed">
                             {/* Left Column - Post Creator */}
                             <div className="flex-1">
                                 <div className="bg-gray-700 rounded-lg p-4 mb-4">
@@ -71,15 +71,15 @@ const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVis
                                     </div>
 
                                     <div className="flex items-center justify-between pt-3 border-t border-gray-600">
-                                        <button className="flex items-center gap-2 text-gray-400 px-4 py-2 rounded-lg">
+                                        <button className="flex items-center gap-2 text-gray-400 sm:px-4 sm:py-2 rounded-lg">
                                             <Image size={20} />
-                                            <span className="text-sm">Photo/video</span>
+                                            <span className="text-sm">Media</span>
                                         </button>
-                                        <button className="flex items-center gap-2 text-gray-400 px-4 py-2 rounded-lg">
+                                        <button className="flex items-center gap-2 text-gray-400 sm:px-4 sm:py-2 rounded-lg">
                                             <UserPlus size={20} />
-                                            <span className="text-sm">Tag people</span>
+                                            <span className="text-sm">People</span>
                                         </button>
-                                        <button className="flex items-center gap-2 text-gray-400 px-4 py-2 rounded-lg">
+                                        <button className="flex items-center gap-2 text-gray-400 sm:px-4 sm:py-2 rounded-lg">
                                             <SmilePlus size={20} />
                                             <span className="text-sm">Feeling/activity</span>
                                         </button>

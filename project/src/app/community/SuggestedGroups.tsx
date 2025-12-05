@@ -57,7 +57,7 @@ const SuggestedGroups: React.FC<Props> = ({ groups }) => {
             <h3 className="mb-4 text-lg font-bold ">Suggested Groups</h3>
             {
                 groupsState?.map((group) => (
-                    <div className='flex flex-row items-center justify-between gap-4'>
+                    <div key={group.id} className='flex flex-row items-center justify-between gap-4'>
                         <span>{group.name}</span>
                         <button
                             onClick={() => { handleGroupJoin(group.id) }}

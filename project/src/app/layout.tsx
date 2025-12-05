@@ -1,10 +1,13 @@
-"use client";
 
 import { Geist, Geist_Mono, DM_Sans } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
 import Navbar from "@/components/Navbar";
 import Providers from "./providers";
+import { auth } from "@/auth";
+import { UserProvider } from "@/context/UserContext";
+import { Toaster } from 'react-hot-toast';
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,11 +24,23 @@ const dmSans = DM_Sans({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
+  const initialUser = session
+    ? {
+      id: session.user.id,
+      name: session.user.name,
+      email: session.user.email,
+      username: session.user.username
+    }
+    : null;
+
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -35,9 +50,15 @@ export default function RootLayout({
             height={4}
             showSpinner={false}
           />
-          <Navbar />
-          {children}
+          
+          <UserProvider initialUser={initialUser}>
+            <Navbar />
+            {children}
+          </UserProvider>
+
         </Providers>
+        <Toaster position="top-right" />
+
       </body>
     </html>
   );

@@ -167,3 +167,4 @@ export const handleGroupJoin = async ({ groupId, setGroupsState }: GroupJoinProp
         console.log(error)
     }
 }
+

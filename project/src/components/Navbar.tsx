@@ -10,26 +10,28 @@ import { getYearFromUnix } from '@/app/utils/date';
 import { RotateLoader } from 'react-spinners';
 import { usePathname } from 'next/navigation';
 import { logout } from '@/lib/auth';
-import { useSession } from 'next-auth/react';
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
+import { useUser } from '@/context/UserContext';
+import { LoginModal } from './NotLogged';
+import { createPortal } from 'react-dom';
+
 
 
 const Navbar = () => {
-
-    const { data: session, status } = useSession();
-    const isLogin = status === 'authenticated';
-    console.log(isLogin);
-
+    const { setUser, user, isLoggedIn } = useUser();
+    console.log(isLoggedIn, user)
     const pathName = usePathname();
     const isValid = pathName.startsWith('/login');
+    const [loginModal, setLoginModal] = useState(false);
 
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Game[]>([]);
     const [loading, setLoading] = useState(false);
     const [debouncedQuery, setDebouncedQuery] = useState(query);
     const searcBarDropdownRef = useRef<HTMLDivElement>(null);
+
+
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -133,7 +135,7 @@ const Navbar = () => {
                     <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm w-44 sm:w-full' placeholder='Search for games' type="text" />
                     <BiSearch className='absolute left-2 ' size={20} />
                     <div className="md:flex hidden relative">
-                        {isLogin ? (
+                        {isLoggedIn ? (
                             <div className="relative group">
                                 {/* Profile Icon */}
                                 <div className="w-10 h-10 rounded-full overflow-hidden cursor-pointer bg-[#202020] flex items-center justify-center group-hover:bg-white transition-all duration-200">
@@ -150,7 +152,12 @@ const Navbar = () => {
                                     </Link>
 
                                     <button
-                                        onClick={() => logout()}
+                                        onClick={async () => {
+                                            await logout();
+                                            setUser(null);
+                                            console.log(user)
+                                        }
+                                        }
                                         className="w-full text-left px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
                                     >
                                         Sign Out
@@ -158,9 +165,7 @@ const Navbar = () => {
                                 </div>
                             </div>
                         ) : (
-                            <Link href="/login">
-                                <button>Login/Signup</button>
-                            </Link>
+                            <button onClick={() => { setLoginModal(true) }}>Login/Signup</button>
                         )}
                     </div>
 
@@ -266,7 +271,7 @@ const Navbar = () => {
                     <div className="border-t border-gray-700 my-2" />
 
                     {/* Profile Section */}
-                    {isLogin ? (
+                    {isLoggedIn ? (
                         <>
                             <Link
                                 href="/profile"
@@ -280,6 +285,7 @@ const Navbar = () => {
                             <button
                                 onClick={() => {
                                     logout();
+                                    setUser(null);
                                     setIsMobileMenuOpen(false);
                                 }}
                                 className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-red-500 transition-colors text-left"
@@ -289,17 +295,26 @@ const Navbar = () => {
                             </button>
                         </>
                     ) : (
-                        <Link
-                            href="/login"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-purple-500 transition-colors"
-                        >
+
+                        <button
+                        className='flex flex-row items-center gap-2'
+                        onClick={() => {
+                            setLoginModal(true)
+                            setIsMobileMenuOpen(false)
+                        }}>
                             <BiUser className="text-2xl" />
-                            <span>Login/Signup</span>
-                        </Link>
+
+                            <span> Login/Signup</span>
+                           
+                        </button>
+
                     )}
                 </div>
             </div>
+            {loginModal && typeof window !== 'undefined' && createPortal(
+                <LoginModal isOpen={loginModal} setLoginModal={setLoginModal} />,
+                document.body
+            )}
         </>
     )
 }
