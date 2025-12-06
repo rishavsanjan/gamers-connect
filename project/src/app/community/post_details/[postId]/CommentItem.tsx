@@ -33,7 +33,7 @@ export default function CommentItem({ comment, postId, level = 0, onReply }: Com
         }
 
         setLoading(true)
-        const res = await axios.post('/api/private/getreplies', { parentId: comment.id })
+        const res = await axios.post('/api/getreplies', { parentId: comment.id })
         setReplies(res.data.replies)
         setShowReplies(true)
         setLoading(false)
@@ -43,7 +43,7 @@ export default function CommentItem({ comment, postId, level = 0, onReply }: Com
         setReplyUploading(true);
         await onReply(comment.id, replyText);
 
-        const res = await axios.post('/api/private/getreplies', { parentId: comment.id })
+        const res = await axios.post('/api/getreplies', { parentId: comment.id })
         setReplies(res.data.replies)
         setReplyCount(prev => prev + 1)
         setShowReplies(true)

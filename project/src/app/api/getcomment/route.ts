@@ -10,10 +10,8 @@ export async function POST(req: Request) {
     const skip = (page - 1) * limit
 
     try {
-        const session = await auth();
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        const session = await auth().catch(() => null);
+        const userId = session?.user?.id ?? null;
 
         const { postId } = await req.json();
 
@@ -22,7 +20,7 @@ export async function POST(req: Request) {
             skip,
             where: { postId, parentId: null },
             include: {
-                user: { select: { id: true, name: true, username: true, avatar:true } },
+                user: { select: { id: true, name: true, username: true, avatar: true } },
                 _count: { select: { replies: true } },
                 CommentReaction: {
                     where: { userId: session?.user.id }
@@ -38,7 +36,7 @@ export async function POST(req: Request) {
             user: item.user,
             userId: item.userId,
             createdAt: item.createdAt,
-            hasLiked: item.CommentReaction.length > 0,
+            hasLiked: userId ? item.CommentReaction.length > 0 : false,
             likeCount: item.likeCount,
             parentId: item.parentId,
             _count: { replies: item._count.replies },

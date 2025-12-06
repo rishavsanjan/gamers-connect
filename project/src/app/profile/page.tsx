@@ -305,7 +305,7 @@ const Profile = async () => {
           }
 
         </div>
-        <div className='flex flex-row gap-4 items-center'>
+        <div className='flex sm:flex-row flex-col gap-4 items-center'>
           <h1 className='text-5xl'>{session?.user.username}</h1>
 
           {/* XP Display */}

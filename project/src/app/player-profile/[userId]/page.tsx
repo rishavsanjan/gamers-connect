@@ -228,27 +228,29 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
 
     return (
         <div className=''>
-            <div className='flex flex-col items-center'>
-                <div className='flex flex-row items-center gap-16 justify-center mt-8 '>
-                    <div className='flex items-center flex-row gap-4'>
-                        <div className={`${user?.avatar ? '' : 'bg-purple-500 p-4 m-4 w-18 h-18 rounded-full'}  `}>
-                            {
-                                user?.avatar ?
-                                    <>
-                                        <img src={user.avatar} alt="" className='rounded-full w-24 h-24' />
-                                    </>
-                                    :
-                                    <>
-                                        <h1 className='text-4xl text-center'>{session?.user.username[0].toUpperCase()}</h1>
-                                    </>
-                            }
+            <div className='flex flex-col items-center gap-4'>
+                <div className='flex flex-col items-center  justify-center mt-4 gap-4 '>
+                    <div className={`${user?.avatar ? '' : 'bg-purple-500  w-18 h-18 rounded-full'}  `}>
+                        {
+                            user?.avatar ?
+                                <>
+                                    <img src={user.avatar} alt="" className='rounded-full w-24 h-24' />
+                                </>
+                                :
+                                <>
+                                    <h1 className='text-4xl text-center'>{session?.user.username[0].toUpperCase()}</h1>
+                                </>
+                        }
 
+                    </div>
+                    <div className='flex items-center flex-row gap-4'>
+
+                        <h1 className='md:text-5xl text-3xl'>{user.username ?? 'Anynomus'}</h1>
+                        <div>
+                            <FollowCard isFollowing={isFollowing} userId={userId} />
                         </div>
-                        <h1 className='text-5xl'>{user.name ?? user.username ?? 'Anynomus'}</h1>
                     </div>
-                    <div>
-                        <FollowCard isFollowing={isFollowing} userId={userId} />
-                    </div>
+
 
                 </div>
                 <div className=' flex items-center gap-2 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-full px-6 py-2.5 backdrop-blur-sm w-fit justify-center self-center'>

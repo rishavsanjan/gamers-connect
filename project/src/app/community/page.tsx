@@ -44,6 +44,8 @@ export default async function GamelyCommunity() {
 
     });
 
+   
+
     const posts = getposts.map((post) => ({
         id: post.id,
         description: post.description,
@@ -163,7 +165,7 @@ export default async function GamelyCommunity() {
                 </div>
             </header>
 
-            <div className="mx-auto max-w-7xl px-6 py-8">
+            <div className="mx-auto max-w-7xl md:px-6 md:py-8 px-2 py-2">
                 <div className="grid grid-cols-12 gap-6">
                     {/* Left Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-3">

@@ -100,7 +100,7 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
 
     return (
         <div className='flex flex-col bg-transparent z-60'>
-            <div className='flex flex-row gap-8 justify-start p-4 '>
+            <div className='flex md:flex-row flex-wrap gap-8 justify-start p-4 '>
                 <div>
                     <button
                         onClick={() => { setActiveTab('overview') }}
@@ -211,7 +211,7 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
             {
                 activeTab === 'overview' &&
                 <div className='flex flex-col gap-8'>
-                    <div className='p-4 px-8 text-3xl flex flex-col gap-2'>
+                    <div className='md:p-4 md:px-8 p-2 text-3xl flex flex-col gap-2'>
                         <span>Game Platforms</span>
                         {
                             platformData.length > 0 ?
@@ -222,15 +222,13 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
 
                         }
                     </div>
-                    <div className='p-4 px-8  flex flex-col gap-2'>
-                        <span>Currently Playing</span>
+                    <div className='  flex flex-col gap-2 md:px-4 '>
+                        <span className='px-4 text-3xl font-semibold'>Currently Playing</span>
                         {
                             playing.length > 0 ?
                                 <>
                                     {/* @ts-ignore */}
-
                                     < ProfileGameList gamesList={playing} />
-
                                 </>
                                 :
                                 <span className='text-white'>Nothing playing currently!</span>
@@ -239,7 +237,7 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
 
                     </div>
                     <GamesByYearChart yearCount={yearCount} />
-                    <div className='p-4 px-8 text-3xl flex flex-col gap-2'>
+                    <div className='md:p-4 md:px-8 text-3xl flex flex-col gap-2'>
                         <GameGenreChart data={genreData} />
                     </div>
                 </div>
@@ -270,6 +268,33 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
                     }
                 </div>
             }
+
+            {
+                activeTab === 'playlist' && playlistCount === 0 &&
+                <div className='self-center mb-20'>
+                    <span className='text-gray-500 text-xl'>No games in playlist!</span>
+                </div>
+            }
+            {
+                activeTab === 'owned' && ownedGamesCount === 0 &&
+                <div className='self-center mb-20'>
+                    <span className='text-gray-500 text-xl'>No games owned!</span>
+                </div>
+            }
+            {
+                activeTab === 'ratings' && ratings.length === 0 &&
+                <div className='self-center mb-20'>
+                    <span className='text-gray-500 text-xl'>No games rated!</span>
+                </div>
+            }
+            {
+                activeTab === 'collection' && collectionCount === 0 &&
+                <div className='self-center mb-20'>
+                    <span className='text-gray-500 text-xl'>No games in collection!</span>
+                </div>
+            }
+            
+
 
         </div>
 
