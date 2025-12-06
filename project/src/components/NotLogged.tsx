@@ -360,8 +360,7 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
             if (provider === 'github') {
                 await login();
             }
-            toast.success(`Logged in with ${provider}!`);
-            setLoginModal(false);
+            
             onLoginSuccess?.();
             router.refresh();
         } catch (error) {
