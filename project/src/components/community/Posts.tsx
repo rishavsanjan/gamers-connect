@@ -1,7 +1,7 @@
 import { Post } from '@/app/types/post'
 import { handleLike, handleRemoveLike } from '@/app/utils/community_functions'
 import { timeAgo } from '@/app/utils/date'
-import { Heart, MessageCircle, Share2 } from 'lucide-react'
+import { Ellipsis, Heart, MessageCircle, Share2 } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 import { BsHeartFill } from 'react-icons/bs'
@@ -23,7 +23,7 @@ const Posts: React.FC<Props> = ({ posts }) => {
                 posts.map(post => (
                     <div key={post.id} className="rounded-2xl border border-purple-500/20 bg-white/5 md:p-6 p-2 backdrop-blur-lg transition hover:border-purple-500/40 ">
                         {/* Post Header */}
-                        <div className="mb-4 flex items-start justify-between">
+                        <div className="mb-4 flex  justify-between">
                             <div className="flex items-center space-x-3">
                                 <Link href={`/player-profile/${post.user.id}`} key={post.user.id}>
                                     {
@@ -38,7 +38,7 @@ const Posts: React.FC<Props> = ({ posts }) => {
 
                                     }
                                 </Link>
-                                <div>
+                                <div className=' '>
                                     <p className="font-bold">{post.user.name || post.user.username}</p>
                                     <p className="text-sm text-gray-400">
                                         {
@@ -62,8 +62,15 @@ const Posts: React.FC<Props> = ({ posts }) => {
                                         }
                                         {timeAgo(post.createdAt)}
                                     </p>
+
+
                                 </div>
                             </div>
+                            <button
+                                className='md:mb-8 cursor-pointer p-4 sm:p-0'
+                            >
+                                <Ellipsis color='white' />
+                            </button>
 
                         </div>
 

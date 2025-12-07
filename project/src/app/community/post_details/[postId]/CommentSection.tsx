@@ -110,6 +110,7 @@ export default function CommentSection({ postId, initialComments }: { postId: st
       {/* Add Comment */}
       <div className="mb-8 rounded-xl border border-purple-500/20 bg-white/5 p-4">
         <textarea
+
           value={commentText}
           onChange={(e) => setCommentText(e.target.value)}
           placeholder="Share your thoughts..."
@@ -117,8 +118,8 @@ export default function CommentSection({ postId, initialComments }: { postId: st
         />
         <button
           onClick={() => { handleAddComment(null, commentText) }}
-          disabled={commentUploading}
-          className="ml-auto flex items-center space-x-2 rounded-lg bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-2 font-semibold transition hover:from-purple-700 hover:to-pink-700"
+          disabled={commentUploading || commentText.trim().length === 0}
+          className="ml-auto flex items-center space-x-2 rounded-lg bg-gradient-to-r disabled:cursor-not-allowed from-purple-600 to-pink-600 px-6 py-2 font-semibold transition hover:from-purple-700 hover:to-pink-700"
         >
           {
             commentUploading ?
