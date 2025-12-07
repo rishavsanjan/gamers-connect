@@ -21,6 +21,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
     const { postId } = await params;
+
     let posts = await prisma.post.findFirst({
         where: {
             id: postId
@@ -41,9 +42,11 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                     name: true,
                     id: true
                 }
-            }, Like: userId
+            },
+            Like: userId
                 ? { where: { userId } }
                 : false
+
         }
     });
 
@@ -266,7 +269,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                                         <span className="text-lg font-semibold">{post.commentCount}</span>
                                     </div>
                                 </div>
-                                <CopyButton/>
+                                <CopyButton />
                             </div>
                         </div>
 

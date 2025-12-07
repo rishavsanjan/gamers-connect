@@ -1,29 +1,45 @@
 import { Post } from '@/app/types/post'
 import { handleLike, handleRemoveLike } from '@/app/utils/community_functions'
 import { timeAgo } from '@/app/utils/date'
-import { Ellipsis, Heart, MessageCircle, Share2 } from 'lucide-react'
+import { Bookmark, BookMarked, Ellipsis, Heart, MessageCircle, Share2 } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { BsHeartFill } from 'react-icons/bs'
 import PostLikeButton from './PostLikeButton'
 import PostDescription from './PostDescription'
 import PostImages from './PostImages'
 import { auth } from '@/auth'
 import toast from 'react-hot-toast'
+import PostSettings from '../PostSettings'
 
 interface Props {
     posts: Post[]
 }
 
 const Posts: React.FC<Props> = ({ posts }) => {
+    const ellipsRef = useRef<HTMLDivElement | null>(null);
+    const [selectedPost, setSelectedPost] = useState<string | null>(null);
 
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (ellipsRef.current && !ellipsRef.current.contains(event.target as Node)) {
+                setSelectedPost(null)
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [])
     return (
         <div className='space-y-4'>
             {
                 posts.map(post => (
-                    <div key={post.id} className="rounded-2xl border border-purple-500/20 bg-white/5 md:p-6 p-2 backdrop-blur-lg transition hover:border-purple-500/40 ">
+                    <div key={post.id} className=" rounded-2xl border border-purple-500/20 bg-white/5 md:p-6 p-2 backdrop-blur-lg transition hover:border-purple-500/40 ">
                         {/* Post Header */}
-                        <div className="mb-4 flex  justify-between">
+                        <div className="mb-4 flex  justify-between ">
                             <div className="flex items-center space-x-3">
                                 <Link href={`/player-profile/${post.user.id}`} key={post.user.id}>
                                     {
@@ -67,10 +83,20 @@ const Posts: React.FC<Props> = ({ posts }) => {
                                 </div>
                             </div>
                             <button
-                                className='md:mb-8 cursor-pointer p-4 sm:p-0'
+                                onClick={() => {
+                                    setSelectedPost(prev => (prev === post.id ? null : post.id));
+                                }}
+                                className='md:mb-8 cursor-pointer p-4 sm:p-0 '
                             >
                                 <Ellipsis color='white' />
+
                             </button>
+                            {
+                                selectedPost === post.id &&
+                                <div ref={ellipsRef} className='absolute bg-black/25 top-10 right-8 mt-2 z-10'>
+                                    <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id} posts={posts} />
+                                </div>
+                            }
 
                         </div>
 
@@ -103,9 +129,11 @@ const Posts: React.FC<Props> = ({ posts }) => {
                             </button>
                         </div>
 
+
                     </div>
                 ))
             }
+
         </div>
     )
 }

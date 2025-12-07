@@ -27,7 +27,8 @@ export interface Post {
     group?:{
         name:string,
         id:string
-    } | null
+    } | null,
+    hasBookmarked:boolean
 }
 
 export interface HashTag {

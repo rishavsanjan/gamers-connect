@@ -37,7 +37,11 @@ export default async function GamelyCommunity() {
             },
             Like: userId
                 ? { where: { userId } }
-                : false
+                : false,
+            bookmarks: userId ? {
+                where:{userId},
+                select:{postId:true}
+            } : false
         },
 
         orderBy: { createdAt: 'desc' }
@@ -58,8 +62,11 @@ export default async function GamelyCommunity() {
         userId: post.userId,
         updatedAt: post.updatedAt,
         type: post.type,
-        group: post.group
+        group: post.group,
+        hasBookmarked:userId ? post.bookmarks.length > 0 : false
     }));
+
+    console.log(posts)
 
 
     const topTags = await prisma.hashtag.findMany({

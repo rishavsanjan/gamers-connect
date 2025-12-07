@@ -41,7 +41,11 @@ export async function POST(req: Request) {
                     group: { select: { name: true, id: true } },
                     Like: userId
                         ? { where: { userId } }
-                        : false
+                        : false,
+                    bookmarks: userId ? {
+                        where: { userId },
+                        select: { postId: true }
+                    } : false
                 },
                 orderBy: { Like: { _count: 'desc' } }
             });
@@ -57,7 +61,11 @@ export async function POST(req: Request) {
                     group: { select: { name: true, id: true } },
                     Like: userId
                         ? { where: { userId } }
-                        : false
+                        : false,
+                    bookmarks: userId ? {
+                        where: { userId },
+                        select: { postId: true }
+                    } : false
                 },
                 orderBy: { createdAt: 'desc' }
             });
@@ -77,7 +85,9 @@ export async function POST(req: Request) {
             game: post.game,
             createdAt: post.createdAt,
             mediaUrls: post.mediaUrls,
-            group: post.group
+            group: post,
+            hasBookmarked: userId ? post.bookmarks.length > 0 : false
+
         }))
 
         const topTags = await prisma.hashtag.findMany({
@@ -107,10 +117,6 @@ export async function POST(req: Request) {
                 },
             },
         });
-
-        posts.map((post) => {
-
-        })
 
 
         return NextResponse.json({ posts: result, topTags, topUsersByPosts }, { status: 200 })
