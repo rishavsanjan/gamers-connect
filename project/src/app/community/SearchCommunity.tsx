@@ -274,8 +274,7 @@ const SearchCommunity = () => {
                     value={query}
                     onChange={(e) => { setQuery(e.target.value) }}
                     onFocus={() => query.trim() && setIsOpen(true)}
-                    className='w-full flex items-center rounded-lg bg-white/10 pl-10 pr-10 py-2 transition hover:bg-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white placeholder:text-gray-400 placeholder:sm:text-sm'
-                    placeholder='Search for posts, people...'
+                    className='w-full flex items-center rounded-lg bg-white/10 pl-10 pr-10 py-2 transition hover:bg-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white placeholder:text-gray-400 placeholder:sm:text-md text-xs' placeholder='Search for posts, people...'
                     type="text"
                 />
                 {query && (

@@ -10,6 +10,8 @@ import LikeButton from './LikeButton';
 import PostDescription from '@/components/community/PostDescription';
 import PostImages from '@/components/community/PostImages';
 import Link from 'next/link';
+import toast from 'react-hot-toast';
+import CopyButton from '@/components/CopyButton';
 
 interface Props {
     params: Promise<{ postId: string }>
@@ -61,6 +63,39 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
         mediaUrls: posts.mediaUrls,
         userId: posts.userId,
     })
+
+    function extractKeywords(text: string) {
+        return text
+            .split(/\s+/)
+            .filter(word => word.length > 3)
+            .slice(0, 5);
+    }
+
+    const keywords = extractKeywords(post.description);
+
+    const relatedPosts = await prisma.post.findMany({
+        where: {
+            AND: [
+                { id: { not: post.id } },
+                {
+                    OR: keywords.map(word => ({
+                        description: { contains: word, mode: "insensitive" }
+                    }))
+                }
+            ]
+        },
+        include: {
+            user: {
+                select: {
+                    name: true,
+                    username: true,
+                    id: true
+                }
+            }
+        },
+        take: 5,
+        orderBy: { createdAt: "desc" }
+    });
 
     let bookmark = false;
 
@@ -134,12 +169,14 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
     }))
 
+    console.log(relatedPosts)
+
     console.log(bookmark)
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
             {/* Header */}
-            <header className="sticky top-0 z-0 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
+            <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                     <a href="/community" className="flex items-center space-x-2 rounded-lg px-4 py-2 transition hover:bg-white/10">
                         <ArrowLeft className="h-5 w-5" />
@@ -149,12 +186,12 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                 </div>
             </header>
 
-            <div className="mx-auto max-w-7xl px-6 py-8">
+            <div className="mx-auto max-w-7xl md:px-6 md:py-8 py-2 px-2">
                 <div className="grid grid-cols-12 gap-6">
                     {/* Main Content */}
-                    <div className="col-span-12 space-y-6 lg:col-span-8">
+                    <div className="col-span-12 space-y-3 lg:col-span-8">
                         {/* Post Card */}
-                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-8 backdrop-blur-lg">
+                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 md:p-8 p-2 backdrop-blur-lg">
                             {/* Post Header */}
                             <div className="mb-6 flex items-start justify-between">
                                 <div className="flex items-center space-x-4">
@@ -171,20 +208,20 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                                         }
                                     </Link>
-                                    <div>
+                                    <div className=''>
                                         <p className="text-xl font-bold">{post?.user?.username || post.user.name}</p>
-                                        <div className="flex items-center space-x-3 text-sm text-gray-400">
+                                        <div className="flex md:flex-row flex-col items-center space-x-3 text-sm text-gray-400">
                                             {
                                                 post.game &&
-                                                <>
+                                                <div className='self-start'>
                                                     <span className="text-purple-400">{post.game?.name}</span>
-                                                    <span>•</span>
-                                                </>
+                                                    <span className='md:visible hidden'>•</span>
+                                                </div>
                                             }
-                                            <span className="flex items-center space-x-1">
+                                            <span className="flex items-center space-x-1 self-start">
                                                 <Clock className="h-3 w-3" />
                                                 {/* @ts-ignore */}
-                                                <span> {getTimeAgoFormatted(post.createdAt)}</span>
+                                                <span > {getTimeAgoFormatted(post.createdAt)}</span>
                                             </span>
                                             {/* <span className="flex items-center space-x-1">
                                                 <Eye className="h-3 w-3" />
@@ -229,53 +266,50 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                                         <span className="text-lg font-semibold">{post.commentCount}</span>
                                     </div>
                                 </div>
-                                <button className="flex items-center space-x-2 rounded-lg bg-purple-600 px-6 py-3 font-semibold transition hover:bg-purple-700">
-                                    <Share2 className="h-5 w-5" />
-                                    <span>Share</span>
-                                </button>
+                                <CopyButton/>
                             </div>
                         </div>
 
-                        {/* Comments Section - Client Component */}
+                        {/* Comments Section */}
                         <CommentSection postId={post.id} initialComments={comments} />
                     </div>
 
                     {/* Right Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-4">
                         <AuthorCard name={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp} profilePicture={post?.user?.avatar} username={post.user.username} userId={session?.user.id} />
-                        {/* 
-                       //related posts
+
+                        {/* related posts */}
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
                             <h3 className="mb-4 text-lg font-bold">Related Posts</h3>
                             <div className="space-y-4">
                                 {relatedPosts.map(relatedPost => (
-                                    <a
+                                    <Link
                                         key={relatedPost.id}
-                                        href={`/community/${relatedPost.id}`}
+                                        href={`/community/post_details/${relatedPost.id}`}
                                         className="block cursor-pointer rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-purple-500/40 hover:bg-white/10"
                                     >
                                         <div className="mb-2 flex items-center space-x-2">
                                             <User className="h-4 w-4 text-purple-400" />
-                                            <p className="text-sm font-medium text-purple-400">{relatedPost.author}</p>
+                                            <p className="text-sm font-medium text-purple-400">{relatedPost.user.username}</p>
                                         </div>
-                                        <p className="mb-3 text-sm text-gray-200">{relatedPost.content}</p>
+                                        <p className="mb-3 text-sm text-gray-200">{relatedPost.description}</p>
                                         <div className="flex items-center space-x-4 text-xs text-gray-400">
                                             <span className="flex items-center space-x-1">
                                                 <Heart className="h-3 w-3" />
-                                                <span>{relatedPost.likes}</span>
+                                                <span>{relatedPost.likeCount}</span>
                                             </span>
                                             <span className="flex items-center space-x-1">
                                                 <MessageCircle className="h-3 w-3" />
-                                                <span>{relatedPost.comments}</span>
+                                                <span>{relatedPost.commentCount}</span>
                                             </span>
                                         </div>
-                                    </a>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
 
-                        //report
-                        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6 backdrop-blur-lg">
+                        {/* report */}
+                        {/* <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6 backdrop-blur-lg">
                             <div className="mb-3 flex items-center space-x-2 text-red-400">
                                 <Flag className="h-5 w-5" />
                                 <h3 className="font-bold">Report Post</h3>
@@ -286,7 +320,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                             <button className="w-full rounded-lg border border-red-500/40 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/10">
                                 Report
                             </button>
-                        </div> */}
+                        </div>  */}
                     </div>
                 </div>
             </div>

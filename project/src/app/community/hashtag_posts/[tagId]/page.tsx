@@ -9,7 +9,8 @@ interface PageProps {
 }
 
 export default async function HashtagPosts({ params }: PageProps) {
-    const session = await auth();
+    const session = await auth().catch(() => null);
+    const userId = session?.user?.id ?? null;
 
     const { tagId: tag } = await params;
     console.log(tag)
@@ -34,9 +35,9 @@ export default async function HashtagPosts({ params }: PageProps) {
                         }
                     }
                     ,
-                    Like: {
-                        where: { userId: session?.user.id }
-                    }
+                    Like: userId
+                        ? { where: { userId } }
+                        : false
                 },
 
             },
@@ -53,7 +54,7 @@ export default async function HashtagPosts({ params }: PageProps) {
         description: post.description,
         likeCount: post.likeCount,
         commentCount: post.commentCount,
-        hasLiked: post.Like.length > 0,
+        hasLiked: userId ? post.Like.length > 0 : false,
         user: post.user,
         game: post.game,
         createdAt: post.createdAt,
@@ -95,15 +96,15 @@ export default async function HashtagPosts({ params }: PageProps) {
                         <ArrowLeft className="h-5 w-5" />
                         <span>Back to Community</span>
                     </a>
-                    <div className="flex items-center space-x-4">
+                    {/* <div className="flex items-center space-x-4">
                         <button className="flex items-center space-x-2 rounded-lg bg-white/10 px-4 py-2 transition hover:bg-white/20">
                             <Filter className="h-4 w-4" />
                             <span>Filter</span>
                         </button>
-                    </div>
+                    </div> */}
                 </div>
             </header>
-            <div className="flex items-center justify-between rounded-xl border border-purple-500/20 bg-white/5 px-6 py-4 backdrop-blur-lg">
+            <div className="flex items-center justify-between rounded-xl border m-4 border-purple-500/20 bg-white/5 px-6 py-4 backdrop-blur-lg">
                 <h2 className="text-xl font-bold">Latest Posts</h2>
                 <select className="cursor-pointer rounded-lg border border-purple-500/20 bg-white/10 px-4 py-2 outline-none transition hover:border-purple-500/40">
                     <option className="bg-gray-900">Latest</option>
@@ -112,12 +113,8 @@ export default async function HashtagPosts({ params }: PageProps) {
                     <option className="bg-gray-900">Most Commented</option>
                 </select>
             </div>
-            <div className='flex flex-row space-x-4 mt-4'>
-                <div className='w-[70%]'>
-                    <InfiniteHashTagFeed tag={tag} initialPosts={initialPosts} />
-                </div>
-
-                <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg w-[30%]">
+            <div className='flex md:flex-row flex-col space-x-4 mt-4 m-4 gap-2'>
+                <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg md:w-[30%] w-full">
                     <h3 className="mb-4 text-lg font-bold">About This Hashtag</h3>
                     <p className="mb-4 text-sm leading-relaxed text-gray-300">
                         Discussion and content related to {tag}. Share your experiences, tips, strategies, and connect with other players.
@@ -133,9 +130,13 @@ export default async function HashtagPosts({ params }: PageProps) {
                         </div>
                     </div>
                 </div>
+                <div className='ms:w-[70%] w-full'>
+                    <InfiniteHashTagFeed tag={tag} initialPosts={initialPosts} />
+                </div>
+
+
             </div>
 
         </div >
     )
 }
-

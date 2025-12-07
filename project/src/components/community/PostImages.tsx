@@ -12,7 +12,8 @@ export default function PostImages({ mediaUrls }: { mediaUrls: string[] }) {
                     className={`
             mb-4 grid gap-2 rounded-xl overflow-hidden
             ${mediaUrls.length === 1 ? "grid-cols-1" : ""}
-            ${mediaUrls.length === 2 ? "grid-cols-2" : ""}
+            ${mediaUrls.length === 2 ? "md:grid-cols-2 grid-cols-1" : ""}
+
             ${mediaUrls.length >= 3 ? "grid-cols-2 sm:grid-cols-3" : ""}
           `}
                 >

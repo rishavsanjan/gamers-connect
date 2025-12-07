@@ -4,17 +4,15 @@ import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
   try {
-    const session = await auth()
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    const session = await auth().catch(() => null)
+    const userId = session?.user?.id ?? null;
 
     const { parentId } = await req.json()
 
     const replies = await prisma.comment.findMany({
       where: { parentId },
       include: {
-        user: { select: { id: true, name: true, username:true, avatar:true } },
+        user: { select: { id: true, name: true, username: true, avatar: true } },
         _count: { select: { replies: true } },
       },
       orderBy: { createdAt: 'asc' },
