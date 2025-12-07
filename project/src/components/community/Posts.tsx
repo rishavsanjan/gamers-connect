@@ -9,7 +9,6 @@ import PostLikeButton from './PostLikeButton'
 import PostDescription from './PostDescription'
 import PostImages from './PostImages'
 import { auth } from '@/auth'
-import toast from 'react-hot-toast'
 
 interface Props {
     posts: Post[]
@@ -21,7 +20,7 @@ const Posts: React.FC<Props> = ({ posts }) => {
         <div className='space-y-4'>
             {
                 posts.map(post => (
-                    <div key={post.id} className="rounded-2xl border border-purple-500/20 bg-white/5 md:p-6 p-2 backdrop-blur-lg transition hover:border-purple-500/40 ">
+                    <div key={post.id} className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg transition hover:border-purple-500/40 ">
                         {/* Post Header */}
                         <div className="mb-4 flex items-start justify-between">
                             <div className="flex items-center space-x-3">
@@ -84,18 +83,11 @@ const Posts: React.FC<Props> = ({ posts }) => {
                                 <MessageCircle className="h-5 w-5" />
                                 <span>{post.commentCount}</span>
                             </button>
-                            <button
-                                onClick={() => {
-                                    const url = `${window.location.href}/post_details/${post.id}`
-                                    navigator.clipboard.writeText(url)
-                                    toast.success("Link copied to clipboard!");
-                                }}
-                                className="flex items-center space-x-2 text-gray-400 transition hover:text-blue-400">
+                            <button className="flex items-center space-x-2 text-gray-400 transition hover:text-blue-400">
                                 <Share2 className="h-5 w-5" />
                                 <span>Share</span>
                             </button>
                         </div>
-
                     </div>
                 ))
             }

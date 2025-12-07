@@ -267,7 +267,9 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                             playing.length > 0 ?
                                 <>
                                     {/* @ts-ignore */}
+
                                     < ProfileGameList gamesList={playing} />
+
                                 </>
                                 :
                                 <span className='text-white'>Nothing playing currently!</span>
@@ -317,36 +319,6 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 activeTab === 'groups' &&
                 <div>
                     <GroupsJoinedCard groups={groups}/>
-                </div>
-            }
-            {
-                activeTab === 'playlist' && playlistCount === 0 &&
-                <div className='self-center mb-20'>
-                    <span className='text-gray-500 text-xl'>No games in playlist!</span>
-                </div>
-            }
-            {
-                activeTab === 'owned' && ownedGamesCount === 0 &&
-                <div className='self-center mb-20'>
-                    <span className='text-gray-500 text-xl'>No games owned!</span>
-                </div>
-            }
-            {
-                activeTab === 'ratings' && ratings.length === 0 &&
-                <div className='self-center mb-20'>
-                    <span className='text-gray-500 text-xl'>No games rated!</span>
-                </div>
-            }
-            {
-                activeTab === 'collection' && collectionCount === 0 &&
-                <div className='self-center mb-20'>
-                    <span className='text-gray-500 text-xl'>No games in collection!</span>
-                </div>
-            }
-            {
-                activeTab === 'bookmark' && bookmarkCount === 0 &&
-                <div className='self-center mb-20'>
-                    <span className='text-gray-500 text-xl'>No posts bookmarked!</span>
                 </div>
             }
 

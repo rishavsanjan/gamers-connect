@@ -132,8 +132,8 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div ref={searcBarDropdownRef} className='flex  items-center gap-4 relative'>
-                    <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm  w-44 sm:w-full h-8' placeholder='Search for games' type="text" />
-                    <BiSearch className='absolute left-2 text-gray-500' size={15} />
+                    <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm w-44 sm:w-full' placeholder='Search for games' type="text" />
+                    <BiSearch className='absolute left-2 ' size={20} />
                     <div className="md:flex hidden relative">
                         {isLoggedIn ? (
                             <div className="relative group">
@@ -170,7 +170,7 @@ const Navbar = () => {
 
                     {/* Results dropdown */}
                     {query.trim() && (
-                        <div className="absolute top-full -left-16 md:left-0 right-0 mt-2 bg-gray-900 border  border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50 w-72 md:w-full">
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-gray-900 border  border-gray-700 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
                             {loading ? (
                                 <div className='items-center flex justify-center self-center p-4 py-8'>
                                     <RotateLoader size={15} color='#ce45da' />
@@ -212,7 +212,7 @@ const Navbar = () => {
                 </div>
 
                 {/* Mobile Menu Button */}
-                <div className='md:hidden  flex justify-center'>
+                <div className='md:hidden'>
                     <button onClick={() => setIsMobileMenuOpen(true)}>
                         <AiOutlineMenu color='white' size={32} />
                     </button>
@@ -282,7 +282,7 @@ const Navbar = () => {
                             </Link>
 
                             <button
-                                onClick={async () => {
+                                onClick={async() => {
                                     await logout();
                                     setUser(null);
                                     setIsMobileMenuOpen(false);
@@ -296,15 +296,15 @@ const Navbar = () => {
                     ) : (
 
                         <button
-                            className='flex flex-row items-center gap-2'
-                            onClick={() => {
-                                setLoginModal(true)
-                                setIsMobileMenuOpen(false)
-                            }}>
+                        className='flex flex-row items-center gap-2'
+                        onClick={() => {
+                            setLoginModal(true)
+                            setIsMobileMenuOpen(false)
+                        }}>
                             <BiUser className="text-2xl" />
 
                             <span> Login/Signup</span>
-
+                           
                         </button>
 
                     )}

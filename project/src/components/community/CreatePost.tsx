@@ -191,7 +191,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
     }
 
     return (
-        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm h-screen w-screen overflow-y-auto">
+        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm h-screen w-screen ">
             <div className="w-full max-w-2xl rounded-2xl border border-purple-500/30 bg-gradient-to-br from-gray-900 to-purple-900 p-8">
                 <h2 className="mb-6 text-2xl font-bold">Create a Post</h2>
 
@@ -236,7 +236,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
                     </label>
                     {/* image previews */}
                     {previews.length > 0 && (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-3 mt-4">
+                        <div className="grid grid-cols-3 md:grid-cols-4 gap-3 mt-4">
                             {previews.map((src, index) => (
                                 <div key={index} className="relative group">
                                     <img
@@ -258,7 +258,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
                 </div>
                 {
                     selectedGame ?
-                        <div className='flex flex-row gap-4 border border-gray-400 p-2 items-center justify-between w-fit mb-4'>
+                        <div className='flex flex-row gap-4 border border-gray-400 p-2 items-center justify-between w-fit'>
                             <div className='flex-row flex gap-2'>
                                 <img
                                     src={selectedGame?.cover.url.replace('t_thumb', 't_cover_big')}

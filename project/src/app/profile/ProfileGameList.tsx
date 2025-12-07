@@ -10,10 +10,9 @@ interface GameProps {
 
 const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
     const [hoverId, setHoverId] = useState<number>(0);
-    const [selectedId, setSelectedId] = useState(0);
 
     function formatUnixDate(timestamp: number): string {
-        const date = new Date(timestamp * 1000);
+        const date = new Date(timestamp * 1000); 
         const options: Intl.DateTimeFormatOptions = {
             year: "numeric",
             month: "long",
@@ -33,8 +32,6 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                         : "/placeholder.jpg";
                     let xboxCount = 0;
                     let playStationCount = 0;
-                    let nitendoCount = 0;
-
                     console.log(game)
                     return (
                         <div
@@ -79,58 +76,14 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                                     </div>
                                 </div>
 
-                                 <div className=''>
-                                    <Link href={`/details/${game.id}`} key={game.id}>
+                                <div className='pb-2'>
+                                    <Link href={`/details/${game.igdb_id}`} key={game.id}>
                                         <p onClick={() => { }} className='text-xl w-80 font-[var(--font-dm-sans)] font-bold hover:text-gray-400 hover:cursor-pointer'>{index + 1}.{' '} {game?.name || 'N/A'}</p>
                                     </Link>
-
                                 </div>
-                                {
-                                    selectedId !== game.id ?
-                                        <button
-                                            onClick={() => setSelectedId(game.id)}
-                                            className='border-b border-gray-400 self-center text-sm sm:hidden '>
-                                            View More
-                                        </button>
-
-                                        :
-
-                                        <button
-                                            onClick={() => setSelectedId(0)}
-                                            className='border-b border-gray-400 self-center text-sm sm:hidden '>
-                                            View Less
-                                        </button>
-
-                                }
-
-                                {
-                                    selectedId === game.id &&
-                                    <div className='flex  flex-col gap-4 w-80'>
-                                        <div className='transition-opacity duration-300 opacity-100 '>
-                                            <span className='line-clamp-3  text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
-                                        </div>
-                                        <div>
-                                            <ul className='grid grid-rows-1'>
-                                                <li>
-                                                    <span className='text-gray-400  text-xs font-mono'>Release Date : </span>
-
-                                                    <span className='text-white  text-xs font-mono'>{formatUnixDate(game.first_release_date)}</span>
-
-                                                </li>
-                                                <li>
-                                                    <span className='text-gray-400  text-xs font-mono'>Genres : </span>
-                                                    <span className='text-white text-xs font-mono '>  {game?.genres?.map((genre) => genre.name).join(', ')}</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-
-                                }
-
-
-                                <div className='relative sm:flex hidden'>
+                                <div className='relative '>
                                     {hoverId === game.id && (
-                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[385px] -left-2'>
+                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[342px] -left-2'>
                                             <div className='flex flex-col gap-4 w-full'>
                                                 <div className='transition-opacity duration-300 opacity-100'>
                                                     <span className='line-clamp-3 text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
@@ -151,6 +104,8 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                                         </div>
                                     )}
                                 </div>
+
+
                             </div>
                         </div>
                     )
