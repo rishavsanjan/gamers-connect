@@ -5,12 +5,9 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import Google from "next-auth/providers/google";
-import toast from "react-hot-toast";
 
 
-export const { auth, handlers,
-
-    signIn, signOut } = NextAuth({
+export const { auth, handlers, signIn, signOut } = NextAuth({
         adapter: {
             ...PrismaAdapter(prisma),
             async createUser(data) {
