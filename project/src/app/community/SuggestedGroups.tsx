@@ -70,7 +70,7 @@ const SuggestedGroups: React.FC<Props> = ({ groups }) => {
                 ))
             }
             <Link href={'/community/create-group'}>
-                <button
+                <button 
                     className="flex w-full items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 py-3 font-semibold transition hover:from-purple-700 hover:to-pink-700 mt-4"
                 >
                     <Plus className="h-5 w-5" />

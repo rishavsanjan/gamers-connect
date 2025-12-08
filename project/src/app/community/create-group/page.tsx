@@ -9,18 +9,17 @@ import VisibilitySelector from './VisibilitySelector';
 import GroupPreview from './GroupPreview';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
+import { useUser } from '@/context/UserContext';
+import { useLoginModal } from '@/context/LoginModalContext';
 
 
 const CreateGroup = () => {
-
-    const [invitedFriend, setInvitedFriend] = useState('Aditya Lalhal Aditya');
-    const [inputValue, setInputValue] = useState('');
+    const { isLoggedIn } = useUser();
+    const { openLoginModal } = useLoginModal();
     const [groupName, setGroupName] = useState('');
     const [showPrivacyMenu, setShowPrivacyMenu] = useState(false);
     const [selectedPrivacy, setSelectedPrivacy] = useState('Public');
-    const removeFriend = () => {
-        setInvitedFriend('');
-    };
+
     const [loading, setLoading] = useState(false);
 
     const [showVisibilityMenu, setShowVisibilityMenu] = useState(false);
@@ -37,7 +36,10 @@ const CreateGroup = () => {
     };
 
     const handleGroupCreate = async () => {
-
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
         setLoading(true);
 
         try {

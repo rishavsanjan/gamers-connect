@@ -85,7 +85,7 @@ export async function POST(req: Request) {
             game: post.game,
             createdAt: post.createdAt,
             mediaUrls: post.mediaUrls,
-            group: post,
+            group: post.group,
             hasBookmarked: userId ? post.bookmarks.length > 0 : false
 
         }))

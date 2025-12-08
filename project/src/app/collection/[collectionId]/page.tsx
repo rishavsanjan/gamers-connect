@@ -45,14 +45,16 @@ const page: React.FC<Props> = async ({ params }) => {
 
     const games = collection?.games.map((game) => {
         return game;
-    })
+    });
+
+    const visibility = collection.visibility === 'PUBLIC' ? true : false
 
     console.log(collection)
 
     return (
         <div>
             {/* @ts-ignore */}
-            <InfiniteCollectionGamesList games={games} collectionId={collectionId} totalGames={collection._count.games} />
+            <InfiniteCollectionGamesList games={games} collectionId={collectionId} totalGames={collection._count.games} visible={visibility} collection={collection}/>
         </div>
     )
 }

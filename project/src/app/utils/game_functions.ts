@@ -1,6 +1,8 @@
 'use client'
 import axios from "axios"
 import { Game } from "../types/game"
+import { useUser } from "@/context/UserContext"
+import { useLoginModal } from "@/context/LoginModalContext"
 
 interface gameStatus {
     inMyGames: {
@@ -15,8 +17,10 @@ interface gameStatus {
 
 
 
-export const addToMyGames = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, owned_platform: string, status: string) => {
 
+
+export const addToMyGames = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, owned_platform: string, status: string) => {
+    
     setLoading(true)
     console.log(status)
     const response = await axios({
@@ -157,16 +161,16 @@ export const addRating = async (game: Game, model: string, setStatus: React.Disp
 }
 
 export function pickPlatformColor(name: string): string {
-  const colors: Record<string, string> = {
-    WINDOWS: "#3b82f6",
-    Nintendo: "#00000",
-    IOS: "#60a5fa",
-    Android: "#84cc16",
-    PLAYSTATION: "#ef4444",
-    "Apple Macintosh": "#e5e5e5",
+    const colors: Record<string, string> = {
+        WINDOWS: "#3b82f6",
+        Nintendo: "#00000",
+        IOS: "#60a5fa",
+        Android: "#84cc16",
+        PLAYSTATION: "#ef4444",
+        "Apple Macintosh": "#e5e5e5",
 
-  };
-  return colors[name] || "#9ca3af"; // default gray if not found
+    };
+    return colors[name] || "#9ca3af"; // default gray if not found
 }
 
 

@@ -14,10 +14,9 @@ interface Props {
 
 const PlayerProfile: React.FC<Props> = async ({ params }) => {
     const { userId } = await params;
-    const session = await auth();
-    if (!session?.user.username) {
-        return;
-    }
+    const session = await auth().catch(() => null);
+    const loggedInId = session?.user.id;
+
 
     const user = await prisma.user.findUnique({
         where: {
@@ -33,6 +32,8 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
             bio: true
         }
     });
+
+
 
     if (!user) {
         return;
@@ -76,7 +77,7 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
             },
         }),
         prisma.collection.findMany({
-            where: { userId: userId },
+            where: { userId: userId, visibility:'PUBLIC' },
             include: {
                 games: {
                     include: {
@@ -202,14 +203,19 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
         }
     })
 
-    const isFollowing = !!await prisma.follow.findUnique({
-        where: {
-            followerId_followingId: {
-                followerId: session.user.id,
-                followingId: userId
+    let isFollowing = false;
+    if (session?.user.id) {
+        isFollowing = !!await prisma.follow.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId: session?.user.id,
+                    followingId: userId
+                }
             }
-        }
-    })
+        })
+    }
+
+
 
     const socialLinks = user?.socialLinks.filter((item) => {
         if (item.link) {
@@ -238,7 +244,7 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
                                 </>
                                 :
                                 <>
-                                    <h1 className='text-4xl text-center'>{session?.user.username[0].toUpperCase()}</h1>
+                                    <h1 className='text-4xl text-center'>{user?.username[0].toUpperCase()}</h1>
                                 </>
                         }
 

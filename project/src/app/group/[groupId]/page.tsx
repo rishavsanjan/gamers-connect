@@ -4,8 +4,7 @@ import GroupTabs from './GroupTabs';
 import { prisma } from '@/lib/db';
 import GroupHeader from './GroupHeader';
 import { auth } from '@/auth';
-import AddPostModal from '@/components/community/AddPostModal';
-import InfiniteGroupPosts from './InfiniteGroupPosts';
+
 
 interface Props {
     params: Promise<{ groupId: string }>

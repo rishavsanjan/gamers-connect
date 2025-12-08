@@ -4,6 +4,8 @@ import * as Slider from "@radix-ui/react-slider";
 import { useState } from "react";
 import { Game } from "@/app/types/game";
 import { FadeLoader } from "react-spinners";
+import { useUser } from "@/context/UserContext";
+import { useLoginModal } from "@/context/LoginModalContext";
 
 interface gameStatus {
     inMyGames: {
@@ -25,6 +27,8 @@ interface RatingModelProps {
 }
 
 const RatingSlider: React.FC<RatingModelProps> = ({ ratingStatus, game, setStatus }) => {
+    const { isLoggedIn } = useUser();
+    const { openLoginModal } = useLoginModal();
     const [value, setValue] = useState([0]);
     const [ratingLoading, setRatingLoading] = useState(false)
     return (
@@ -47,7 +51,14 @@ const RatingSlider: React.FC<RatingModelProps> = ({ ratingStatus, game, setStatu
             <p className="text-xl font-bold">{value[0]} / 100</p>
 
             <button
-                onClick={() => { addRating(game, 'rating', setStatus, setRatingLoading, value[0]) }}
+                onClick={() => {
+                    if (!isLoggedIn) {
+                        openLoginModal();
+                        return;
+                    }
+                    addRating(game, 'rating', setStatus, setRatingLoading, value[0])
+
+                }}
                 className="bg-purple-600 hover:bg-purple-700 px-5 py-2 rounded-xl font-semibold transition cursor-pointer"
             >
                 {

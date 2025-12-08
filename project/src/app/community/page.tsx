@@ -48,6 +48,8 @@ export default async function GamelyCommunity() {
 
     });
 
+    console.log(getposts)
+
     const posts = getposts.map((post) => ({
         id: post.id,
         description: post.description,

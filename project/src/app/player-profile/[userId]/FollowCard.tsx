@@ -1,6 +1,7 @@
 'use client'
 import { addFollow } from '@/app/utils/community_functions';
-import { useSession } from 'next-auth/react';
+import { useLoginModal } from '@/context/LoginModalContext';
+import { useUser } from '@/context/UserContext';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
 
@@ -10,15 +11,18 @@ interface Props {
 }
 
 const FollowCard: React.FC<Props> = ({ isFollowing, userId }) => {
-    const { data: session } = useSession();
-
+    const { isLoggedIn , user} = useUser();
+    const {openLoginModal} = useLoginModal()
     const [following, setFollowing] = useState(isFollowing);
     const [loading, setLoading] = useState(false);
 
     const handleFollow = async () => {
-
+        if(!isLoggedIn){
+            openLoginModal();
+            return;
+        }
         setLoading(true);
-        addFollow({ otherPersonId: userId, myId: session?.user.id });
+        addFollow({ otherPersonId: userId, myId: user?.id });
         setFollowing(prev => !prev)
         setLoading(false);
     }

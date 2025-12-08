@@ -9,8 +9,9 @@ import { LuGamepad2 } from "react-icons/lu"
 import RatingSlider from "./RatingSlider"
 import CollectionModal from "./CollectionModal"
 import { BiFolder } from "react-icons/bi"
-import { TiTick } from "react-icons/ti"
 import { GoCheck } from "react-icons/go";
+import { useUser } from "@/context/UserContext"
+import { useLoginModal } from "@/context/LoginModalContext"
 
 interface AddMyGameButtonProps {
     game: Game
@@ -30,6 +31,8 @@ interface gameStatus {
 
 
 export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
+    const { isLoggedIn } = useUser();
+    const { openLoginModal } = useLoginModal();
     const [status, setStatus] = useState<gameStatus>({
         inMyGames: null,
         inPlaylist: false,
@@ -89,6 +92,10 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                 <div className="flex sm:flex-row flex-wrap gap-4">
                     <button
                         onClick={() => {
+                            if (!isLoggedIn) {
+                                openLoginModal();
+                                return;
+                            }
                             status.inMyGames ? removeFromMyGame(game, 'myGame', setStatus, setLoading) : setShowPlatformModal(true)
                         }}
                         className={`${status.inMyGames ? 'bg-green-500' : 'bg-white'}  rounded-xl p-1 gap-4  flex flex-row  px-8 items-center hover:bg-red-300 hover:backdrop-blur-2xl hover:shadow-2xl transition-all ease-in-out duration-300 cursor-pointer`}>
@@ -134,6 +141,10 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                     </button>
                     <button
                         onClick={() => {
+                            if (!isLoggedIn) {
+                                openLoginModal();
+                                return;
+                            }
                             status.inPlaylist ? removeFromPlayList(game, 'playlist', setStatus, setPlaylistLoading) : addToPlayList(game, 'playlist', setStatus, setPlaylistLoading)
                         }}
                         className='bg-transparent hover:bg-gray-50/10 ease-in-out duration-300 cursor-pointer rounded-xl p-2 gap-4  flex flex-row justify-between items-center border border-white '>
@@ -177,7 +188,14 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
 
                     </button>
                     <button
-                        onClick={() => { setCollectionModal(true) }}
+                        onClick={() => {
+                            if (!isLoggedIn) {
+                                openLoginModal();
+                                return;
+                            }
+                            setCollectionModal(true)
+
+                        }}
                         className='bg-transparent hover:bg-gray-50/10 ease-in-out duration-300 cursor-pointer rounded-xl p-2   flex flex-row justify-between items-center gap-3 border border-white '>
                         <div className="flex flex-col items-start">
                             <p>Save to</p>
@@ -188,7 +206,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                     </button>
 
                 </div>
-                
+
                 <div className='self-start sm:w-96 w-80'>
                     {
                         status.rated ?
@@ -250,6 +268,10 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                             {gameStatuses.map((gameStatus) => (
                                 <button
                                     onClick={() => {
+                                        if (!isLoggedIn) {
+                                            openLoginModal();
+                                            return;
+                                        }
                                         setOwnedGame(prev => ({ ...prev, status: gameStatus }));
                                         setShowStatusModal(false);
                                         addToMyGames(game, 'myGame', setStatus, setLoading, ownGame.owned_platform, gameStatus)

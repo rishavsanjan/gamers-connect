@@ -36,6 +36,8 @@ export async function POST(req: Request) {
             return game;
         })
 
+        
+
 
         return NextResponse.json({ games }, { status: 200 })
     } catch (error) {
