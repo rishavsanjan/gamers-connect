@@ -8,13 +8,14 @@ import AddPostModal from '@/components/community/AddPostModal';
 import InfiniteGroupPosts from './InfiniteGroupPosts';
 
 interface Props {
-    params : Promise<{groupId:string}>
+    params: Promise<{ groupId: string }>
 }
 
 const GroupPage: React.FC<Props> = async ({ params }) => {
     const { groupId } = await params;
+    const session = await auth().catch(() => null);
+    const userId = session?.user?.id ?? null;
 
-    const session = await auth();
 
     const group = await prisma.group.findFirst({
         where: {
@@ -57,7 +58,12 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
             },
             Like: {
                 where: { userId: session!.user.id }
-            }
+            },
+            bookmarks: userId ? {
+                where: { userId },
+                select: { postId: true }
+            } : false
+
         },
 
         orderBy: { createdAt: 'desc' }
@@ -78,7 +84,9 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         userId: post.userId,
         updatedAt: post.updatedAt,
         type: post.type,
-        group: post.group
+        group: post.group,
+        hasBookmarked: userId ? post.bookmarks.length > 0 : false
+
     }));
 
     if (!group) {
@@ -191,7 +199,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         currentUserRole = 'member'
     }
 
-    
+
 
     return (
         <div className="min-h-screen bg-[#18191a] text-[#e4e6eb]">
