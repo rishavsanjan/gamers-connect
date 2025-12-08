@@ -15,7 +15,7 @@ export default function PostImages({ mediaUrls }: { mediaUrls: string[] }) {
             ${mediaUrls.length === 2 ? "md:grid-cols-2 grid-cols-1" : ""}
 
             ${mediaUrls.length >= 3 ? "grid-cols-2 sm:grid-cols-3" : ""}
-          `}
+           `}
                 >
                     {mediaUrls.slice(0, 4).map((image, index) => (
                         <div
@@ -27,7 +27,7 @@ export default function PostImages({ mediaUrls }: { mediaUrls: string[] }) {
                             <img
                                 src={image}
                                 alt={`media-${index}`}
-                                className="w-full h-64 object-cover rounded-lg hover:opacity-90 transition"
+                                className="w-full h-full object-cover rounded-lg hover:opacity-90 transition"
                             />
 
                             {index === 3 && mediaUrls.length > 4 && (

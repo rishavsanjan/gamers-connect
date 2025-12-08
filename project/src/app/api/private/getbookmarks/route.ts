@@ -16,7 +16,7 @@ export async function GET(req: Request) {
         }
 
         const bookmarks = await prisma.bookmark.findMany({
-            take:limit,
+            take: limit,
             skip,
             where: {
                 userId: session.user.id
@@ -27,7 +27,9 @@ export async function GET(req: Request) {
                         user: {
                             select: {
                                 name: true,
-                                id: true
+                                id: true,
+                                username: true,
+                                avatar: true
                             }
                         },
                         game: {
@@ -38,6 +40,10 @@ export async function GET(req: Request) {
                         },
                         Like: {
                             where: { userId: session.user.id }
+                        },
+                        bookmarks: {
+                            where: { userId: session.user.id },
+                            select: { postId: true }
                         }
                     },
 
@@ -62,7 +68,9 @@ export async function GET(req: Request) {
                 userId: post.post.userId,
                 type: post.post.type,
                 updatedAt: post.post.updatedAt,
-                gameId: post.post.gameId
+                gameId: post.post.gameId,
+                hasBookmarked: post.post.bookmarks.length > 0 || false
+
             };
         })
 

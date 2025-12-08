@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { CollectionTab } from '@/app/types/profile'
+import Link from 'next/link'
 
 interface Props {
     collections: CollectionTab[]
@@ -16,8 +17,9 @@ const ProfileCollection: React.FC<Props> = ({ collections }) => {
                         ? `https:${item.games[0]?.cover.replace("t_thumb", "t_screenshot_med")}`
                         : "/placeholder.jpg";
                     return (
-                        <div
-                            key={index}
+                        <Link
+                            href={`/collection/${item.id}`}
+                            key={item.id}
                             className="group relative flex flex-col items-center justify-center gap-3 overflow-hidden rounded-xl shadow-xl h-72 cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                         >
                             <img
@@ -36,7 +38,7 @@ const ProfileCollection: React.FC<Props> = ({ collections }) => {
                             </div>
 
                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
+                        </Link>
 
                     )
                 })

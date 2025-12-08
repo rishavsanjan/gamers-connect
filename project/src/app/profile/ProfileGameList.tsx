@@ -35,7 +35,6 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                     let playStationCount = 0;
                     let nitendoCount = 0;
 
-                    console.log(game)
                     return (
                         <div
                             onMouseEnter={() => { setHoverId(game.id) }}

@@ -2,30 +2,38 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { NextResponse } from 'next/server'
 
-export  async function GET(req: Request) {
+export async function POST(req: Request) {
     try {
         const { searchParams } = new URL(req.url);
         const tag = searchParams.get('tag');
         const page = Number(searchParams.get('page') || 1)
         const limit = Number(searchParams.get('limit') || 2)
         const skip = (page - 1) * limit
+
         if (!tag) {
             return NextResponse.json({ error: 'Tag is required' }, { status: 400 })
         }
 
-        const session = await auth();
-        console.log(tag, page, limit, skip)
+        const { filter, category } = await req.json();
+        const session = await auth().catch(() => null);
+        const userId = session?.user?.id;
+
+        const whereClause: any = category ? { type: category } : {};
+
         const hashtag = await prisma.hashtag.findUnique({
             where: { name: tag },
             include: {
                 posts: {
                     skip,
                     take: limit,
+                    where: whereClause,
                     include: {
                         user: {
                             select: {
                                 name: true,
-                                id: true
+                                id: true,
+                                username: true,
+                                avatar: true
                             }
                         },
                         game: {
@@ -33,16 +41,20 @@ export  async function GET(req: Request) {
                                 name: true,
                                 igdb_id: true
                             }
-                        }
-                        ,
-                        Like: {
-                            where: { userId: session?.user.id }
-                        }
+                        },
+                        Like: userId ? {
+                            where: { userId }
+                        } : false,
+                        bookmarks: userId ? {
+                            where: { userId },
+                            select: { postId: true }
+                        } : false
                     },
-
+                    orderBy: filter === 'popular'
+                        ? { Like: { _count: 'desc' } }
+                        : { createdAt: 'desc' }
                 },
-
-            }
+            },
         });
 
         if (!hashtag) {
@@ -54,7 +66,7 @@ export  async function GET(req: Request) {
             description: post.description,
             likeCount: post.likeCount,
             commentCount: post.commentCount,
-            hasLiked: post.Like.length > 0,
+            hasLiked: Array.isArray(post.Like) && post.Like.length > 0,
             user: post.user,
             game: post.game,
             createdAt: post.createdAt,
@@ -63,11 +75,13 @@ export  async function GET(req: Request) {
             userId: post.userId,
             updatedAt: post.updatedAt,
             type: post.type,
+            hasBookmarked: userId && Array.isArray(post.bookmarks) && post.bookmarks.length > 0
         }))
 
         return NextResponse.json({ posts })
 
     } catch (error) {
-        console.log(error)
+        console.error('Error fetching hashtag posts:', error)
+        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
     }
 }

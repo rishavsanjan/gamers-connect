@@ -127,6 +127,10 @@ const Profile = async () => {
           },
           Like: {
             where: { userId: session.user.id }
+          },
+          bookmarks: {
+            where: { userId: session.user.id },
+            select: { postId: true }
           }
         },
 
@@ -152,6 +156,7 @@ const Profile = async () => {
       type: post.post.type,
       updatedAt: post.post.updatedAt,
       gameId: post.post.gameId,
+      hasBookmarked: post.post.bookmarks.length > 0 || false
 
     };
   });
@@ -190,7 +195,6 @@ const Profile = async () => {
     isFollowingBack: myFollowingSet.has(f.followerId),
   }));
 
-  console.log(followers)
 
 
   const followingWithoutFormatting = await prisma.follow.findMany({
@@ -231,7 +235,6 @@ const Profile = async () => {
 
 
 
-  console.log(following)
 
 
 
@@ -281,7 +284,6 @@ const Profile = async () => {
 
 
 
-  console.log(user)
 
   //@ts-ignore
   const profileData: ProfileTabsData = { ratings, mygames, playlist, collection, stats: allMyGamesForStats, currentlyPlaying };

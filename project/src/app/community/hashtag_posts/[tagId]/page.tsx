@@ -37,7 +37,11 @@ export default async function HashtagPosts({ params }: PageProps) {
                     ,
                     Like: userId
                         ? { where: { userId } }
-                        : false
+                        : false,
+                    bookmarks: userId ? {
+                        where: { userId },
+                        select: { postId: true }
+                    } : false
                 },
 
             },
@@ -63,6 +67,8 @@ export default async function HashtagPosts({ params }: PageProps) {
         userId: post.userId,
         updatedAt: post.updatedAt,
         type: post.type,
+        hasBookmarked: userId ? post.bookmarks.length > 0 : false
+
     }));
 
     const postCount = await prisma.post.count({
@@ -104,38 +110,11 @@ export default async function HashtagPosts({ params }: PageProps) {
                     </div> */}
                 </div>
             </header>
-            <div className="flex items-center justify-between rounded-xl border m-4 border-purple-500/20 bg-white/5 px-6 py-4 backdrop-blur-lg">
-                <h2 className="text-xl font-bold">Latest Posts</h2>
-                <select className="cursor-pointer rounded-lg border border-purple-500/20 bg-white/10 px-4 py-2 outline-none transition hover:border-purple-500/40">
-                    <option className="bg-gray-900">Latest</option>
-                    <option className="bg-gray-900">Popular</option>
-                    <option className="bg-gray-900">Most Liked</option>
-                    <option className="bg-gray-900">Most Commented</option>
-                </select>
-            </div>
-            <div className='flex md:flex-row flex-col space-x-4 mt-4 m-4 gap-2'>
-                <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg md:w-[30%] w-full">
-                    <h3 className="mb-4 text-lg font-bold">About This Hashtag</h3>
-                    <p className="mb-4 text-sm leading-relaxed text-gray-300">
-                        Discussion and content related to {tag}. Share your experiences, tips, strategies, and connect with other players.
-                    </p>
-                    <div className="space-y-3 border-t border-white/10 pt-4">
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-400">Total Posts</span>
-                            <span className="font-bold text-purple-400">{postCount}</span>
-                        </div>
-                        <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-400">Growth (posts in last 24 hours)</span>
-                            <span className="font-bold text-green-400">{recentPostCount}</span>
-                        </div>
-                    </div>
-                </div>
-                <div className='ms:w-[70%] w-full'>
-                    <InfiniteHashTagFeed tag={tag} initialPosts={initialPosts} />
-                </div>
 
 
-            </div>
+            <InfiniteHashTagFeed tag={tag} initialPosts={initialPosts} postCount={postCount} recentPostCount={recentPostCount} />
+
+
 
         </div >
     )

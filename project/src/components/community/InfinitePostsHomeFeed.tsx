@@ -127,7 +127,6 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
                 >
                     <option value={'latest'} className="bg-gray-900">Latest</option>
                     <option value={'popular'} className="bg-gray-900">Popular</option>
-                    <option value={'trending'} className="bg-gray-900">Trending</option>
                 </select>
             </div>
             <Posts posts={posts} />

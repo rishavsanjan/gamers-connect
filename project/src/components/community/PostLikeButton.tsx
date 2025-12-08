@@ -17,7 +17,6 @@ interface Props {
 const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
     const [loginModal, setLoginModal] = useState(false);
     const { user, isLoggedIn } = useUser();
-    console.log(isLoggedIn, user)
 
     const [liked, setLiked] = useState(hasLiked);
     const [count, setCount] = useState(likeCount);
