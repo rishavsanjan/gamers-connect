@@ -265,7 +265,8 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
 
 
 
-    const handleSignUpSubmit = async () => {
+    const handleSignUpSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
         if (!validateForm() || !usernameAvailability || formData.username.trim().length === 0 || !emailAvailability) return;
 
         setLoading(true);

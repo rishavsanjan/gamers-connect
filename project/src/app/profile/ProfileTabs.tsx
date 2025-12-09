@@ -18,6 +18,7 @@ import GameGenreChart from '@/components/graphs/HorizontalGraph';
 import FollowingCard from '@/components/FollowingCard';
 import ProfileAchievements from './ProfileAchievements';
 import GroupsJoinedCard from './GroupsJoinedCard';
+import InfiniteProfilePosts from '@/components/InfiniteProfilePosts';
 
 interface GroupsExtended extends Group {
     hasJoined: boolean
@@ -35,13 +36,15 @@ interface Props extends ProfileTabsData {
     achievementsCount: number
     groups: GroupsExtended[]
     groupsCount: number
+    posts:Post[]
+    postsCount:number
 }
 
 
 const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, bookmarkedPosts, playlistCount,
     ownedGamesCount,
     collectionCount,
-    ratingsCount, bookmarkCount, follower, following, achievementsCount, groups, groupsCount }) => {
+    ratingsCount, bookmarkCount, follower, following, achievementsCount, groups, groupsCount, posts, postsCount }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
     const [playlistGames, setPlaylistGames] = useState(playlist.map(item => item.game));
@@ -153,6 +156,15 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{ratingsCount || 0}</span>
 
                 </div>
+                <div className='relative '>
+                    <button
+                        onClick={() => { setActiveTab('post') }}
+                        className={`${activeTab === 'post' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    >Posts
+                    </button>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{postsCount || 0}</span>
+
+                </div>
 
                 <div className='relative '>
                     <button
@@ -218,6 +230,12 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 activeTab === 'bookmark' &&
                 <div className='p-4'>
                     <InfiniteProfileBookmarked initialPosts={bookmarkedPosts} />
+                </div>
+            }
+            {
+                activeTab === 'post' &&
+                <div className='p-4'>
+                    <InfiniteProfilePosts initialPosts={posts} />
                 </div>
             }
             {
@@ -415,6 +433,13 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 activeTab === 'bookmark' && bookmarkCount === 0 &&
                 <div className='self-center mb-20'>
                     <span className='text-gray-500 text-xl'>No posts bookmarked!</span>
+                </div>
+            }
+
+             {
+                activeTab === 'post' && postsCount === 0 &&
+                <div className='self-center mb-20'>
+                    <span className='text-gray-500 text-xl'>No posts!</span>
                 </div>
             }
 

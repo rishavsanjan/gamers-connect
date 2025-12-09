@@ -139,6 +139,55 @@ const Profile = async () => {
       },
 
     }
+  });
+
+  const posts = await prisma.post.findMany({
+    take: 5,
+    where: {
+      userId: session.user.id
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+          id: true,
+          username: true,
+          avatar: true
+        }
+      },
+      game: {
+        select: {
+          name: true,
+          igdb_id: true
+        }
+      },
+      Like: {
+        where: { userId: session.user.id }
+      },
+      bookmarks: {
+        where: { userId: session.user.id },
+        select: { postId: true }
+      }
+    }
+  });
+
+  const formattedPosts = posts.map((post) => {
+    return {
+      id: post.id,
+      description: post.description,
+      likeCount: post.likeCount,
+      commentCount: post.commentCount,
+      hasLiked: post.Like.length > 0,
+      user: post.user,
+      game: post.game,
+      createdAt: post.createdAt,
+      mediaUrls: post.mediaUrls,
+      userId: post.userId,
+      type: post.type,
+      updatedAt: post.updatedAt,
+      gameId: post.gameId,
+      hasBookmarked: post.bookmarks.length > 0 || false
+    }
   })
 
   const bookmarkedPosts = bookmarks.map((post) => {
@@ -160,6 +209,12 @@ const Profile = async () => {
 
     };
   });
+
+  const postsCount = await prisma.post.count({
+    where:{
+      userId:session.user.id
+    }
+  })
 
   const followersWithoutFormatting = await prisma.follow.findMany({
     where: {
@@ -455,6 +510,8 @@ const Profile = async () => {
         achievementsCount={achievementsCount}
         groups={formattedGroups}
         groupsCount={groupsCount}
+        posts={formattedPosts}
+        postsCount={postsCount}
       />
     </div>
   )

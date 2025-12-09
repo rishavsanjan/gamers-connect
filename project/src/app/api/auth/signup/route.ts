@@ -28,7 +28,7 @@ export async function POST(req: Request) {
             }
         })
 
-        return NextResponse.json({ createUser });
+        return NextResponse.json({ createUser, success:true });
     } catch (error) {
         console.log(error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });

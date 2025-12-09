@@ -35,11 +35,10 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
     ratingsCount, follower, following, userId }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
-    const playlistGames = playlist.map(item => item.game);
+    const [playlistGames, setPlaylistGames] = useState(playlist.map(item => item.game));
     const [ownedGames, setOwnedGames] = useState(mygames.map(item => item.game));
 
-    // const ownedgames = mygames.map(item => item.game);
-    const ratedgames = ratings.map(item => item.game);
+    const [ratedgames, setRatedGames] = useState(ratings.map(item => item.game));
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
         if (!item.game.first_release_date) return acc;
 
@@ -84,15 +83,20 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
 
         setLoading(true);
         const response = await axios({
-            url: `/api/private/fetchgames?page=${nextPage}&tab=${tab}`,
+            url: `/api/fetch-player-profile-data?page=${nextPage}&tab=${tab}`,
             method: 'post',
             data: {
                 userId
             }
         });
-        const games = response.data.mygames.map((item: any) => { return item.game })
-        setOwnedGames(prev => [...prev, ...games])
-        console.log(response.data)
+        const games = response.data.games.map((item: any) => { return item.game })
+        if (tab === 'myGames') {
+            setOwnedGames(prev => [...prev, ...games])
+        } else if (tab === 'playlist') {
+            setPlaylistGames(prev => [...prev, ...games])
+        } else if (tab === 'ratings') {
+            setRatedGames(prev => [...prev, ...games])
+        }
         setLoading(false);
     }
 
@@ -171,8 +175,32 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
 
             {
                 activeTab === 'playlist' &&
-                //@ts-ignore
-                <ProfileGameList gamesList={playlistGames} />
+                <div className='pb-8 flex flex-col  '>
+                    {/* @ts-ignore */}
+                    <ProfileGameList gamesList={playlistGames} />
+                    <div className={`${playlistCount === playlistGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
+                        {
+                            loading ?
+
+                                <ClipLoader color='gray' />
+                                :
+                                <>
+                                    {
+                                        playlistCount !== playlistGames.length &&
+                                        < button onClick={() => {
+                                            setNextPage(prev => prev + 1);
+                                            loadMore('playlist');
+                                        }}>
+                                            Load More
+                                        </button>
+                                    }
+                                </>
+
+
+                        }
+                    </div>
+                </div>
+
             }
             {
                 activeTab === 'owned' &&
@@ -200,8 +228,33 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
             }
             {
                 activeTab === 'ratings' &&
-                //@ts-ignore
-                <ProfileGameList gamesList={ratedgames} />
+                <div className='pb-8 flex flex-col  '>
+                    {/* @ts-ignore */}
+                    <ProfileGameList gamesList={ratedgames} />
+                    <div className={`${ratingsCount === ratedgames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
+                        {
+                            loading ?
+
+                                <ClipLoader color='gray' />
+                                :
+                                <>
+                                    {
+                                        ratingsCount !== ratedgames.length &&
+                                        < button onClick={() => {
+                                            setNextPage(prev => prev + 1);
+                                            loadMore('ratings');
+                                        }}>
+                                            Load More
+                                        </button>
+                                    }
+                                </>
+
+
+                        }
+                    </div>
+                </div>
+
+
             }
             {
                 activeTab === 'collection' &&
@@ -293,7 +346,7 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
                     <span className='text-gray-500 text-xl'>No games in collection!</span>
                 </div>
             }
-            
+
 
 
         </div>
