@@ -7,10 +7,8 @@ export async function GET(req: Request) {
 
     const groupId = String(searchParams.get('groupId'));
     try {
-        const session = await auth();
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        const session = await auth().catch(() => null);
+        
 
         const details = await prisma.group.findFirst({
             where: {

@@ -11,10 +11,8 @@ export async function POST(req: Request) {
     const { filter, category, groupId } = await req.json();
     console.log(category)
     try {
-        const session = await auth();
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        const session = await auth().catch(() => null);
+        
 
         let where: any = {};
 
@@ -34,7 +32,7 @@ export async function POST(req: Request) {
                 game: { select: { name: true, igdb_id: true } },
                 user: { select: { name: true, id: true, username: true, avatar:true } },
                 group: { select: { name: true, id: true } },
-                Like: { where: { userId: session.user.id } }
+                Like: { where: { userId: session?.user.id } }
             },
             orderBy:
                 filter === "popular"

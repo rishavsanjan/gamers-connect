@@ -9,6 +9,7 @@ import InfiniteGroupMedia from './InfiniteGroupMedia'
 import { Post as PostPrisma } from '@prisma/client'
 import GroupAsideBar from './GroupAsideBar'
 import InfiniteGroupMembers from './InfiniteGroupMembers'
+import { PostFeedProvider } from '@/context/PostsContext'
 
 interface Props {
     groupId: string
@@ -25,11 +26,11 @@ interface Props {
         avatar: string | null,
         role?: 'admin' | 'member'
     }>
-    currentUserId?:string,
+    currentUserId?: string,
     currentUserRole?: string
 }
 
-const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members , currentUserId, currentUserRole}) => {
+const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members, currentUserId, currentUserRole }) => {
     const [activeTab, setActiveTab] = useState('Posts');
 
     const tabs = ['Posts', 'Featured', 'Members', 'Media'];
@@ -67,7 +68,10 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, pos
                         <>
                             {/* Post Composer */}
                             <AddPostModal groupId={groupId} />
-                            <InfiniteGroupPosts groupId={groupId} initialPosts={posts} />
+                            <PostFeedProvider initialPosts={posts}>
+                                <InfiniteGroupPosts groupId={groupId}  />
+                            </PostFeedProvider>
+
                         </>
 
                     }
@@ -78,7 +82,7 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, pos
                     {
                         activeTab === 'Members' &&
                         <>
-                            <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole}/>
+                            <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole} group={group}/>
                         </>
                     }
 

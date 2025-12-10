@@ -10,10 +10,8 @@ export async function POST(req: Request) {
     const skip = (page - 1) * limit
     const { groupId } = await req.json();
     try {
-        const session = await auth();
-        if (!session?.user?.id) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
+        const session = await auth().catch(() => null);
+    
 
         const posts = await prisma.post.findMany({
             skip,

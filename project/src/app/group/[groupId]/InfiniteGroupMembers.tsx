@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Crown, Shield, UserMinus, MoreVertical } from 'lucide-react'
 import axios from 'axios'
+import { Group } from '@prisma/client'
 
 interface Member {
     name: string | null
@@ -14,14 +15,16 @@ interface Props {
     members: Member[]
     groupId: string
     currentUserId?: string
-    currentUserRole?: string
+    currentUserRole?: string,
+    group:Group
 }
 
 const InfiniteGroupMembers: React.FC<Props> = ({
     members,
     groupId,
     currentUserId,
-    currentUserRole
+    currentUserRole,
+    group
 }) => {
     const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
@@ -80,7 +83,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     }
 
     const handleKickMember = async (memberId: string) => {
-        
+
         setKickingUserId(memberId)
         try {
             const response = await axios({
@@ -174,7 +177,16 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                                     <h3 className="text-white font-medium truncate">
                                         {member.name || member.username}
                                     </h3>
-                                    {getRoleBadge(member.role || 'MEMBER')}
+                                    {
+                                        member.id === group.ownerId && 'OWNER' &&
+                                        <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-medium">
+                                            <Crown size={12} />
+                                            Owner
+                                        </div>
+                                    }
+                                    {
+                                        getRoleBadge(member.role || 'MEMBER')
+                                    }
                                 </div>
                                 <p className="text-gray-400 text-sm truncate">
                                     @{member.username}

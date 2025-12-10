@@ -55,9 +55,9 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
             group: {
                 select: { name: true, id: true }
             },
-            Like: {
-                where: { userId: session!.user.id }
-            },
+            Like: userId
+                ? { where: { userId } }
+                : false,
             bookmarks: userId ? {
                 where: { userId },
                 select: { postId: true }
@@ -74,7 +74,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         description: post.description,
         likeCount: post.likeCount,
         commentCount: post.commentCount,
-        hasLiked: post.Like.length > 0,
+        hasLiked: userId ? post.Like.length > 0 : false,
         user: post.user,
         game: post.game,
         createdAt: post.createdAt,
