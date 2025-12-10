@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { ArrowLeft, Filter } from 'lucide-react'
 import InfiniteHashTagFeed from './InfiniteHashTagFeed'
+import { PostFeedProvider } from '@/context/PostsContext'
 
 interface PageProps {
     params: Promise<{ tagId: string }>
@@ -111,8 +112,10 @@ export default async function HashtagPosts({ params }: PageProps) {
                 </div>
             </header>
 
+            <PostFeedProvider initialPosts={initialPosts}>
+                <InfiniteHashTagFeed tag={tag}  postCount={postCount} recentPostCount={recentPostCount} />
+            </PostFeedProvider>
 
-            <InfiniteHashTagFeed tag={tag} initialPosts={initialPosts} postCount={postCount} recentPostCount={recentPostCount} />
 
 
 

@@ -2,6 +2,7 @@
 
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
+import { usePostFeed } from '@/context/PostsContext'
 import axios from 'axios'
 import { Filter } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -9,18 +10,18 @@ import { ClipLoader } from 'react-spinners'
 
 interface Props {
     tag: string,
-    initialPosts: Post[],
     postCount: number,
     recentPostCount: number
 }
 
-const InfiniteHashTagFeed: React.FC<Props> = ({ tag, initialPosts, postCount, recentPostCount }) => {
-    const [posts, setPosts] = useState(initialPosts)
+const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount }) => {
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const [filter, setFilter] = useState('latest')
     const [category, setCategory] = useState('')
+
+    const { posts, setPosts } = usePostFeed();
 
     const observer = useRef<IntersectionObserver | null>(null);
     const isFetchingRef = useRef(false);
@@ -40,10 +41,10 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, initialPosts, postCount, re
 
     const getPosts = useCallback(async (pageNum: number, isReset = false) => {
         if (isFetchingRef.current) return;
-        
+
         isFetchingRef.current = true;
         setLoading(true)
-        
+
         try {
             const response = await axios.post(
                 `/api/hash-tag-posts?tag=${encodeURIComponent(tag)}&page=${pageNum}`,
@@ -89,9 +90,9 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, initialPosts, postCount, re
         <div>
             <div className="flex items-center justify-between rounded-xl border m-4 border-purple-500/20 bg-white/5 px-6 py-4 backdrop-blur-lg">
                 <Filter className="h-5 w-5 text-purple-400" />
-                <select 
+                <select
                     value={category}
-                    onChange={(e) => setCategory(e.target.value)} 
+                    onChange={(e) => setCategory(e.target.value)}
                     className="flex-1 cursor-pointer border-none bg-transparent outline-none"
                 >
                     <option value={''} className="bg-gray-900">All</option>
@@ -129,7 +130,7 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, initialPosts, postCount, re
                     </div>
                 </div>
                 <div className='md:w-[70%] w-full'>
-                    <Posts posts={posts} />
+                    <Posts />
 
                     <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                         {loading && <ClipLoader color='white' size={40} />}
