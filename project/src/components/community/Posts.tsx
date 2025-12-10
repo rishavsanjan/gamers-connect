@@ -12,18 +12,18 @@ import { auth } from '@/auth'
 import toast from 'react-hot-toast'
 import PostSettings from '../PostSettings'
 import { useUser } from '@/context/UserContext'
+import { usePostFeed } from '@/context/PostsContext'
 
 interface Props {
-    posts: Post[]
 }
 
-const Posts: React.FC<Props> = ({ posts }) => {
+const Posts: React.FC<Props> = ({  }) => {
     const ellipsRef = useRef<HTMLDivElement | null>(null);
     const [selectedPost, setSelectedPost] = useState<string | null>(null);
     const { user } = useUser();
+    const {posts} = usePostFeed();
 
 
-    console.log(posts)
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (ellipsRef.current && !ellipsRef.current.contains(event.target as Node)) {
@@ -77,7 +77,6 @@ const Posts: React.FC<Props> = ({ posts }) => {
                                                 post.group  &&
                                                 <>
                                                     <Link href={`/group/${post.group.id}`} key={post.group.id}>
-                                                    <span>ad</span>
                                                         <span className="text-purple-400">{post.group.name}</span>
                                                     </Link>
                                                     {' '}  • {' '}
@@ -101,7 +100,7 @@ const Posts: React.FC<Props> = ({ posts }) => {
                                 {
                                     selectedPost === post.id &&
                                     <div ref={ellipsRef} className='absolute bg-black/25 top-10 right-8 mt-2 z-10'>
-                                        <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id} posts={posts} />
+                                        <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id}  />
                                     </div>
                                 }
 

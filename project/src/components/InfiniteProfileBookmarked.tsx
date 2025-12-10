@@ -1,20 +1,19 @@
 'use client'
 
 interface Props {
-    initialPosts: Post[]
 }
 
-import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
+import { usePostFeed } from '@/context/PostsContext'
 import axios from 'axios'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
-const InfiniteProfileBookmarked: React.FC<Props> = ({ initialPosts }) => {
-    const [posts, setPosts] = useState(initialPosts)
-    const [page, setPage] = useState(1)
-    const [loading, setLoading] = useState(false)
-    const [hasMore, setHasMore] = useState(true)
+const InfiniteProfileBookmarked: React.FC<Props> = ({  }) => {
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const {posts, setPosts} = usePostFeed();
 
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -58,7 +57,7 @@ const InfiniteProfileBookmarked: React.FC<Props> = ({ initialPosts }) => {
 
     return (
         <div>
-            <Posts posts={posts} />
+            <Posts />
 
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                 {loading && <ClipLoader color='white' size={40} />}

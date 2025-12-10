@@ -11,7 +11,6 @@ import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { Post } from '@/app/types/post';
 import InfiniteHomePostsFeed from '../../../components/community/InfinitePostsHomeFeed';
-import InfiniteProfileBookmarked from '../../../components/InfiniteProfileBookmarked';
 import { User } from '@prisma/client';
 import { Follower } from '@/app/types/follower';
 import FollowingCard from '../../../components/FollowingCard';
@@ -175,7 +174,7 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
 
             {
                 activeTab === 'playlist' &&
-                <div className='pb-8 flex flex-col  '>
+                <div className='pb-8 flex flex-col  sm:items-center'>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={playlistGames} />
                     <div className={`${playlistCount === playlistGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
@@ -204,21 +203,26 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
             }
             {
                 activeTab === 'owned' &&
-                <div className='pb-8 flex flex-col items-center '>
+                <div className='pb-8 flex flex-col sm:items-center '>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={ownedGames} />
-                    <div className='hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all'>
+                    <div className={`${ownedGamesCount === ownedGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
                         {
                             loading ?
 
                                 <ClipLoader color='gray' />
                                 :
-                                <button onClick={() => {
-                                    setNextPage(prev => prev + 1);
-                                    loadMore('myGames');
-                                }}>
-                                    Load More
-                                </button>
+                                <>
+                                    {
+                                        ownedGamesCount !== ownedGames.length &&
+                                        < button onClick={() => {
+                                            setNextPage(prev => prev + 1);
+                                            loadMore('myGames');
+                                        }}>
+                                            Load More
+                                        </button>
+                                    }
+                                </>
                         }
                     </div>
 
@@ -228,7 +232,7 @@ const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collec
             }
             {
                 activeTab === 'ratings' &&
-                <div className='pb-8 flex flex-col  '>
+                <div className='pb-8 flex flex-col  sm:items-center'>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={ratedgames} />
                     <div className={`${ratingsCount === ratedgames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>

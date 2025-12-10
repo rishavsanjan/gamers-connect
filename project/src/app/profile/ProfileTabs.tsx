@@ -19,6 +19,7 @@ import FollowingCard from '@/components/FollowingCard';
 import ProfileAchievements from './ProfileAchievements';
 import GroupsJoinedCard from './GroupsJoinedCard';
 import InfiniteProfilePosts from '@/components/InfiniteProfilePosts';
+import { PostFeedProvider } from '@/context/PostsContext';
 
 interface GroupsExtended extends Group {
     hasJoined: boolean
@@ -36,8 +37,8 @@ interface Props extends ProfileTabsData {
     achievementsCount: number
     groups: GroupsExtended[]
     groupsCount: number
-    posts:Post[]
-    postsCount:number
+    posts: Post[]
+    postsCount: number
 }
 
 
@@ -229,13 +230,19 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             {
                 activeTab === 'bookmark' &&
                 <div className='p-4'>
-                    <InfiniteProfileBookmarked initialPosts={bookmarkedPosts} />
+                    <PostFeedProvider initialPosts={bookmarkedPosts} >
+                        <InfiniteProfileBookmarked />
+                    </PostFeedProvider>
+
                 </div>
             }
             {
                 activeTab === 'post' &&
                 <div className='p-4'>
-                    <InfiniteProfilePosts initialPosts={posts} />
+                    <PostFeedProvider initialPosts={posts}>
+                        <InfiniteProfilePosts />
+                    </PostFeedProvider>
+
                 </div>
             }
             {
@@ -436,7 +443,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 </div>
             }
 
-             {
+            {
                 activeTab === 'post' && postsCount === 0 &&
                 <div className='self-center mb-20'>
                     <span className='text-gray-500 text-xl'>No posts!</span>

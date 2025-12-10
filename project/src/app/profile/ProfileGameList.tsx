@@ -24,7 +24,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
 
     return (
         <div
-            className='grid grid-cols-1 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2  gap-8 p-4   rounded-xl   '
+            className='grid grid-cols-1  xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2  gap-8 p-4   rounded-xl   '
         >
             {
                 gamesList.map((game, index) => {
@@ -78,7 +78,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                                     </div>
                                 </div>
 
-                                 <div className=''>
+                                <div className=''>
                                     <Link href={`/details/${game.id}`} key={game.id}>
                                         <p onClick={() => { }} className='text-xl w-80 font-[var(--font-dm-sans)] font-bold hover:text-gray-400 hover:cursor-pointer'>{index + 1}.{' '} {game?.name || 'N/A'}</p>
                                     </Link>
@@ -129,7 +129,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
 
                                 <div className='relative sm:flex hidden'>
                                     {hoverId === game.id && (
-                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[385px] -left-2'>
+                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[335px] -left-2'>
                                             <div className='flex flex-col gap-4 w-full'>
                                                 <div className='transition-opacity duration-300 opacity-100'>
                                                     <span className='line-clamp-3 text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>

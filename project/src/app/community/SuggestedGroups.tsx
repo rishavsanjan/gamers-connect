@@ -58,7 +58,10 @@ const SuggestedGroups: React.FC<Props> = ({ groups }) => {
             {
                 groupsState?.map((group) => (
                     <div key={group.id} className='flex flex-row items-center justify-between gap-4'>
-                        <span>{group.name}</span>
+                        <Link href={`/group/${group.id}`} key={group.id}>
+                            <span>{group.name}</span>
+                        </Link>
+
                         <button
                             onClick={() => { handleGroupJoin(group.id) }}
                             className=" rounded-md p-1 px-4 bg-gradient-to-r from-purple-600 to-pink-600 font-semibold transition hover:from-purple-700 hover:to-pink-700 items-center flex "
@@ -70,7 +73,7 @@ const SuggestedGroups: React.FC<Props> = ({ groups }) => {
                 ))
             }
             <Link href={'/community/create-group'}>
-                <button 
+                <button
                     className="flex w-full items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 py-3 font-semibold transition hover:from-purple-700 hover:to-pink-700 mt-4"
                 >
                     <Plus className="h-5 w-5" />

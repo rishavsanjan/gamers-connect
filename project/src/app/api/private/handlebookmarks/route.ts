@@ -26,7 +26,7 @@ export async function POST(req: Request) {
                     userId: session.user.id
                 }
             })
-            return NextResponse.json({ bookmark });
+            return NextResponse.json({ bookmark, success:true });
 
         } else {
             const bookmark = await prisma.bookmark.delete({
@@ -37,7 +37,7 @@ export async function POST(req: Request) {
                     }
                 }
             })
-            return NextResponse.json({ bookmark });
+            return NextResponse.json({ bookmark, success:true });
 
         }
 

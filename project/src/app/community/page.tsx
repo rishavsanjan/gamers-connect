@@ -8,6 +8,7 @@ import { auth } from '@/auth';
 import AddPostModal from '@/components/community/AddPostModal';
 import SearchCommunity from './SearchCommunity';
 import SuggestedGroups from './SuggestedGroups';
+import { PostFeedProvider } from '@/context/PostsContext';
 export default async function GamelyCommunity() {
 
     const session = await auth().catch(() => null);
@@ -39,8 +40,8 @@ export default async function GamelyCommunity() {
                 ? { where: { userId } }
                 : false,
             bookmarks: userId ? {
-                where:{userId},
-                select:{postId:true}
+                where: { userId },
+                select: { postId: true }
             } : false
         },
 
@@ -65,7 +66,7 @@ export default async function GamelyCommunity() {
         updatedAt: post.updatedAt,
         type: post.type,
         group: post.group,
-        hasBookmarked:userId ? post.bookmarks.length > 0 : false
+        hasBookmarked: userId ? post.bookmarks.length > 0 : false
     }));
 
     console.log(posts)
@@ -268,7 +269,11 @@ export default async function GamelyCommunity() {
 
                                 : */}
                         <>
-                            <InfiniteHomePostsFeed initialPosts={posts} />
+                            <PostFeedProvider initialPosts={posts}>
+                                <InfiniteHomePostsFeed  />
+                            </PostFeedProvider>
+
+
 
                         </>
                         {/* } */}

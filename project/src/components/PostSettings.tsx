@@ -7,23 +7,22 @@ import toast from 'react-hot-toast';
 import { useUser } from '@/context/UserContext';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { Post } from '@/app/types/post';
+import { usePostFeed } from '@/context/PostsContext';
 
 interface PostActionsProps {
   postId: string;
   hasBookmarked: boolean;
-  posts: Post[]
 }
 
 export default function PostActions({
   postId,
-  hasBookmarked, posts
+  hasBookmarked
 }: PostActionsProps) {
   const [bookmarked, setBookmarked] = useState(hasBookmarked);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const { isLoggedIn } = useUser();
   const { openLoginModal } = useLoginModal();
-  const [postsState, setPostsState] = useState(posts)
-
+  const { toggleBookamrk } = usePostFeed();
   const handleBookmark = async () => {
     if (!isLoggedIn) {
       openLoginModal();
@@ -45,14 +44,10 @@ export default function PostActions({
 
       if (response.data.success) {
         toast.success(bookmarked ? 'Bookmark removed' : 'Post bookmarked');
+        toggleBookamrk(postId);
+
       }
-      setPostsState(prev =>
-        prev.map(item =>
-          item.id === postId
-            ? { ...item, hasBookmarked: !item.hasBookmarked }
-            : item
-        )
-      );
+      
     } catch (error) {
       // Revert on error
       setBookmarked(previousState);

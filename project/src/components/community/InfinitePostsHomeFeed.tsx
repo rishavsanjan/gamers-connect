@@ -4,22 +4,22 @@
 
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
+import { PostFeedProvider, usePostFeed } from '@/context/PostsContext'
 import axios from 'axios'
 import { Filter } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
 interface Props {
-    initialPosts: Post[]
 }
 
-const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
-    const [posts, setPosts] = useState(initialPosts)
+const InfiniteHomePostsFeed: React.FC<Props> = () => {
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const [filter, setFilter] = useState('');
     const [category, setCategory] = useState('');
+    const { setPosts } = usePostFeed();
 
     const observer = useRef<IntersectionObserver | null>(null);
 
@@ -129,7 +129,8 @@ const InfiniteHomePostsFeed: React.FC<Props> = ({ initialPosts }) => {
                     <option value={'popular'} className="bg-gray-900">Popular</option>
                 </select>
             </div>
-            <Posts posts={posts} />
+            <Posts />
+
 
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                 {loading && <ClipLoader color='white' size={40} />}

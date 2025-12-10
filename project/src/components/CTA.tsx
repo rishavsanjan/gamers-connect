@@ -113,8 +113,8 @@ export default function CTA() {
     console.log(games)
 
     return (
-        <div className="flex sm:flex-row flex-col">
-            <aside className="w-full sm:w-[20%] lg:w-[15%] sm:h-screen sm:sticky sm:top-0 sm:overflow-y-auto hide-scrollbar border-b sm:border-b-0 sm:border-r border-gray-700">
+        <div className="flex md:flex-row flex-col">
+            <aside className="w-full md:w-[20%] lg:w-[15%] md:h-screen md:sticky md:top-0 md:overflow-y-auto hide-scrollbar border-b md:border-b-0 md:border-r border-gray-700">
                 <SideBar
                     selectedCategory={category}
                     onCategoryChange={handleCategoryChange}
@@ -126,8 +126,8 @@ export default function CTA() {
 
             <main
                 ref={contentRef}
-                className="p-2 sm:p-4 w-full sm:w-[80%] lg:w-[85%] flex flex-col sm:h-screen sm:overflow-y-auto hide-scrollbar"     >
-                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold px-2 sm:px-4 py-4 sm:py-6 capitalize">
+                className="p-2 md:p-4 w-full md:w-[80%] lg:w-[85%] flex flex-col md:h-screen md:overflow-y-auto hide-scrollbar"     >
+                <h1 className="text-2xl md:text-3xl  lg:text-5xl font-bold px-2 md:px-4 py-4 md:py-6 capitalize">
                     {category === 'top250' && 'Top 250'}
                     {category === 'thisweek' && 'This Week'}
                     {category === 'last30days' && 'Last 30 Days'}
@@ -147,7 +147,7 @@ export default function CTA() {
                     {platformId === 508 && 'Nitendo'}
                     {platformId === 34 && 'Mobile'}
                 </h1>
-                <span className='px-2 sm:px-4 text-sm sm:text-base text-gray-300 mb-4'>
+                <span className='px-2 md:px-4 text-md md:text-base text-gray-300 mb-4'>
                     {genreCategory === 5 && 'Shooter games focus on ranged combat, where players use firearms or projectile weapons to defeat enemies. They test precision, reflexes, and tactical movement. Subgenres include first-person shooters (FPS) like Call of Duty and third-person shooters like Fortnite or Gears of War.'}
                     {genreCategory === 12 && 'RPGs let players assume the role of a character in a richly detailed world. These games emphasize storytelling, exploration, and character progression, often featuring quests, dialogue choices, and leveling systems. Examples include The Witcher 3, Final Fantasy, and Elden Ring.'}
                     {genreCategory === 31 && 'Adventure games focus on story, exploration, and puzzle-solving rather than fast-paced action. Players uncover narratives, solve mysteries, and interact with characters and environments. Classics include Life is Strange, The Legend of Zelda, and Monkey Island.'}
@@ -157,7 +157,10 @@ export default function CTA() {
                     {genreCategory === 33 && 'Arcade games emphasize quick, accessible fun with simple mechanics and high replayability. Originally designed for arcade machines, these games focus on reflexes, timing, and scoring. Think of Pac-Man, Street Fighter II, or Geometry Dash.'}
                     {genreCategory === 9 && 'Puzzle games challenge the player’s logic, pattern recognition, and problem-solving skills. They range from relaxing experiences like Tetris and Candy Crush to complex brain-teasers like Portal or The Witness.'}
                 </span>
-                <GamesList gamesList={games} />
+                <div className='flex flex-col  items-center'>
+                    <GamesList gamesList={games} />
+                </div>
+
                 {
                     loading &&
                     <div className='self-center'>
