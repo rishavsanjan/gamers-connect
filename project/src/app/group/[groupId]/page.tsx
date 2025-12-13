@@ -183,22 +183,27 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
     let currentUserRole;
 
-    if (group.ownerId === currentUserId) {
-        currentUserRole = 'owner'
-    } else if (await prisma.group.findFirst({
-        where: {
-            id: groupId,
-            admins: {
-                some: { id: currentUserId }
-            }
-        }
-    })) {
-        currentUserRole = 'admin'
+    
+    if (!currentUserId) {
+        currentUserRole = 'guest';
+    } else if (group.ownerId === currentUserId) {
+        currentUserRole = 'owner';
     } else {
-        currentUserRole = 'member'
+        const isAdmin = await prisma.group.findFirst({
+            where: {
+                id: groupId,
+                admins: {
+                    some: { id: currentUserId }
+                }
+            },
+            select: { id: true } 
+        });
+
+        currentUserRole = isAdmin ? 'admin' : 'member';
     }
 
 
+    console.log(currentUserRole)
 
     return (
         <div className="min-h-screen bg-[#18191a] text-[#e4e6eb]">

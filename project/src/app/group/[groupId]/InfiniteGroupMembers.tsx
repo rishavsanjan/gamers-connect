@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Crown, Shield, UserMinus, MoreVertical } from 'lucide-react'
 import axios from 'axios'
 import { Group } from '@prisma/client'
+import { GrUpgrade } from 'react-icons/gr'
+import { FcDownRight } from 'react-icons/fc'
 
 interface Member {
     name: string | null
@@ -16,7 +18,7 @@ interface Props {
     groupId: string
     currentUserId?: string
     currentUserRole?: string,
-    group:Group
+    group: Group
 }
 
 const InfiniteGroupMembers: React.FC<Props> = ({
@@ -26,6 +28,8 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     currentUserRole,
     group
 }) => {
+
+    console.log(currentUserRole)
     const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
     const [loading, setLoading] = useState(false)
@@ -124,7 +128,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     }
 
     const getRoleBadge = (role: string) => {
-        if (role === 'OWNER') {
+        if (role === 'owner') {
             return (
                 <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-medium">
                     <Crown size={12} />
@@ -132,7 +136,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                 </div>
             )
         }
-        if (role === 'ADMIN') {
+        if (role === 'admin') {
             return (
                 <div className="flex items-center gap-1 px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-medium">
                     <Shield size={12} />
@@ -143,11 +147,72 @@ const InfiniteGroupMembers: React.FC<Props> = ({
         return null
     }
 
+    const handleAdminCreate = async (memberId: string) => {
+        try {
+            const response = await axios({
+                url: `/api/private/group/group-admin-create`,
+                method: 'post',
+                data: {
+                    groupId,
+                    memberId
+                }
+            });
+
+            setMembersState(prev => prev.map((member) => {
+                if (member.id === memberId) {
+                    return {
+                        ...member,
+                        role: 'admin'
+                    }
+                } else {
+                    return member;
+                }
+
+            }))
+
+            console.log(response.data)
+
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+
+    const handleAdminRemove = async (memberId: string) => {
+        try {
+            const response = await axios({
+                url: `/api/private/group/group-admin-remove`,
+                method: 'post',
+                data: {
+                    groupId,
+                    memberId
+                }
+            });
+
+            setMembersState(prev => prev.map((member) => {
+                if (member.id === memberId) {
+                    return {
+                        ...member,
+                        role: 'member'
+                    }
+                } else {
+                    return member;
+                }
+
+            }))
+
+            console.log(response.data)
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     return (
         <div className="space-y-3">
             {membersState.map((member, index) => {
                 const isLastMember = index === membersState.length - 1
-                const canKick = canKickMember(member.role || 'MEMBER') && member.id !== currentUserId
+                // const canKick = canKickMember(member.role || 'member') && member.id !== currentUserId && (currentUserRole === 'admin' || currentUserRole === 'owner')
 
                 return (
                     <div
@@ -178,14 +243,14 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                                         {member.name || member.username}
                                     </h3>
                                     {
-                                        member.id === group.ownerId && 'OWNER' &&
+                                        member.id === group.ownerId && 'owner' &&
                                         <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-medium">
                                             <Crown size={12} />
                                             Owner
                                         </div>
                                     }
                                     {
-                                        getRoleBadge(member.role || 'MEMBER')
+                                        getRoleBadge(member.role || 'member')
                                     }
                                 </div>
                                 <p className="text-gray-400 text-sm truncate">
@@ -195,7 +260,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                         </div>
 
                         {/* Actions */}
-                        {canKick && (
+                        {((currentUserRole === 'admin' || currentUserRole === 'owner') && currentUserId !== member.id && member.id !== group.ownerId) && (
                             <div className="relative">
                                 <button
                                     onClick={() => setOpenMenuId(openMenuId === member.id ? null : member.id)}
@@ -211,16 +276,44 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                                             className="fixed inset-0 z-10"
                                             onClick={() => setOpenMenuId(null)}
                                         />
-                                        <div className="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-lg border border-gray-700 z-20">
+                                        <div className="absolute right-0 mt-2 w-52 bg-gray-800 rounded-lg shadow-lg border border-gray-700 z-20">
                                             <button
                                                 onClick={() => handleKickMember(member.id)}
                                                 disabled={kickingUserId === member.id}
                                                 className="w-full flex items-center gap-2 px-4 py-3 text-red-400 hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50"
                                             >
                                                 <UserMinus size={16} />
-                                                {kickingUserId === member.id ? 'Removing...' : 'Remove Member'}
+                                                {kickingUserId === member.id ? 'Removing...' : 'Remove from group'}
                                             </button>
+                                            {
+                                                (currentUserRole === 'owner' && member.role === 'member') &&
+                                                (
+                                                    <button
+                                                        onClick={() => handleAdminCreate(member.id)}
+                                                        disabled={currentUserId === member.id}
+                                                        className="w-full flex items-center gap-2 px-4 py-3 text-green-400 hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50"
+                                                    >
+                                                        <GrUpgrade size={16} />
+                                                        {kickingUserId === member.id ? 'Promoting.' : 'Promote'}
+                                                    </button>
+                                                )
+                                            }
+                                            {
+                                                (currentUserRole === 'owner' && member.role === 'admin') &&
+                                                (
+                                                    <button
+                                                        onClick={() => handleAdminRemove(member.id)}
+                                                        disabled={currentUserId === member.id}
+                                                        className="w-full flex items-center gap-2 px-4 py-3 text-red-400 hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50"
+                                                    >
+                                                        <FcDownRight size={16} />
+                                                        {kickingUserId === member.id ? 'Demoting.' : 'Demote'}
+                                                    </button>
+                                                )
+                                            }
+
                                         </div>
+
                                     </>
                                 )}
                             </div>

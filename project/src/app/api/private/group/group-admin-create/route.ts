@@ -9,7 +9,7 @@ export async function POST(req: Request) {
         if (!session?.user?.id) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
-        const { groupId, userId } = await req.json();
+        const { groupId, memberId } = await req.json();
 
         const isMember = await prisma.group.findFirst({
             where: {
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         const alreadyAdmin = await prisma.group.findFirst({
             where: {
                 id: groupId,
-                admins: { some: { id: userId } }
+                admins: { some: { id: memberId } }
             }
         })
 
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
             },
             data: {
                 admins: {
-                    connect: { id: userId }
+                    connect: { id: memberId }
                 }
             }
         })
