@@ -4,6 +4,7 @@ import GroupTabs from './GroupTabs';
 import { prisma } from '@/lib/db';
 import GroupHeader from './GroupHeader';
 import { auth } from '@/auth';
+import { GroupDetailsProvider } from '@/context/GroupsContext';
 
 
 interface Props {
@@ -91,6 +92,8 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
     if (!group) {
         return;
     }
+
+    
 
     const hasJoined = group.members.length > 0;
 
@@ -183,7 +186,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
     let currentUserRole;
 
-    
+
     if (!currentUserId) {
         currentUserRole = 'guest';
     } else if (group.ownerId === currentUserId) {
@@ -196,7 +199,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
                     some: { id: currentUserId }
                 }
             },
-            select: { id: true } 
+            select: { id: true }
         });
 
         currentUserRole = isAdmin ? 'admin' : 'member';
@@ -217,11 +220,16 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
             {/* Main Container */}
             <div className="max-w-[1100px] mx-auto px-5">
-                {/* Group Header */}
-                <GroupHeader group={{ ...group, hasJoined }} members={formattedNames} memberCount={group.memberCount} />
+                <GroupDetailsProvider group={{...group, hasJoined}} members={finalUsers} totalMembers={group.memberCount}>
+                    {/* Group Header */}
+                    <GroupHeader  />
 
-                {/* Navigation Tabs */}
-                <GroupTabs groupId={groupId} posts={posts} group={group} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount} members={finalUsers} currentUserId={currentUserId} currentUserRole={currentUserRole} />
+                    {/* Navigation Tabs */}
+                    <GroupTabs groupId={groupId} posts={posts} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount} members={finalUsers} currentUserId={currentUserId} currentUserRole={currentUserRole} />
+
+                </GroupDetailsProvider>
+
+
 
             </div>
         </div>

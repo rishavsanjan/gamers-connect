@@ -4,6 +4,7 @@ import axios from 'axios'
 import { Group } from '@prisma/client'
 import { GrUpgrade } from 'react-icons/gr'
 import { FcDownRight } from 'react-icons/fc'
+import { useGroupDetails } from '@/context/GroupsContext'
 
 interface Member {
     name: string | null
@@ -18,7 +19,6 @@ interface Props {
     groupId: string
     currentUserId?: string
     currentUserRole?: string,
-    group: Group
 }
 
 const InfiniteGroupMembers: React.FC<Props> = ({
@@ -26,16 +26,17 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     groupId,
     currentUserId,
     currentUserRole,
-    group
+    
 }) => {
 
     console.log(currentUserRole)
     const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
     const [loading, setLoading] = useState(false)
-    const [membersState, setMembersState] = useState(members)
     const [openMenuId, setOpenMenuId] = useState<string | null>(null)
-    const [kickingUserId, setKickingUserId] = useState<string | null>(null)
+    const [kickingUserId, setKickingUserId] = useState<string | null>(null);
+    
+    const { membersState, setMembersState, setMemberCount, groupState } = useGroupDetails();
 
     const observer = useRef<IntersectionObserver | null>(null)
 
@@ -99,7 +100,8 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                 }
             })
 
-            setMembersState(prev => prev.filter(m => m.id !== memberId))
+            setMembersState(prev => prev.filter(m => m.id !== memberId));
+            setMemberCount(prev => prev - 1)
             setOpenMenuId(null)
         } catch (error) {
             console.error('Failed to kick member:', error)
@@ -109,11 +111,11 @@ const InfiniteGroupMembers: React.FC<Props> = ({
         }
     }
 
-    const canKickMember = (memberRole: string) => {
-        if (currentUserRole === 'owner') return true
-        if (currentUserRole === 'admin' && memberRole === 'member') return true
-        return false
-    }
+    // const canKickMember = (memberRole: string) => {
+    //     if (currentUserRole === 'owner') return true
+    //     if (currentUserRole === 'admin' && memberRole === 'member') return true
+    //     return false
+    // }
 
     useEffect(() => {
         if (page === 1) return
@@ -243,7 +245,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                                         {member.name || member.username}
                                     </h3>
                                     {
-                                        member.id === group.ownerId && 'owner' &&
+                                        member.id === groupState.ownerId && 'owner' &&
                                         <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-medium">
                                             <Crown size={12} />
                                             Owner
@@ -260,7 +262,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                         </div>
 
                         {/* Actions */}
-                        {((currentUserRole === 'admin' || currentUserRole === 'owner') && currentUserId !== member.id && member.id !== group.ownerId) && (
+                        {((currentUserRole === 'admin' || currentUserRole === 'owner') && currentUserId !== member.id && member.id !== groupState.ownerId) && (
                             <div className="relative">
                                 <button
                                     onClick={() => setOpenMenuId(openMenuId === member.id ? null : member.id)}

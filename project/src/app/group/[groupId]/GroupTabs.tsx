@@ -14,7 +14,6 @@ import { PostFeedProvider } from '@/context/PostsContext'
 interface Props {
     groupId: string
     posts: Post[]
-    group: Group
     postCount24hrs: number
     postCount30Days: number
     postsWithMedia: PostPrisma[]
@@ -30,10 +29,10 @@ interface Props {
     currentUserRole?: string
 }
 
-const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members, currentUserId, currentUserRole }) => {
+const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members, currentUserId, currentUserRole }) => {
     const [activeTab, setActiveTab] = useState('Posts');
 
-    const tabs = ['Posts', 'Featured', 'Members', 'Media'];
+    const tabs = ['Posts', 'Members', 'Media'];
     return (
         <div>
             <nav className="border-b border-[#3a3b3c] mb-5">
@@ -82,14 +81,14 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, group, postCount24hrs, pos
                     {
                         activeTab === 'Members' &&
                         <>
-                            <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole} group={group}/>
+                            <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole} />
                         </>
                     }
 
                 </div>
 
                 {/* Sidebar */}
-                <GroupAsideBar group={group} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} mediaCount={mediaCount} />
+                <GroupAsideBar  postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} mediaCount={mediaCount} />
             </div>
 
         </div>

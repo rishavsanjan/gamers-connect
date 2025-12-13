@@ -1,6 +1,9 @@
 'use client'
 
 import { handleGroupJoin, handleGroupLeave } from '@/app/utils/community_functions';
+import { useGroupDetails } from '@/context/GroupsContext';
+import { useLoginModal } from '@/context/LoginModalContext';
+import { useUser } from '@/context/UserContext';
 import { Check, ChevronDown, Plus } from 'lucide-react';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
@@ -10,28 +13,64 @@ interface Props {
     groupId: string
 }
 
+type Role = 'owner' | 'admin' | 'member'
+
+interface Member {
+    id: string
+    name: string | null
+    username: string
+    avatar: string | null
+    role: Role
+}
+
 const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
     const [hasJoinedState, setHasJoinedState] = useState<boolean>(hasJoined);
     const [loading, setLoading] = useState(false);
+    const { user, isLoggedIn } = useUser();
+    const { setMemberCount, setMembersState, membersState } = useGroupDetails();
+    const { openLoginModal } = useLoginModal();
+
 
     const handleJoin = async () => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
         setLoading(true)
         try {
-            await handleGroupJoin({ groupId })
-            setHasJoinedState(prev => !prev)
+            await handleGroupJoin({ groupId });
+            setHasJoinedState(prev => !prev);
+            const userJoined: Member = {
+                id: user!.id,
+                name: user?.name || null,
+                username: user!.username,
+                avatar: null,
+                role: 'member'
+            }
+
+            setMembersState(prev => [...prev, userJoined])
+
+            setMemberCount(prev => prev + 1);
         } catch (error) {
             console.log(error)
         } finally {
             setLoading(false)
         }
-
-
     }
+
     const handleLeave = async () => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
         setLoading(true)
         try {
             await handleGroupLeave({ groupId })
             setHasJoinedState(prev => !prev)
+            setMembersState(prev =>
+                prev.filter(member => member.id !== user!.id)
+            )
+            setMemberCount(prev => prev - 1);
         } catch (error) {
             console.log(error)
         } finally {

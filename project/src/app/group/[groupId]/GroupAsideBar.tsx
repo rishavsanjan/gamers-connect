@@ -1,15 +1,17 @@
+import { useGroupDetails } from '@/context/GroupsContext'
 import { Group } from '@prisma/client'
 import { Eye, Globe, Lock } from 'lucide-react'
 import React from 'react'
 
 interface Props {
-    group: Group
     postCount24hrs: number
     postCount30Days: number
     mediaCount: number
 }
 
-const GroupAsideBar: React.FC<Props> = ({ group, postCount24hrs, postCount30Days, mediaCount }) => {
+const GroupAsideBar: React.FC<Props> = ({ postCount24hrs, postCount30Days, mediaCount }) => {
+    const {  groupState } = useGroupDetails();
+
     return (
         <aside className="flex flex-col gap-4">
             {/* About Card */}
@@ -17,13 +19,13 @@ const GroupAsideBar: React.FC<Props> = ({ group, postCount24hrs, postCount30Days
                 <h3 className="text-[17px] font-semibold mb-3">About</h3>
                 <p className="text-sm leading-relaxed text-[#b0b3b8] mb-2">
                     {
-                        group.description === null ?
+                        groupState.description === null ?
                             <>
                                 No Description!
                             </>
                             :
                             <>
-                                {group.description}
+                                {groupState.description}
                             </>
                     }
                 </p>
@@ -33,9 +35,9 @@ const GroupAsideBar: React.FC<Props> = ({ group, postCount24hrs, postCount30Days
                         <div className="flex gap-3">
                             <Globe size={20} className="text-gray-400 flex-shrink-0 mt-1" />
                             <div>
-                                <p className="font-semibold mb-1"> {group.privacy === 'PUBLIC' ? 'Public' : 'Private'}</p>
+                                <p className="font-semibold mb-1"> {groupState.privacy === 'PUBLIC' ? 'Public' : 'Private'}</p>
                                 <p className="text-sm text-gray-400">
-                                    {group.privacy === 'PUBLIC' ? "Anyone can see who's in the group and what they post." : 'Only those who joined can see the posts.'}
+                                    {groupState.privacy === 'PUBLIC' ? "Anyone can see who's in the group and what they post." : 'Only those who joined can see the posts.'}
 
                                 </p>
                             </div>
@@ -44,9 +46,9 @@ const GroupAsideBar: React.FC<Props> = ({ group, postCount24hrs, postCount30Days
                         <div className="flex gap-3">
                             <Eye size={20} className="text-gray-400 flex-shrink-0 mt-1" />
                             <div>
-                                <p className="font-semibold mb-1">{group.visibility === 'VISIBLE' ? 'Visible' : 'Hidden'}</p>
+                                <p className="font-semibold mb-1">{groupState.visibility === 'VISIBLE' ? 'Visible' : 'Hidden'}</p>
                                 <p className="text-sm text-gray-400">
-                                    {group.visibility === 'VISIBLE' ? 'Anyone can find this group.' : 'Only people with invite link can find this.'}
+                                    {groupState.visibility === 'VISIBLE' ? 'Anyone can find this group.' : 'Only people with invite link can find this.'}
 
                                 </p>
                             </div>
