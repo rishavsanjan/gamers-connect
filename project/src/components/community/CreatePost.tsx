@@ -13,7 +13,7 @@ import { useRouter } from 'next/navigation'
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
     setPosts?: React.Dispatch<SetStateAction<Post[]>>
-    groupId?:string
+    groupId?: string
 }
 
 const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId }) => {
@@ -31,8 +31,8 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
     const [uploading, setUploading] = useState(false);
     const [images, setImages] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
-
-    const CLOUDINARY_CLOUD_NAME = "diwmvqto3"; 
+    const [visibility, setVisibility] = useState(false);
+    const CLOUDINARY_CLOUD_NAME = "diwmvqto3";
     const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
 
 
@@ -95,7 +95,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
                 `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/${type}/upload`,
                 {
                     method: 'POST',
-                    body: formData, // ✅ no custom headers
+                    body: formData,
                 }
             );
 
@@ -116,6 +116,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
 
     const handleCreatePost = async () => {
         setUploading(true)
+
         const extractHashtags = (text: string): string[] => {
             const matches = text.match(/#\w+/g);
             return matches ? matches.map(tag => tag.slice(1).toLowerCase()) : [];
@@ -148,6 +149,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
                 type: category,
                 tags: hashtags,
                 mediaUrls: uploadedUrls,
+                visibility: !groupId ? visibility ? 'EVERYONE' : 'ONLY_FOLLOWERS' : 'GROUP',
                 groupId
             }
         });
@@ -332,9 +334,34 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
                             </div>
                         </div>
                 }
+                {
+                    !groupId &&
+                    <div className='flex flex-col mb-4'>
+                        <label htmlFor="username" className="text-white text-base font-medium mb-2">Share</label>
+                        <div className='flex flex-row justify-between items-center w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 px-4 text-base '>
+                            <span className=''>{visibility ? 'Share to everyone' : 'Share only to followers'}</span>
+                            <div
+                                onClick={() => { setVisibility(prev => !prev) }}
+                                className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition 
+                         ${visibility ? "bg-purple-600" : "bg-gray-400"}`}
+                            >
+                                <div
+                                    className={`bg-white w-5 h-5 rounded-full shadow-md transform transition 
+                        ${visibility ? "translate-x-6" : ""}`}
+                                >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                }
 
 
-               
+
+
+
 
                 <div className="flex space-x-4">
                     <button

@@ -40,6 +40,7 @@ model User {
   Like            Like[]
   Comment         Comment[]
   CommentReaction CommentReaction[]
+  privacy         AccountPrivacy    @default(PUBLIC)
 
   followers        Follow[]          @relation("Followers")
   following        Follow[]          @relation("Following")
@@ -208,16 +209,17 @@ model Hashtag {
 }
 
 model Post {
-  id           String   @id @default(cuid())
+  id           String      @id @default(cuid())
   description  String
   userId       String
-  type         PostType @default(GENERAL)
+  type         PostType    @default(GENERAL)
   gameId       String?
-  mediaUrls    String[] @default([])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  likeCount    Int      @default(0)
-  commentCount Int      @default(0)
+  mediaUrls    String[]    @default([])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  likeCount    Int         @default(0)
+  commentCount Int         @default(0)
+  visibility   PostPrivacy 
 
   group   Group?  @relation(fields: [groupId], references: [id])
   groupId String?
@@ -228,6 +230,12 @@ model Post {
   Like      Like[]
   Comment   Comment[]
   bookmarks Bookmark[]
+}
+
+enum PostPrivacy {
+  EVERYONE
+  ONLY_FOLLOWERS
+  GROUP
 }
 
 model Bookmark {
@@ -393,6 +401,11 @@ enum GameStatus {
 }
 
 enum CollectionVisibility {
+  PRIVATE
+  PUBLIC
+}
+
+enum AccountPrivacy {
   PRIVATE
   PUBLIC
 }

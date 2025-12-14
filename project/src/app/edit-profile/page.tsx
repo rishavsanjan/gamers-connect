@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Home, Gamepad2, Users, Settings, HelpCircle, LogOut, Link2, X, Twitch, Twitter, Youtube, Facebook, Instagram } from 'lucide-react';
+import { Twitch, Twitter, Youtube, Facebook, Instagram } from 'lucide-react';
 import { BsDiscord, BsSteam } from 'react-icons/bs';
 import axios from 'axios';
 import { User } from '@prisma/client';
 import { ClipLoader } from 'react-spinners';
 import Cropper from "react-easy-crop";
+import Link from 'next/link';
 
 
 const EditProfilePage: React.FC = () => {
@@ -31,7 +32,7 @@ const EditProfilePage: React.FC = () => {
     const [previewProfilePic, setPreviewProfilePic] = useState('');
 
     const [fetchingAvailability, setFetchingAvailability] = useState(false);
-
+    const [privacy, setPrivacy] = useState<boolean>()
     const [loading, setLoading] = useState(false);
 
     const [isCropModalOpen, setIsCropModalOpen] = useState<boolean>(false);
@@ -58,7 +59,7 @@ const EditProfilePage: React.FC = () => {
             console.log(response.data)
             const userData = response.data.user;
             setProfile(userData);
-
+            
             setUsername(userData?.username || '');
             setRealName(userData?.name || '');
             setBio(userData?.bio || '');
@@ -66,6 +67,8 @@ const EditProfilePage: React.FC = () => {
             if (userData?.avatar) {
                 setPreviewProfilePic(userData.avatar);
             }
+            const visibility = userData.privacy === 'PUBLIC' ? true : false;
+            setPrivacy(visibility)
 
             setSocialLinks({
                 twitch: userData?.socialLinks[0].link || '',
@@ -168,6 +171,7 @@ const EditProfilePage: React.FC = () => {
                     discord: socialLinks.discord,
                     facebook: socialLinks.facebook,
                     instagram: socialLinks.instagram,
+                    privacy: privacy ? 'PUBLIC' : 'PRIVATE'
                 }
             })
 
@@ -265,7 +269,7 @@ const EditProfilePage: React.FC = () => {
                 <div className="max-w-4xl mx-auto">
                     {/* Breadcrumbs */}
                     <div className="flex flex-wrap gap-2 mb-6">
-                        <a href="#" className="text-[#9a90cb] text-base font-medium">Profile</a>
+                        <Link href="/profile" className="text-[#9a90cb] text-base font-medium hover:text-white ease-in-out duration-300">Profile</Link>
                         <span className="text-[#9a90cb] text-base font-medium">/</span>
                         <span className="text-white text-base font-medium">Edit Profile</span>
                     </div>
@@ -301,6 +305,31 @@ const EditProfilePage: React.FC = () => {
                             </label>
                         </div>
                     </div>
+
+                    {/*Account Privacy Option */}
+                    <div className='flex flex-col mb-4'>
+                        <label htmlFor="username" className="text-white text-base font-medium mb-2">Accont Privacy</label>
+                        <div className='flex flex-row justify-between items-center w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 px-4 text-base '>
+                            <span className=''>{privacy ? 'Public Account' : 'Private Account'}</span>
+                            <div
+                                onClick={() => {setPrivacy(prev => !prev) }}
+                                className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition 
+                         ${privacy ? "bg-purple-600" : "bg-gray-400"}`}
+                            >
+                                <div
+                                    className={`bg-white w-5 h-5 rounded-full shadow-md transform transition 
+                        ${privacy ? "translate-x-6" : ""}`}
+                                >
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+
+
 
                     {/* Form */}
                     <div className="space-y-8">

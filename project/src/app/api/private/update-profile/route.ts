@@ -11,7 +11,7 @@ export async function POST(req: Request) {
 
         const userId = session.user.id;
 
-        const { username, name, bio, twitch, x, discord, instagram, facebook, steam, youtube, profilePicture } = await req.json();
+        const { username, name, bio, twitch, x, discord, instagram, facebook, steam, youtube, profilePicture , privacy} = await req.json();
 
 
         const user = await prisma.user.update({
@@ -23,6 +23,7 @@ export async function POST(req: Request) {
                 name,
                 bio,
                 avatar: profilePicture,
+                privacy,
                 socialLinks: {
                     upsert: [
                         {

@@ -14,7 +14,8 @@ export async function GET(req: Request) {
                 id:session.user.id
             },
             include:{
-                socialLinks:true
+                socialLinks:true,
+                
             }
         })
 

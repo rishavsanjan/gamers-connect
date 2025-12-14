@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         const { description, name, igdb_id,
             summary, storyline, first_release_date, total_rating,
             cover, game_type, genres, platforms,
-            type, tags, mediaUrls, groupId } = await req.json();
+            type, tags, mediaUrls, groupId, visibility } = await req.json();
 
 
         let game;
@@ -63,7 +63,8 @@ export async function POST(req: Request) {
             userId: session.user.id,
             gameId: game?.id,
             mediaUrls,
-            groupId
+            groupId,
+            visibility
         };
 
         if (Array.isArray(tags) && tags.length > 0) {
