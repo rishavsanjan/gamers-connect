@@ -9,6 +9,7 @@ import { ClipLoader, RotateLoader } from 'react-spinners';
 import { GrClose } from 'react-icons/gr';
 import { Post } from '@/app/types/post';
 import { useRouter } from 'next/navigation'
+import ShareAsPost from '../ShareAsPost';
 
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
@@ -112,7 +113,6 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
             throw err;
         }
     };
-
 
     const handleCreatePost = async () => {
         setUploading(true)
@@ -390,6 +390,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
 
                 </div>
             </div>
+            
         </div>
     )
 }

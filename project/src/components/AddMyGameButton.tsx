@@ -12,6 +12,7 @@ import { BiFolder } from "react-icons/bi"
 import { GoCheck } from "react-icons/go";
 import { useUser } from "@/context/UserContext"
 import { useLoginModal } from "@/context/LoginModalContext"
+import ShareAsPost from "./ShareAsPost"
 
 interface AddMyGameButtonProps {
     game: Game
@@ -52,8 +53,10 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
         'WINDOWS', 'PLAYSTATION', 'XBOX', 'NINTENDO',
         'MAC', 'LINUX', 'IOS', 'ANDROID', 'ARCADE', 'WII'
     ];
-
+    const [currentGameStatus, setCurrentGameStatus] = useState('');
     const gameStatuses = ['NOT_STARTED', 'PLAYING', 'COMPLETED', 'ABANDONED'];
+    const [shareAsPost, setShareAsPost] = useState(false);
+
 
     useEffect(() => {
         const fetchStatus = async () => {
@@ -85,6 +88,8 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
             document.body.style.overflow = "auto";
         }
     }, [collectionModal]);
+
+    console.log(shareAsPost)
 
     return (
         <>
@@ -272,9 +277,11 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                                             openLoginModal();
                                             return;
                                         }
+                                        setCurrentGameStatus(gameStatus)
                                         setOwnedGame(prev => ({ ...prev, status: gameStatus }));
                                         setShowStatusModal(false);
-                                        addToMyGames(game, 'myGame', setStatus, setLoading, ownGame.owned_platform, gameStatus)
+                                        addToMyGames(game, 'myGame', setStatus, setLoading, ownGame.owned_platform, gameStatus);
+                                        setShareAsPost(true);
                                     }}
                                     key={gameStatus}
                                     className="bg-gray-700 hover:bg-green-600 text-white py-4 px-6 rounded-xl transition-all duration-300 font-semibold hover:scale-105 text-left"
@@ -292,7 +299,10 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                     </div>
                 </div>
             )}
-
+            {
+                shareAsPost &&
+                <ShareAsPost shareAsPost={shareAsPost} type="myGame" gameId={game.id} setShareAsPost={setShareAsPost} gameName={game.name} status={currentGameStatus} />
+            }
         </>
 
 
