@@ -14,9 +14,62 @@ export default async function GamelyCommunity() {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
 
+    let followingUserIds;
+    let joinedGroupIds;
+
+    if (userId) {
+        const followingIds = await prisma.follow.findMany({
+            where: { followerId: userId },
+            select: {
+                followingId: true
+            }
+        });
+
+        const groupIds = await prisma.user.findMany({
+            where: { id: userId },
+            include: {
+                memberInGroups: {
+                    select: {
+                        id: true
+                    }
+                }
+            }
+        })
+
+        followingUserIds = followingIds.map(f => f.followingId)
+        joinedGroupIds = groupIds.map(f => f.memberInGroups.map(f => f.id)).flat()
+        console.log(followingUserIds)
+        console.log(joinedGroupIds)
+    }
+
 
     const getposts = await prisma.post.findMany({
         take: 2,
+        where:
+            userId ? {
+                OR: [
+                    {
+                        userId: { in: followingUserIds }
+                    },
+                    {
+                        groupId: { in: joinedGroupIds }
+                    },
+                    {
+                        visibility: 'EVERYONE'
+                    }, 
+                    {
+                        userId
+                    }
+                ]
+
+
+            } : {
+                OR: [
+                    {
+                        visibility: 'EVERYONE'
+                    }
+                ]
+            },
         include: {
 
             game: {
@@ -270,7 +323,7 @@ export default async function GamelyCommunity() {
                                 : */}
                         <>
                             <PostFeedProvider initialPosts={posts}>
-                                <InfiniteHomePostsFeed  />
+                                <InfiniteHomePostsFeed />
                             </PostFeedProvider>
 
 

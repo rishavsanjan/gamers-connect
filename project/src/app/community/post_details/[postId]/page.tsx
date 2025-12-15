@@ -22,6 +22,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
     const userId = session?.user?.id ?? null;
     const { postId } = await params;
 
+   
     let posts = await prisma.post.findFirst({
         where: {
             id: postId

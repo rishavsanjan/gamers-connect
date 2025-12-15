@@ -5,6 +5,7 @@ import { Group } from '@prisma/client'
 import { GrUpgrade } from 'react-icons/gr'
 import { FcDownRight } from 'react-icons/fc'
 import { useGroupDetails } from '@/context/GroupsContext'
+import Link from 'next/link'
 
 interface Member {
     name: string | null
@@ -26,7 +27,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     groupId,
     currentUserId,
     currentUserRole,
-    
+
 }) => {
 
     console.log(currentUserRole)
@@ -35,7 +36,7 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     const [loading, setLoading] = useState(false)
     const [openMenuId, setOpenMenuId] = useState<string | null>(null)
     const [kickingUserId, setKickingUserId] = useState<string | null>(null);
-    
+
     const { membersState, setMembersState, setMemberCount, groupState } = useGroupDetails();
 
     const observer = useRef<IntersectionObserver | null>(null)
@@ -222,44 +223,49 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                         ref={isLastMember ? lastPostRef : null}
                         className="flex items-center justify-between p-4 bg-gray-800/50 rounded-lg hover:bg-gray-800/70 transition-colors"
                     >
-                        <div className="flex items-center gap-3 flex-1">
-                            {/* Avatar */}
-                            <div className="relative">
-                                {member.avatar ? (
-                                    <img
-                                        src={member.avatar}
-                                        alt={member.name || member.username}
-                                        className="w-12 h-12 rounded-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
-                                        {getInitials(member.name, member.username)}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Member Info */}
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 flex-wrap">
-                                    <h3 className="text-white font-medium truncate">
-                                        {member.name || member.username}
-                                    </h3>
-                                    {
-                                        member.id === groupState.ownerId && 'owner' &&
-                                        <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-medium">
-                                            <Crown size={12} />
-                                            Owner
+                        <Link href={`/player-profile/${member.id}`} key={member.id}>
+                            <div className="flex items-center gap-3 flex-1">
+                                {/* Avatar */}
+                                <div className="relative">
+                                    {member.avatar ? (
+                                        <img
+                                            src={member.avatar}
+                                            alt={member.name || member.username}
+                                            className="w-12 h-12 rounded-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold">
+                                            {getInitials(member.name, member.username)}
                                         </div>
-                                    }
-                                    {
-                                        getRoleBadge(member.role || 'member')
-                                    }
+                                    )}
                                 </div>
-                                <p className="text-gray-400 text-sm truncate">
-                                    @{member.username}
-                                </p>
+
+                                {/* Member Info */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 flex-wrap">
+                                        <h3 className="text-white font-medium truncate">
+                                            {member.name || member.username}
+                                        </h3>
+                                        {
+                                            member.id === groupState.ownerId && 'owner' &&
+                                            <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs font-medium">
+                                                <Crown size={12} />
+                                                Owner
+                                            </div>
+                                        }
+                                        {
+                                            getRoleBadge(member.role || 'member')
+                                        }
+                                    </div>
+                                    <p className="text-gray-400 text-sm truncate">
+                                        @{member.username}
+                                    </p>
+                                </div>
+
                             </div>
-                        </div>
+                        </Link>
+
+
 
                         {/* Actions */}
                         {((currentUserRole === 'admin' || currentUserRole === 'owner') && currentUserId !== member.id && member.id !== groupState.ownerId) && (

@@ -18,6 +18,32 @@ export async function POST(req: Request) {
         let posts;
         console.log(filter);
 
+        let followingUserIds;
+        let joinedGroupIds;
+
+        if (userId) {
+            const followingIds = await prisma.follow.findMany({
+                where: { followerId: userId },
+                select: {
+                    followingId: true
+                }
+            });
+
+            const groupIds = await prisma.user.findMany({
+                where: { id: userId },
+                include: {
+                    memberInGroups: {
+                        select: {
+                            id: true
+                        }
+                    }
+                }
+            })
+
+            followingUserIds = followingIds.map(f => f.followingId)
+            joinedGroupIds = groupIds.map(f => f.memberInGroups.map(f => f.id)).flat()
+        }
+
 
         let whereClause: any = {};
         const isFirstLoad = !filter && !category;
@@ -34,7 +60,44 @@ export async function POST(req: Request) {
             posts = await prisma.post.findMany({
                 skip,
                 take: limit,
-                where: whereClause,
+                where: userId ? {
+                    AND: [
+                        {
+                            OR: [
+                                {
+                                    userId: { in: followingUserIds }
+                                },
+                                {
+                                    groupId: { in: joinedGroupIds }
+                                },
+                                {
+                                    visibility: 'EVERYONE'
+                                },
+                                {
+                                    userId
+                                }
+                            ]
+                        },
+                        {
+                            whereClause
+                        }
+                    ]
+                } : {
+                    AND: [
+                        {
+                            OR: [
+                                {
+                                    visibility: 'EVERYONE'
+                                },
+
+                            ]
+                        },
+                        {
+                            whereClause
+                        }
+                    ]
+
+                },
                 include: {
                     game: { select: { name: true, igdb_id: true } },
                     user: { select: { name: true, id: true, username: true, avatar: true } },
@@ -54,7 +117,44 @@ export async function POST(req: Request) {
             posts = await prisma.post.findMany({
                 skip,
                 take: limit,
-                where: whereClause,
+                where: userId ? {
+                    AND: [
+                        {
+                            OR: [
+                                {
+                                    userId: { in: followingUserIds }
+                                },
+                                {
+                                    groupId: { in: joinedGroupIds }
+                                },
+                                {
+                                    visibility: 'EVERYONE'
+                                },
+                                {
+                                    userId
+                                }
+                            ]
+                        },
+                        {
+                            ...whereClause
+                        }
+                    ]
+                } : {
+                    AND: [
+                        {
+                            OR: [
+                                {
+                                    visibility: 'EVERYONE'
+                                },
+
+                            ]
+                        },
+                        {
+                            ...whereClause
+                        }
+                    ]
+
+                },
                 include: {
                     game: { select: { name: true, igdb_id: true } },
                     user: { select: { name: true, id: true, username: true, avatar: true } },
