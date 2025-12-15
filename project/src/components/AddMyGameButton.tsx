@@ -56,6 +56,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
     const [currentGameStatus, setCurrentGameStatus] = useState('');
     const gameStatuses = ['NOT_STARTED', 'PLAYING', 'COMPLETED', 'ABANDONED'];
     const [shareAsPost, setShareAsPost] = useState(false);
+    const [sharePayload, setSharePayload] = useState<any>(null);
 
 
     useEffect(() => {
@@ -220,7 +221,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                                 <p className="text-xl font-bold ">Rated</p>
                             </div>
                             :
-                            <RatingSlider ratingStatus={status.rated} game={game} setStatus={setStatus} />
+                            <RatingSlider ratingStatus={status.rated} game={game} setStatus={setStatus} setSharePayload={setSharePayload} setShareAsPost={setShareAsPost} />
 
                     }
 
@@ -281,6 +282,12 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                                         setOwnedGame(prev => ({ ...prev, status: gameStatus }));
                                         setShowStatusModal(false);
                                         addToMyGames(game, 'myGame', setStatus, setLoading, ownGame.owned_platform, gameStatus);
+                                        setSharePayload({
+                                            type: "myGame",
+                                            gameId: game.id,
+                                            gameName: game.name,
+                                            status:gameStatus
+                                        })
                                         setShareAsPost(true);
                                     }}
                                     key={gameStatus}
@@ -301,7 +308,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
             )}
             {
                 shareAsPost &&
-                <ShareAsPost shareAsPost={shareAsPost} type="myGame" gameId={game.id} setShareAsPost={setShareAsPost} gameName={game.name} status={currentGameStatus} />
+                <ShareAsPost shareAsPost={shareAsPost}  setShareAsPost={setShareAsPost}   {...sharePayload} />
             }
         </>
 

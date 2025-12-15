@@ -2,6 +2,7 @@ import React, { Dispatch, useEffect, useState } from 'react';
 import { X, Share2, Check } from 'lucide-react';
 import axios from 'axios';
 import { Game } from '@/app/types/game';
+import { ClipLoader } from 'react-spinners';
 
 interface Props {
     shareAsPost: boolean,
@@ -10,10 +11,11 @@ interface Props {
     setShareAsPost: Dispatch<React.SetStateAction<boolean>>
     gameName?: string
     status?: string
+    rating?: number
 
 }
 
-const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPost, gameName, status }) => {
+const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPost, gameName, status, rating }) => {
 
 
 
@@ -21,7 +23,6 @@ const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPos
 
     const [isSharing, setIsSharing] = useState(false);
     const [visibility, setVisibility] = useState(false);
-    const [uplading, setUploading] = useState(false)
 
     useEffect(() => {
         const selectedGameData = async () => {
@@ -52,8 +53,8 @@ const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPos
                 return `Playing ${gameName}! Share your experience.`;
             }
 
-        } else if (type === 'addToCollection') {
-            return `Added $ to my "$" collection! 📚`;
+        } else if (type === 'rating') {
+            return `Rated ${gameName}. I have rated it ${rating}. Tell me how much did you rated it.`;
         }
         return '';
     };
@@ -61,7 +62,7 @@ const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPos
     const [message, setMessage] = useState(getDefaultMessage());
 
     const handleCreatePost = async () => {
-        setUploading(true)
+        setIsSharing(true)
 
         const extractHashtags = (text: string): string[] => {
             const matches = text.match(/#\w+/g);
@@ -94,9 +95,9 @@ const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPos
                 visibility: visibility ? 'EVERYONE' : 'ONLY_FOLLOWERS',
             }
         });
-        
+
         setTimeout(() => {
-            setUploading(false);
+            setIsSharing(false);
             setShareAsPost(false);
         }, 500);
 
@@ -180,12 +181,11 @@ const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPos
                     <button
                         onClick={handleCreatePost}
                         disabled={isSharing || message.trim().length === 0}
-                        className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="flex-1 px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 disabled:cursor-not-allowed"
                     >
                         {isSharing ? (
                             <>
-                                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                Sharing...
+                                <ClipLoader color='white' size={20}/>
                             </>
                         ) : (
                             <>
@@ -194,6 +194,7 @@ const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPos
                             </>
                         )}
                     </button>
+
                 </div>
             </div>
         </div>

@@ -102,12 +102,7 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                     <p>Add to list</p>
                 </div>
             </div>
-            <button
-
-                className='flex flex-row justify-between items-center w-96 border-b border-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-400 ease-in-out duration-300 transition-all'>
-                <p>View Playlist</p>
-                <LiaAngleRightSolid />
-            </button>
+           
             <button
                 onClick={() => { setCreateCollectionModal(true) }}
                 className='flex flex-row justify-between items-center w-96 border-b border-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-400 ease-in-out duration-300 transition-all'>
