@@ -102,9 +102,6 @@ const ShareAsPost: React.FC<Props> = ({ shareAsPost, type, gameId, setShareAsPos
         }, 500);
 
     }
-
-    console.log(game)
-
     if (!shareAsPost) return null;
 
     return (
