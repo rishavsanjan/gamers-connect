@@ -1,14 +1,10 @@
-import { Post } from '@/app/types/post'
-import { handleLike, handleRemoveLike } from '@/app/utils/community_functions'
 import { timeAgo } from '@/app/utils/date'
-import { Bookmark, BookMarked, Ellipsis, Heart, MessageCircle, Share2 } from 'lucide-react'
+import {  Ellipsis, MessageCircle, Share2 } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
-import { BsHeartFill } from 'react-icons/bs'
 import PostLikeButton from './PostLikeButton'
 import PostDescription from './PostDescription'
 import PostImages from './PostImages'
-import { auth } from '@/auth'
 import toast from 'react-hot-toast'
 import PostSettings from '../PostSettings'
 import { useUser } from '@/context/UserContext'
@@ -37,6 +33,7 @@ const Posts: React.FC<Props> = ({  }) => {
             document.removeEventListener("mousedown", handleClickOutside)
         }
     }, [])
+    console.log(posts)
     return (
         <div className='space-y-4'>
             {
@@ -99,8 +96,8 @@ const Posts: React.FC<Props> = ({  }) => {
                                 </button>
                                 {
                                     selectedPost === post.id &&
-                                    <div ref={ellipsRef} className='absolute bg-black/25 top-10 right-8 mt-2 z-10'>
-                                        <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id}  />
+                                    <div ref={ellipsRef} className='absolute bg-black/100 top-10 right-8 mt-2 z-10'>
+                                        <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id}  postOwnerId={post.user.id}/>
                                     </div>
                                 }
 

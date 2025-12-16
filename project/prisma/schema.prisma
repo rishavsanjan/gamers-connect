@@ -266,9 +266,9 @@ model Comment {
   id        String      @id @default(cuid())
   userId    String
   postId    String
-  parentId  String? // ✅ points to another Comment if this is a reply
+  parentId  String?
   createdAt DateTime    @default(now())
-  content   String // ✅ actual comment text
+  content   String 
   type      CommentType @default(COMMENT)
   likeCount Int         @default(0)
 
