@@ -1,227 +1,112 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
-import { prisma } from '@/lib/db';
+import { prisma } from "@/lib/db";
 
 export async function POST(req: Request) {
+  try {
     const { searchParams } = new URL(req.url);
 
-    const page = Number(searchParams.get('page') || 1);
-    const limit = Number(searchParams.get('limit') || 2);
-    const skip = (page - 1) * limit
-    const { filter, category } = await req.json();
+    const page = Number(searchParams.get("page") || 1);
+    const limit = Number(searchParams.get("limit") || 10);
+    const skip = (page - 1) * limit;
 
-    console.log(category)
-    try {
-        const session = await auth().catch(() => null);
-        const userId = session?.user?.id ?? null;
+    const { filter = "latest", category } = await req.json();
 
-        let posts;
-        console.log(filter);
+    const session = await auth().catch(() => null);
+    const userId = session?.user?.id ?? null;
 
-        let followingUserIds;
-        let joinedGroupIds;
+    let followingUserIds: string[] = [];
+    let joinedGroupIds: string[] = [];
 
-        if (userId) {
-            const followingIds = await prisma.follow.findMany({
-                where: { followerId: userId },
-                select: {
-                    followingId: true
-                }
-            });
+    if (userId) {
+      const following = await prisma.follow.findMany({
+        where: { followerId: userId },
+        select: { followingId: true },
+      });
 
-            const groupIds = await prisma.user.findMany({
-                where: { id: userId },
-                include: {
-                    memberInGroups: {
-                        select: {
-                            id: true
-                        }
-                    }
-                }
-            })
+      const groups = await prisma.group.findMany({
+        where: {
+          members: {
+            some: { id: userId },
+          },
+        },
+        select: { id: true },
+      });
 
-            followingUserIds = followingIds.map(f => f.followingId)
-            joinedGroupIds = groupIds.map(f => f.memberInGroups.map(f => f.id)).flat()
-        }
-
-
-        let whereClause: any = {};
-        const isFirstLoad = !filter && !category;
-
-        if (!isFirstLoad) {
-            if (category) {
-                whereClause.type = category;
-            }
-        }
-
-
-
-        if (filter === 'popular' && !isFirstLoad) {
-            posts = await prisma.post.findMany({
-                skip,
-                take: limit,
-                where: userId ? {
-                    AND: [
-                        {
-                            OR: [
-                                {
-                                    userId: { in: followingUserIds }
-                                },
-                                {
-                                    groupId: { in: joinedGroupIds }
-                                },
-                                {
-                                    visibility: 'EVERYONE'
-                                },
-                                {
-                                    userId
-                                }
-                            ]
-                        },
-                        {
-                            whereClause
-                        }
-                    ]
-                } : {
-                    AND: [
-                        {
-                            OR: [
-                                {
-                                    visibility: 'EVERYONE'
-                                },
-
-                            ]
-                        },
-                        {
-                            whereClause
-                        }
-                    ]
-
-                },
-                include: {
-                    game: { select: { name: true, igdb_id: true } },
-                    user: { select: { name: true, id: true, username: true, avatar: true } },
-                    group: { select: { name: true, id: true } },
-                    Like: userId
-                        ? { where: { userId } }
-                        : false,
-                    bookmarks: userId ? {
-                        where: { userId },
-                        select: { postId: true }
-                    } : false
-                },
-                orderBy: { Like: { _count: 'desc' } }
-            });
-        } else {
-            // normal (newest) sorting – used for first load OR non-popular with filter
-            posts = await prisma.post.findMany({
-                skip,
-                take: limit,
-                where: userId ? {
-                    AND: [
-                        {
-                            OR: [
-                                {
-                                    userId: { in: followingUserIds }
-                                },
-                                {
-                                    groupId: { in: joinedGroupIds }
-                                },
-                                {
-                                    visibility: 'EVERYONE'
-                                },
-                                {
-                                    userId
-                                }
-                            ]
-                        },
-                        {
-                            ...whereClause
-                        }
-                    ]
-                } : {
-                    AND: [
-                        {
-                            OR: [
-                                {
-                                    visibility: 'EVERYONE'
-                                },
-
-                            ]
-                        },
-                        {
-                            ...whereClause
-                        }
-                    ]
-
-                },
-                include: {
-                    game: { select: { name: true, igdb_id: true } },
-                    user: { select: { name: true, id: true, username: true, avatar: true } },
-                    group: { select: { name: true, id: true } },
-                    Like: userId
-                        ? { where: { userId } }
-                        : false,
-                    bookmarks: userId ? {
-                        where: { userId },
-                        select: { postId: true }
-                    } : false
-                },
-                orderBy: { createdAt: 'desc' }
-            });
-        }
-
-        if (!posts) {
-            return;
-        }
-
-        const result = posts.map((post) => ({
-            id: post.id,
-            description: post.description,
-            likeCount: post.likeCount,
-            commentCount: post.commentCount,
-            hasLiked: userId ? post.Like.length > 0 : false,
-            user: post.user,
-            game: post.game,
-            createdAt: post.createdAt,
-            mediaUrls: post.mediaUrls,
-            group: post.group,
-            hasBookmarked: userId ? post.bookmarks.length > 0 : false
-
-        }))
-
-        const topTags = await prisma.hashtag.findMany({
-            take: 5,
-            orderBy: {
-                posts: {
-                    _count: 'desc',
-                },
-            },
-            include: {
-                _count: {
-                    select: { posts: true },
-                },
-            },
-        });
-
-        const topUsersByPosts = await prisma.user.findMany({
-            take: 5,
-            orderBy: {
-                Post: {
-                    _count: 'desc',
-                },
-            },
-            include: {
-                _count: {
-                    select: { Post: true },
-                },
-            },
-        });
-
-
-        return NextResponse.json({ posts: result, topTags, topUsersByPosts }, { status: 200 })
-    } catch (error) {
-        console.log(error)
-        return NextResponse.json('Server Problem', { status: 500 })
+      followingUserIds = following.map(f => f.followingId);
+      joinedGroupIds = groups.map(g => g.id);
     }
+
+    const whereClause: any = {
+      ...(category && { type: category }),
+      ...(userId
+        ? {
+            OR: [
+              { userId: { in: followingUserIds } },    
+              { groupId: { in: joinedGroupIds } },       
+              { visibility: "EVERYONE" },                
+              { userId },                                
+            ],
+          }
+        : {
+            visibility: "EVERYONE",
+          }),
+    };
+
+    const posts = await prisma.post.findMany({
+      where: whereClause,
+      include: {
+        user: {
+          select: { id: true, name: true, username: true, avatar: true },
+        },
+        group: {
+          select: { id: true, name: true },
+        },
+        game: {
+          select: { name: true, igdb_id: true },
+        },
+        Like: userId ? { where: { userId } } : false,
+        bookmarks: userId
+          ? { where: { userId }, select: { postId: true } }
+          : false,
+      },
+      orderBy:
+        filter === "popular"
+          ? { likeCount: "desc" }
+          : { createdAt: "desc" },
+      skip,
+      take: limit,
+    });
+
+    const rankedPosts = posts.sort((a, b) => {
+      const getRank = (post: any) => {
+        if (post.userId === userId) return 1; 
+        if (followingUserIds.includes(post.userId)) return 2;
+        if (post.groupId && joinedGroupIds.includes(post.groupId)) return 3;
+        if (post.visibility === "EVERYONE") return 4;
+        return 5;
+      };
+
+      return getRank(a) - getRank(b);
+    });
+
+    const result = rankedPosts.map(post => ({
+      id: post.id,
+      description: post.description,
+      createdAt: post.createdAt,
+      mediaUrls: post.mediaUrls,
+      likeCount: post.likeCount,
+      commentCount: post.commentCount,
+      hasLiked: userId ? post.Like.length > 0 : false,
+      hasBookmarked: userId ? post.bookmarks.length > 0 : false,
+      user: post.user,
+      group: post.group,
+      game: post.game,
+    }));
+
+    return NextResponse.json({ posts: result }, { status: 200 });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
+  }
 }
