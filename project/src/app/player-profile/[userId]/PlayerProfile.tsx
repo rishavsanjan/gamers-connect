@@ -9,9 +9,6 @@ import { PlatformBar } from '../../../components/graphs/GamePlatform';
 import GameGenreChart from '../../../components/graphs/HorizontalGraph';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
-import { Post } from '@/app/types/post';
-import InfiniteHomePostsFeed from '../../../components/community/InfinitePostsHomeFeed';
-import { User } from '@prisma/client';
 import { Follower } from '@/app/types/follower';
 import FollowingCard from '../../../components/FollowingCard';
 import ProfileGameList from '@/app/profile/ProfileGameList';
@@ -31,7 +28,10 @@ interface Props extends ProfileTabsData {
 const PlayerProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, stats, currentlyPlaying, playlistCount,
     ownedGamesCount,
     collectionCount,
-    ratingsCount, follower, following, userId }) => {
+    ratingsCount,
+    follower,
+    following,
+    userId }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [loading, setLoading] = useState(false)
     const [playlistGames, setPlaylistGames] = useState(playlist.map(item => item.game));

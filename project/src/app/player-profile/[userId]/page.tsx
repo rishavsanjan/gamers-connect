@@ -7,6 +7,7 @@ import FollowCard from './FollowCard';
 import Link from 'next/link';
 import { BsDiscord, BsSteam, BsYoutube } from 'react-icons/bs';
 import { Facebook, Instagram, Twitch, Twitter } from 'lucide-react';
+import PrivateProfile from './PrivateProfile';
 
 interface Props {
     params: Promise<{ userId: string }>
@@ -29,10 +30,30 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
             avatar: true,
             socialLinks: true,
             xp: true,
-            bio: true
-        }
+            bio: true,
+            privacy: true
+        },
+
     });
 
+    let isFollowing = false;
+
+    if (session?.user.id) {
+        isFollowing = !!await prisma.follow.findUnique({
+            where: {
+                followerId_followingId: {
+                    followerId: session?.user.id,
+                    followingId: userId
+                }
+            }
+        })
+    }
+
+    if(!isFollowing  && user?.privacy === 'PRIVATE'){
+        return(
+            <PrivateProfile receiverId={user.id} senderId={loggedInId}/>
+        )
+    }
 
 
     if (!user) {
@@ -77,7 +98,7 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
             },
         }),
         prisma.collection.findMany({
-            where: { userId: userId, visibility:'PUBLIC' },
+            where: { userId: userId, visibility: 'PUBLIC' },
             include: {
                 games: {
                     include: {
@@ -203,17 +224,9 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
         }
     })
 
-    let isFollowing = false;
-    if (session?.user.id) {
-        isFollowing = !!await prisma.follow.findUnique({
-            where: {
-                followerId_followingId: {
-                    followerId: session?.user.id,
-                    followingId: userId
-                }
-            }
-        })
-    }
+
+
+
 
 
 

@@ -157,10 +157,15 @@ const Navbar = () => {
                                             setUser(null);
                                         }
                                         }
-                                        className="w-full text-left px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
+                                        className="w-full text-left px-4 py-2 hover:bg-white hover:text-black"
                                     >
                                         Sign Out
                                     </button>
+                                    <Link
+                                        className="block px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
+                                        href={`/profile/follow-requests`}>
+                                        Follow requests
+                                    </Link>
                                 </div>
                             </div>
                         ) : (

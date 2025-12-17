@@ -1,18 +1,12 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" // or "mysql", "sqlite", "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -42,14 +36,49 @@ model User {
   CommentReaction CommentReaction[]
   privacy         AccountPrivacy    @default(PUBLIC)
 
-  followers        Follow[]          @relation("Followers")
-  following        Follow[]          @relation("Following")
-  bookmarks        Bookmark[]
-  userAchievements UserAchievement[]
-  ownedGroups      Group[]           @relation("GroupOwner")
-  adminInGroups    Group[]           @relation("GroupAdmins")
-  memberInGroups   Group[]           @relation("GroupMembers")
-  socialLinks      SocialLinks[]
+  followers              Follow[]           @relation("Followers")
+  following              Follow[]           @relation("Following")
+  bookmarks              Bookmark[]
+  userAchievements       UserAchievement[]
+  ownedGroups            Group[]            @relation("GroupOwner")
+  adminInGroups          Group[]            @relation("GroupAdmins")
+  memberInGroups         Group[]            @relation("GroupMembers")
+  socialLinks            SocialLinks[]
+  sentFollowRequests     FollowRequest[]    @relation("FollowRequestSender")
+  receivedFollowRequests FollowRequest[]    @relation("FollowRequestReceiver")
+  groupJoinRequests      GroupJoinRequest[]
+}
+
+model FollowRequest {
+  id         String        @id @default(cuid())
+  senderId   String
+  receiverId String
+  status     RequestStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+
+  sender   User @relation("FollowRequestSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver User @relation("FollowRequestReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model GroupJoinRequest {
+  id        String        @id @default(cuid())
+  userId    String
+  groupId   String
+  status    RequestStatus @default(PENDING)
+  createdAt DateTime      @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
 }
 
 model Achievement {
@@ -192,13 +221,13 @@ model Collection {
 
 model Platform {
   id    String @id @default(cuid())
-  name  String @unique // Add @unique
+  name  String @unique
   games Game[] @relation("GamePlatforms")
 }
 
 model Genre {
   id    String @id @default(cuid())
-  name  String @unique // Add @unique
+  name  String @unique
   games Game[] @relation("GameGenres")
 }
 
@@ -219,13 +248,13 @@ model Post {
   updatedAt    DateTime    @updatedAt
   likeCount    Int         @default(0)
   commentCount Int         @default(0)
-  visibility   PostPrivacy 
+  visibility   PostPrivacy
 
-  group   Group?  @relation(fields: [groupId], references: [id])
+  group   Group?  @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId String?
 
-  user      User       @relation(fields: [userId], references: [id])
-  game      Game?      @relation(fields: [gameId], references: [id])
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game      Game?      @relation(fields: [gameId], references: [id], onDelete: Cascade)
   tags      Hashtag[]  @relation("PostHashtags")
   Like      Like[]
   Comment   Comment[]
@@ -256,8 +285,8 @@ model Like {
   postId    String
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id])
-  post Post @relation(fields: [postId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
 }
@@ -268,13 +297,13 @@ model Comment {
   postId    String
   parentId  String?
   createdAt DateTime    @default(now())
-  content   String 
+  content   String
   type      CommentType @default(COMMENT)
   likeCount Int         @default(0)
 
-  user            User              @relation(fields: [userId], references: [id])
-  post            Post              @relation(fields: [postId], references: [id])
-  parent          Comment?          @relation("CommentReplies", fields: [parentId], references: [id])
+  user            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post            Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent          Comment?          @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies         Comment[]         @relation("CommentReplies")
   CommentReaction CommentReaction[]
 
@@ -288,28 +317,28 @@ model CommentReaction {
   commentId String
   createdAt DateTime @default(now())
 
-  user    User    @relation(fields: [userId], references: [id])
-  comment Comment @relation(fields: [commentId], references: [id])
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
 
   @@unique([userId, commentId])
 }
 
 model Follow {
   id          String   @id @default(cuid())
-  followerId  String // the user who follows
-  followingId String // the user being followed
+  followerId  String
+  followingId String
   createdAt   DateTime @default(now())
 
-  follower  User @relation("Following", fields: [followerId], references: [id])
-  following User @relation("Followers", fields: [followingId], references: [id])
+  follower  User @relation("Following", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
 
-  @@unique([followerId, followingId]) // prevent duplicate follows
+  @@unique([followerId, followingId])
 }
 
 model Group {
   id String @id @default(cuid())
 
-  groupOwner  User    @relation("GroupOwner", fields: [ownerId], references: [id])
+  groupOwner  User    @relation("GroupOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String
   admins      User[]  @relation("GroupAdmins")
   members     User[]  @relation("GroupMembers")
@@ -323,7 +352,8 @@ model Group {
   privacy    GroupPrivacy    @default(PUBLIC)
   visibility GroupVisibility @default(VISIBLE)
 
-  createdAt DateTime @default(now())
+  createdAt         DateTime           @default(now())
+  groupJoinRequests GroupJoinRequest[]
 }
 
 model SocialLinks {
@@ -331,7 +361,7 @@ model SocialLinks {
   link   String
   type   SocialType
   userId String
-  user   User       @relation(fields: [userId], references: [id])
+  user   User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
