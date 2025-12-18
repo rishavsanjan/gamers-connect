@@ -3,13 +3,12 @@ import { Post } from '@/app/types/post'
 import AddPostModal from '@/components/community/AddPostModal'
 import React, { useState } from 'react'
 import InfiniteGroupPosts from './InfiniteGroupPosts'
-import { Lock } from 'lucide-react'
-import { Group, User } from '@prisma/client'
 import InfiniteGroupMedia from './InfiniteGroupMedia'
 import { Post as PostPrisma } from '@prisma/client'
 import GroupAsideBar from './GroupAsideBar'
 import InfiniteGroupMembers from './InfiniteGroupMembers'
 import { PostFeedProvider } from '@/context/PostsContext'
+import InfiniteGroupRequests from './InfiniteGroupRequests'
 
 interface Props {
     groupId: string
@@ -30,9 +29,9 @@ interface Props {
 }
 
 const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members, currentUserId, currentUserRole }) => {
-    const [activeTab, setActiveTab] = useState('Posts');
 
-    const tabs = ['Posts', 'Members', 'Media'];
+    const [activeTab, setActiveTab] = useState('Posts');
+    const tabs = currentUserRole === 'owner' || currentUserRole === 'admin' ? ['Posts', 'Members', 'Media', 'Group Requests'] : ['Posts', 'Members', 'Media'];
     return (
         <div>
             <nav className="border-b border-[#3a3b3c] mb-5">
@@ -68,7 +67,7 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
                             {/* Post Composer */}
                             <AddPostModal groupId={groupId} />
                             <PostFeedProvider initialPosts={posts}>
-                                <InfiniteGroupPosts groupId={groupId}  />
+                                <InfiniteGroupPosts groupId={groupId} />
                             </PostFeedProvider>
 
                         </>
@@ -84,11 +83,17 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
                             <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole} />
                         </>
                     }
+                    {
+                        activeTab === 'Group Requests' &&
+                        <>
+                            <InfiniteGroupRequests/>
+                        </>
+                    }
 
                 </div>
 
                 {/* Sidebar */}
-                <GroupAsideBar  postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} mediaCount={mediaCount} />
+                <GroupAsideBar postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} mediaCount={mediaCount} />
             </div>
 
         </div>

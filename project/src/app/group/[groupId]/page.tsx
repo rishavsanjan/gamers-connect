@@ -37,7 +37,10 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
     if (!group) {
         return;
     }
+
     const hasJoined = group.members.length > 0;
+
+
 
     if (!hasJoined && group.privacy === 'PRIVATE') {
         const isRequestSent = (await prisma.groupJoinRequest.count({
@@ -46,10 +49,10 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
                 groupId
             }
         })) > 0 ? true : false;
-        return <PrivateGroupPage group={group} isRequestSent={isRequestSent}/>
+        return <PrivateGroupPage group={group} isRequestSent={isRequestSent} />
     }
 
-    console.log(group)
+
 
 
     const getposts = await prisma.post.findMany({
@@ -110,9 +113,28 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
 
 
+    const groupRequests = await prisma.groupJoinRequest.findMany({
+        where: {
+            groupId
+        },
+        select: {
+            user: {
+                select: {
+                    id: true,
+                    avatar: true,
+                    username: true,
+                    name: true,
+                    xp: true
+                }
+            },
+            createdAt: true
+        }
+    });
 
-
-
+    const requests = groupRequests.map((req) => ({
+        ...req.user,
+        createdAt: req.createdAt,
+    }));
 
     const members = await prisma.group.findMany({
         take: 5,
@@ -237,7 +259,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
             {/* Main Container */}
             <div className="max-w-[1100px] mx-auto px-5">
-                <GroupDetailsProvider group={{ ...group, hasJoined }} members={finalUsers} totalMembers={group.memberCount}>
+                <GroupDetailsProvider group={{ ...group, hasJoined }} members={finalUsers} totalMembers={group.memberCount} requests={requests}>
                     {/* Group Header */}
                     <GroupHeader />
 

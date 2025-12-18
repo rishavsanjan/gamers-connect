@@ -13,6 +13,16 @@ interface Member {
     role: Role
 }
 
+interface Requests {
+    id: string,
+    name: string | null,
+    username: string,
+    avatar: string | null,
+    xp: number,
+    createdAt: Date
+
+}
+
 interface GroupDetailsContextType {
     groupState: GroupsExtended
 
@@ -20,17 +30,21 @@ interface GroupDetailsContextType {
     membersState: Member[]
     setMemberCount: React.Dispatch<React.SetStateAction<number>>
     setMembersState: React.Dispatch<React.SetStateAction<Member[]>>
+    groupRequests: Requests[]
+    setGroupRequests: React.Dispatch<React.SetStateAction<Requests[]>>
 }
 
 const GroupDetailsContext = createContext<GroupDetailsContextType | null>(null);
 
-export function GroupDetailsProvider({ group, members, totalMembers, children }: any) {
+export function GroupDetailsProvider({ group, members, totalMembers, requests, children }: any) {
     const [groupState, setGroupState] = useState<GroupsExtended>(group);
     const [membersState, setMembersState] = useState(members);
     const [memberCount, setMemberCount] = useState(totalMembers);
+    const [groupRequests, setGroupRequests] = useState(requests);
+
 
     return (
-        <GroupDetailsContext.Provider value={{ groupState, memberCount, membersState, setMemberCount, setMembersState }}>
+        <GroupDetailsContext.Provider value={{ groupState, memberCount, membersState, setMemberCount, setMembersState, groupRequests, setGroupRequests }}>
             {children}
         </GroupDetailsContext.Provider>
     );

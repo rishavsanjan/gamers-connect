@@ -7,6 +7,8 @@ import { useUser } from '@/context/UserContext';
 import { Check, ChevronDown, Plus } from 'lucide-react';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
+import PrivateGroupPage from './PrivateGroup';
+import { createPortal } from 'react-dom';
 
 interface Props {
     hasJoined: boolean,
@@ -27,7 +29,7 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
     const [hasJoinedState, setHasJoinedState] = useState<boolean>(hasJoined);
     const [loading, setLoading] = useState(false);
     const { user, isLoggedIn } = useUser();
-    const { setMemberCount, setMembersState, membersState } = useGroupDetails();
+    const { setMemberCount, setMembersState, groupState } = useGroupDetails();
     const { openLoginModal } = useLoginModal();
 
 
@@ -71,6 +73,10 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
                 prev.filter(member => member.id !== user!.id)
             )
             setMemberCount(prev => prev - 1);
+            console.log(groupState)
+            if (groupState.privacy === 'PRIVATE') {
+                    window.location.reload();
+            }
         } catch (error) {
             console.log(error)
         } finally {
@@ -78,38 +84,44 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
         }
     }
 
+
+
     return (
-        <button
-            disabled={loading}
-            onClick={hasJoinedState ? handleLeave : handleJoin}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#3a3b3c] text-[#e4e6eb] rounded-md font-semibold hover:bg-[#4e4f50] transition-colors disabled:cursor-not-allowed">
-            {
+        <>
+                <button
+                    disabled={loading}
+                    onClick={hasJoinedState ? handleLeave : handleJoin}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-[#3a3b3c] text-[#e4e6eb] rounded-md font-semibold hover:bg-[#4e4f50] transition-colors disabled:cursor-not-allowed">
+                    {
 
-                loading ?
-                    <ClipLoader size={25} color='white' />
-                    :
+                        loading ?
+                            <ClipLoader size={25} color='white' />
+                            :
 
-                    <>
-                        {
-                            hasJoinedState ?
-                                <>
-                                    <Check size={16} />
-                                    Joined
-                                    <ChevronDown size={16} />
-                                </>
-                                :
-                                <>
-                                    <Plus />
-                                    Join
-                                </>
-                        }
+                            <>
+                                {
+                                    hasJoinedState ?
+                                        <>
+                                            <Check size={16} />
+                                            Joined
+                                            <ChevronDown size={16} />
+                                        </>
+                                        :
+                                        <>
+                                            <Plus />
+                                            Join
+                                        </>
+                                }
 
 
-                    </>
+                            </>
 
-            }
+                    }
 
-        </button>
+                </button>
+            
+        </>
+
     )
 }
 
