@@ -9,7 +9,7 @@ import { ClipLoader } from 'react-spinners'
 
 interface Props {
     user: Follower
-    activeTab: string,
+    activeTab?: string,
     setFollowers?: React.Dispatch<React.SetStateAction<Follower[]>>
     setFollowersCount? : React.Dispatch<React.SetStateAction<number>>
     setFollowingCount? : React.Dispatch<React.SetStateAction<number>>
