@@ -4,7 +4,7 @@ import { handleGroupJoin, handleGroupLeave } from '@/app/utils/community_functio
 import { useGroupDetails } from '@/context/GroupsContext';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
-import { Check, ChevronDown, Plus } from 'lucide-react';
+import { Check, ChevronDown, DeleteIcon, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
 import PrivateGroupPage from './PrivateGroup';
@@ -75,7 +75,7 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
             setMemberCount(prev => prev - 1);
             console.log(groupState)
             if (groupState.privacy === 'PRIVATE') {
-                    window.location.reload();
+                window.location.reload();
             }
         } catch (error) {
             console.log(error)
@@ -85,41 +85,53 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
     }
 
 
-
     return (
         <>
-                <button
-                    disabled={loading}
-                    onClick={hasJoinedState ? handleLeave : handleJoin}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-[#3a3b3c] text-[#e4e6eb] rounded-md font-semibold hover:bg-[#4e4f50] transition-colors disabled:cursor-not-allowed">
-                    {
+            <button
+                disabled={loading}
+                onClick={hasJoinedState ? handleLeave : handleJoin}
+                className="flex items-center gap-2 px-5 py-2.5 bg-[#3a3b3c] text-[#e4e6eb] rounded-md font-semibold hover:bg-[#4e4f50] transition-colors disabled:cursor-not-allowed">
+                {
 
-                        loading ?
-                            <ClipLoader size={25} color='white' />
-                            :
+                    loading ?
+                        <ClipLoader size={25} color='white' />
+                        :
 
-                            <>
-                                {
-                                    hasJoinedState ?
-                                        <>
-                                            <Check size={16} />
-                                            Joined
-                                            <ChevronDown size={16} />
-                                        </>
-                                        :
-                                        <>
-                                            <Plus />
-                                            Join
-                                        </>
-                                }
+                        <>
+                            {
+                                groupState.ownerId === user?.id ?
+                                    <>
+                                        <Trash2 size={18}/>
+                                        Delete
+                                    </>
+                                    :
+                                    <>
+                                        {
+                                            hasJoinedState ?
+                                                <>
+                                                    <Check size={16} />
+                                                    Joined
+                                                    <ChevronDown size={16} />
+                                                </>
+                                                :
+                                                <>
+                                                    <Plus />
+                                                    Join
+                                                </>
+                                        }
+                                    </>
+                            }
 
 
-                            </>
 
-                    }
 
-                </button>
-            
+
+                        </>
+
+                }
+
+            </button>
+
         </>
 
     )
