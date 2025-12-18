@@ -5,6 +5,7 @@ import { prisma } from '@/lib/db';
 import GroupHeader from './GroupHeader';
 import { auth } from '@/auth';
 import { GroupDetailsProvider } from '@/context/GroupsContext';
+import PrivateGroupPage from './PrivateGroup';
 
 
 interface Props {
@@ -32,6 +33,24 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
             }
         }
     })
+
+    if (!group) {
+        return;
+    }
+    const hasJoined = group.members.length > 0;
+
+    if (!hasJoined && group.privacy === 'PRIVATE') {
+        const isRequestSent = (await prisma.groupJoinRequest.count({
+            where: {
+                userId: session?.user.id,
+                groupId
+            }
+        })) > 0 ? true : false;
+        return <PrivateGroupPage group={group} isRequestSent={isRequestSent}/>
+    }
+
+    console.log(group)
+
 
     const getposts = await prisma.post.findMany({
         where: {
@@ -89,13 +108,11 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
     }));
 
-    if (!group) {
-        return;
-    }
 
-    
 
-    const hasJoined = group.members.length > 0;
+
+
+
 
     const members = await prisma.group.findMany({
         take: 5,
@@ -220,9 +237,9 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
             {/* Main Container */}
             <div className="max-w-[1100px] mx-auto px-5">
-                <GroupDetailsProvider group={{...group, hasJoined}} members={finalUsers} totalMembers={group.memberCount}>
+                <GroupDetailsProvider group={{ ...group, hasJoined }} members={finalUsers} totalMembers={group.memberCount}>
                     {/* Group Header */}
-                    <GroupHeader  />
+                    <GroupHeader />
 
                     {/* Navigation Tabs */}
                     <GroupTabs groupId={groupId} posts={posts} postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} postsWithMedia={postWithMedia} mediaCount={mediaCount} members={finalUsers} currentUserId={currentUserId} currentUserRole={currentUserRole} />

@@ -50,8 +50,10 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     const [loading, setLoading] = useState(false)
     const [playlistGames, setPlaylistGames] = useState(playlist.map(item => item.game));
     const [ownedGames, setOwnedGames] = useState(mygames.map(item => item.game));
-
-    // const ownedgames = mygames.map(item => item.game);
+    const [followersState, setFollowersState] = useState(follower);
+    const [followingState, setFollowingState] = useState(following);
+    const [followerCountState, setFollowerCountState] = useState(follower.length)
+    const [followingrCountState, setFollowingrCountState] = useState(following.length)
     const [ratedgames, setRatedGames] = useState(ratings.map(item => item.game));
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
         if (!item.game.first_release_date) return acc;
@@ -192,7 +194,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                         className={`${activeTab === 'follower' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
                     >Followers
                     </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{follower.length || 0}</span>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{followerCountState || 0}</span>
 
                 </div>
 
@@ -202,7 +204,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                         className={`${activeTab === 'following' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
                     >Following
                     </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{following.length || 0}</span>
+                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{followingrCountState || 0}</span>
 
                 </div>
 
@@ -379,9 +381,9 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 activeTab === 'follower' &&
                 <div className='p-4 px-8  flex flex-row flex-wrap gap-2'>
                     {
-                        follower.map((user) => {
+                        followersState.map((user) => {
                             return (
-                                <FollowingCard user={user} />
+                                <FollowingCard user={user} activeTab={activeTab} setFollowers={setFollowersState} setFollowersCount={setFollowerCountState}/>
                             )
                         })
                     }
@@ -392,9 +394,9 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 activeTab === 'following' &&
                 <div className='p-4 px-8  flex flex-row flex-wrap gap-2'>
                     {
-                        following.map((user) => {
+                        followingState.map((user) => {
                             return (
-                                <FollowingCard user={user} />
+                                <FollowingCard user={user} activeTab={activeTab} />
                             )
                         })
                     }

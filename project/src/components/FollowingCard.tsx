@@ -1,25 +1,61 @@
 import { Follower } from '@/app/types/follower'
 import { addFollow } from '@/app/utils/community_functions'
+import axios from 'axios'
+import { Cross, X } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import React, { useState } from 'react'
+import React, { SetStateAction, useState } from 'react'
+import { GrX } from 'react-icons/gr'
 import { ClipLoader } from 'react-spinners'
 
 interface Props {
     user: Follower
+    activeTab: string,
+    setFollowers?: React.Dispatch<React.SetStateAction<Follower[]>>
+    setFollowersCount? : React.Dispatch<React.SetStateAction<number>>
+    setFollowingCount? : React.Dispatch<React.SetStateAction<number>>
 }
 
-const FollowingCard: React.FC<Props> = ({ user }) => {
+const FollowingCard: React.FC<Props> = ({ user, activeTab, setFollowers, setFollowersCount, setFollowingCount }) => {
+    console.log(user)
     const { data: session } = useSession();
     const displayName = user.name ?? user.username ?? 'Anonymous'
     const firstLetter = displayName.charAt(0).toUpperCase()
     const [following, setFollowing] = useState(!!user.isFollowingBack);
     const [loading, setLoading] = useState(false);
+    const [removing, setRemoving] = useState(false);
 
     const handleFollow = async (userId: string) => {
         setLoading(true);
         addFollow({ otherPersonId: userId, myId: session?.user.id });
         setFollowing(prev => !prev)
+        
         setLoading(false);
+    }
+
+    const handleRemoveFollower = async (followerId: string) => {
+        setRemoving(true)
+        try {
+            const response = await axios({
+                url: `/api/private/remove-follower`,
+                method: 'post',
+                data: {
+                    followerId,
+                    followingId: session?.user.id
+                }
+            })
+            if (setFollowers && response.data.success && setFollowersCount) {
+                setFollowers(prev => prev.filter(f => f.id !== followerId))
+                setFollowersCount(prev => prev - 1)
+            }
+            
+            
+
+        } catch (error) {
+            console.log(error)
+        } finally {
+            setRemoving(false)
+        }
+
     }
 
     return (
@@ -78,8 +114,22 @@ const FollowingCard: React.FC<Props> = ({ user }) => {
                     }
 
                 </button>
-
             }
+            {
+                activeTab === 'follower' &&
+                <button
+                    disabled={removing}
+                    className='hover:bg-gray-400 rounded-full p-1 ease-in-out duration-200 disabled:cursor-not-allowed' onClick={() => { handleRemoveFollower(user.id) }}>
+                    {
+                        removing ?
+                            <ClipLoader color='white' size={20}/>
+                            :
+                            <X />
+                    }
+
+                </button>
+            }
+
 
         </div>
     )

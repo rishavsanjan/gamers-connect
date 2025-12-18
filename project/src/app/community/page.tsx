@@ -56,7 +56,7 @@ export default async function GamelyCommunity() {
                     },
                     {
                         visibility: 'EVERYONE'
-                    }, 
+                    },
                     {
                         userId
                     }
@@ -169,7 +169,7 @@ export default async function GamelyCommunity() {
     const suggestedGroups = await prisma.group.findMany({
         take: 3,
         where: {
-            AND: [{ visibility: 'VISIBLE' }, { privacy: 'PUBLIC' }],
+            AND: [{ visibility: 'VISIBLE' }, { OR: [{ privacy: 'PUBLIC' }, { privacy: 'PRIVATE' }] }],
             NOT: {
                 members: { some: { id: session?.user.id } }
             }
