@@ -24,6 +24,7 @@ const CreateGroup = () => {
 
     const [showVisibilityMenu, setShowVisibilityMenu] = useState(false);
     const [selectedVisibility, setSelectedVisibility] = useState('Visible');
+    const [description, setDescription] = useState('');
 
     const selectPrivacy = (privacy: string) => {
         setSelectedPrivacy(privacy);
@@ -67,8 +68,8 @@ const CreateGroup = () => {
 
     console.log(groupName)
     return (
-        <div className='flex sm:flex-row flex-col'>
-            <div className='sm:w-[25%]'>
+        <div className='flex lg:flex-row flex-col'>
+            <div className='lg:w-[25%]'>
                 <div className="min-h-screen bg-gray-900 text-white sm:p-6 p-2 border-r border-gray-400">
                     {/* Header */}
                     <div className="flex items-center gap-4 mb-6">
@@ -99,7 +100,15 @@ const CreateGroup = () => {
                         placeholder="Group name"
                         value={groupName}
                         onChange={(e) => { setGroupName(e.target.value) }}
-                        className="w-full bg-transparent border border-gray-600 rounded-lg px-4 py-3 mb-4 text-white placeholder-gray-500 focus:outline-none focus:border-gray-500"
+                        className="w-full bg-transparent border border-gray-600 rounded-lg px-4 py-3 mb-4 text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 ease-in-out duration-300"
+                    />
+
+                    <textarea
+                        rows={4}
+                        placeholder="Description"
+                        value={description}
+                        onChange={(e) => { setDescription(e.target.value) }}
+                        className="w-full bg-transparent border border-gray-600 rounded-lg px-4 py-3 mb-4 text-white placeholder-gray-500 focus:outline-none focus:border-gray-500 ease-in-out duration-300"
                     />
 
                     {/* Privacy Selector */}
@@ -136,7 +145,7 @@ const CreateGroup = () => {
 
 
             {/* Right Side */}
-            <GroupPreview groupName={groupName} selectedVisibility={selectedVisibility} selectedPrivacy={selectedPrivacy} />
+            <GroupPreview groupName={groupName} selectedVisibility={selectedVisibility} selectedPrivacy={selectedPrivacy} description={description} />
 
 
         </div>

@@ -34,7 +34,8 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
     const tabs = currentUserRole === 'owner' || currentUserRole === 'admin' ? ['Posts', 'Members', 'Media', 'Group Requests'] : ['Posts', 'Members', 'Media'];
     return (
         <div>
-            <nav className="border-b border-[#3a3b3c] mb-5">
+            
+            <nav className="border-b border-[#3a3b3c] ">
                 <ul className="flex gap-0">
                     {tabs.map((tab) => (
                         <li
@@ -55,46 +56,51 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
             </nav>
 
             {/* Content Area */}
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5 pb-10">
-                {/* Main Content */}
-                <div className="flex flex-col gap-4">
+            <div className="h-[calc(100vh-120px)] ">
+                <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-5 h-full pb-10">
+                    {/* Main Content */}
+                    <div className="flex flex-col gap-4 lg:overflow-y-auto pr-1 hide-scrollbar pt-4">
+                        {/* Active Tab */}
+                        {
+                            activeTab === 'Posts' &&
+                            <>
+                                {/* Post Composer */}
+                                <AddPostModal groupId={groupId} />
+                                <PostFeedProvider initialPosts={posts}>
+                                    <InfiniteGroupPosts groupId={groupId} />
+                                </PostFeedProvider>
 
 
-                    {/* Active Tab */}
-                    {
-                        activeTab === 'Posts' &&
-                        <>
-                            {/* Post Composer */}
-                            <AddPostModal groupId={groupId} />
-                            <PostFeedProvider initialPosts={posts}>
-                                <InfiniteGroupPosts groupId={groupId} />
-                            </PostFeedProvider>
+                            </>
 
-                        </>
+                        }
+                        {
+                            activeTab === 'Media' &&
+                            <InfiniteGroupMedia posts={postsWithMedia} groupId={groupId} />
+                        }
+                        {
+                            activeTab === 'Members' &&
+                            <>
+                                <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole} />
+                            </>
+                        }
+                        {
+                            activeTab === 'Group Requests' &&
+                            <>
+                                <InfiniteGroupRequests />
+                            </>
+                        }
 
-                    }
-                    {
-                        activeTab === 'Media' &&
-                        <InfiniteGroupMedia posts={postsWithMedia} groupId={groupId} />
-                    }
-                    {
-                        activeTab === 'Members' &&
-                        <>
-                            <InfiniteGroupMembers members={members} groupId={groupId} currentUserId={currentUserId} currentUserRole={currentUserRole} />
-                        </>
-                    }
-                    {
-                        activeTab === 'Group Requests' &&
-                        <>
-                            <InfiniteGroupRequests/>
-                        </>
-                    }
+                    </div>
+
+                    {/* Sidebar */}
+                    <div className="sticky top-6 self-start h-fit pt-4">
+                        <GroupAsideBar postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} mediaCount={mediaCount} />
+                    </div>
 
                 </div>
-
-                {/* Sidebar */}
-                <GroupAsideBar postCount24hrs={postCount24hrs} postCount30Days={postCount30Days} mediaCount={mediaCount} />
             </div>
+
 
         </div>
 

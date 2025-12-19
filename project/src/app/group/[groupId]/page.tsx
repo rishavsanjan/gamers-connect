@@ -40,7 +40,9 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
     const hasJoined = group.members.length > 0;
 
-
+    if (!session?.user) {
+        return <PrivateGroupPage group={group} isRequestSent={false} />
+    }
 
     if (!hasJoined && group.privacy === 'PRIVATE') {
         const isRequestSent = (await prisma.groupJoinRequest.count({
@@ -113,87 +115,65 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
 
 
-    const groupRequests = await prisma.groupJoinRequest.findMany({
-        where: {
-            groupId
-        },
-        select: {
-            user: {
-                select: {
-                    id: true,
-                    avatar: true,
-                    username: true,
-                    name: true,
-                    xp: true
+    const [members, postCount24hrs, postCount30Days, postWithMedia, mediaCount] = await Promise.all([
+        await prisma.group.findMany({
+            take: 5,
+            where: {
+                id: groupId
+            },
+            include: {
+                members: {
+                    select: { username: true, id: true, name: true, avatar: true }
+                },
+                admins: {
+                    select: { username: true, id: true, name: true, avatar: true }
+                },
+
+            },
+        }),
+
+        await prisma.post.count({
+            where: {
+                createdAt: {
+                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // last 24 hours
+                },
+                groupId
+            }
+        }),
+        await prisma.post.count({
+            where: {
+                createdAt: {
+                    gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // last 30 days
+                },
+                groupId
+            }
+        }),
+        await prisma.post.findMany({
+            take: 2,
+            where: {
+                groupId,
+                mediaUrls: {
+                    isEmpty: false
                 }
-            },
-            createdAt: true
-        }
-    });
-
-    const requests = groupRequests.map((req) => ({
-        ...req.user,
-        createdAt: req.createdAt,
-    }));
-
-    const members = await prisma.group.findMany({
-        take: 5,
-        where: {
-            id: groupId
-        },
-        include: {
-            members: {
-                select: { username: true, id: true, name: true, avatar: true }
-            },
-            admins: {
-                select: { username: true, id: true, name: true, avatar: true }
-            },
-
-        },
-
-    })
-
-
-    const formattedNames = members.flatMap(item =>
-        item.members.map(member => member.username[0].toUpperCase())
-    );
-
-    const postCount24hrs = await prisma.post.count({
-        where: {
-            createdAt: {
-                gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // last 24 hours
-            },
-            groupId
-        }
-    });
-
-    const postCount30Days = await prisma.post.count({
-        where: {
-            createdAt: {
-                gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // last 30 days
-            },
-            groupId
-        }
-    });
-
-    const postWithMedia = await prisma.post.findMany({
-        take: 2,
-        where: {
-            groupId,
-            mediaUrls: {
-                isEmpty: false
             }
-        }
-    })
-
-    const mediaCount = await prisma.post.count({
-        where: {
-            groupId,
-            mediaUrls: {
-                isEmpty: false
+        }),
+        await prisma.post.count({
+            where: {
+                groupId,
+                mediaUrls: {
+                    isEmpty: false
+                }
             }
-        }
-    })
+        })
+
+    ])
+
+
+
+
+
+
+
 
     const admins = members.flatMap(item =>
         item.admins.map(admin => ({
@@ -244,22 +224,42 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         currentUserRole = isAdmin ? 'admin' : 'member';
     }
 
+    let requests: any = [];
 
-    console.log(currentUserRole)
+    if (currentUserRole === 'admin' || currentUserRole === 'owner') {
+        const groupRequests = await prisma.groupJoinRequest.findMany({
+            where: {
+                groupId
+            },
+            select: {
+                user: {
+                    select: {
+                        id: true,
+                        avatar: true,
+                        username: true,
+                        name: true,
+                        xp: true
+                    }
+                },
+                createdAt: true
+            }
+        });
+
+        requests = groupRequests.map((req) => ({
+            ...req.user,
+            createdAt: req.createdAt,
+        }));
+    }
+
+
 
     return (
         <div className="min-h-screen bg-[#18191a] text-[#e4e6eb]">
-            {/* Header Banner */}
-            <div
-                className="w-full h-[350px] bg-cover bg-center relative"
-                style={{
-                    backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(24,25,26,0.9)), url('https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=1400&h=350&fit=crop')`
-                }}
-            />
+
 
             {/* Main Container */}
             <div className="max-w-[1100px] mx-auto px-5">
-                <GroupDetailsProvider group={{ ...group, hasJoined }} members={finalUsers} totalMembers={group.memberCount} requests={requests}>
+                <GroupDetailsProvider group={{ ...group, hasJoined }} members={finalUsers} totalMembers={group.memberCount} requests={requests} currentUserRole={currentUserRole}>
                     {/* Group Header */}
                     <GroupHeader />
 

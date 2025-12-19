@@ -345,6 +345,7 @@ model Group {
   posts       Post[]
   name        String
   description String?
+  coverImage  String?
 
   memberCount Int @default(1)
   postCount   Int @default(0)

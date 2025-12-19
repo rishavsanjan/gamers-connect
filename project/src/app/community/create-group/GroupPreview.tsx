@@ -5,11 +5,12 @@ interface Props {
     groupName: string,
     selectedPrivacy: string,
     selectedVisibility: string
+    description: string
 }
 
-const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVisibility }) => {
+const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVisibility, description }) => {
     return (
-        <div className='sm:w-[75%]'>
+        <div className='lg:w-[75%]'>
             <div className="min-h-screen bg-gray-900 text-white sm:p-6 p-2">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -29,7 +30,7 @@ const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVis
 
                     {/* Group Info Section */}
                     <div className="p-6 cursor-not-allowed">
-                        <h1 className="text-2xl font-bold text-gray-400 mb-2">{groupName.length > 0 ? groupName : ' Group name'}</h1>
+                        <h1 className="text-2xl font-bold text-gray-400 mb-2">{groupName.trim().length > 0 ? groupName : ' Group name'}</h1>
                         <div className="flex items-center gap-2 text-sm text-gray-400 mb-6">
                             <Globe size={16} />
                             <span>Public group · 1 member</span>
@@ -40,6 +41,7 @@ const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVis
                             <button className="pb-3 border-b-2 border-blue-500 text-white font-semibold">
                                 About
                             </button>
+
                             <button className="pb-3 text-gray-400">
                                 Posts
                             </button>
@@ -47,12 +49,12 @@ const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVis
                                 Members
                             </button>
                             <button className="pb-3 text-gray-400">
-                                Events
+                                Media
                             </button>
                         </div>
 
                         {/* Content Area */}
-                        <div className="flex sm:flex-row flex-col gap-6 cursor-not-allowed">
+                        <div className="flex lg:flex-row flex-col gap-6 cursor-not-allowed">
                             {/* Left Column - Post Creator */}
                             <div className="flex-1">
                                 <div className="bg-gray-700 rounded-lg p-4 mb-4">
@@ -88,10 +90,15 @@ const GroupPreview: React.FC<Props> = ({ groupName, selectedPrivacy, selectedVis
                             </div>
 
                             {/* Right Column - About Section */}
-                            <div className="w-80">
+                            <div className="lg:w-80 w-full">
                                 <div className="bg-gray-700 rounded-lg p-4">
-                                    <h3 className="text-lg font-semibold mb-4">About</h3>
+                                    <div className='flex flex-col shrink-0'>
+                                        <h3 className="text-lg font-semibold ">About</h3>
+                                        <p className="text-sm text-[#b0b3b8] mb-2 line-clamp-4 break-words">
+                                            {description.trim().length === 0 ? 'No Description!' : description}
+                                        </p>
 
+                                    </div>
                                     <div className="space-y-4">
                                         <div className="flex gap-3">
                                             <Globe size={20} className="text-gray-400 flex-shrink-0 mt-1" />

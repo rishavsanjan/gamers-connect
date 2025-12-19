@@ -190,27 +190,7 @@ export default async function GamelyCommunity() {
     })
     console.log(getposts)
 
-    function PleaseLoginBanner({ contentType = "this content" }) {
-        return (
-            <div className="bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm border border-purple-500/30 rounded-2xl p-8 text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-pink-500/20 to-purple-600/20 rounded-full mb-4 border border-purple-500/30">
-                    <Lock className="w-8 h-8 text-purple-400" />
-                </div>
-                <h3 className="text-2xl font-bold text-white mb-2">Login Required</h3>
-                <p className="text-slate-400 mb-6 max-w-md mx-auto">
-                    Please log in to  {contentType}. Join our community to unlock all features!
-                </p>
-                <div className="flex gap-3 justify-center flex-wrap">
-                    <button className="px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg hover:from-pink-600 hover:to-purple-700 transition transform hover:scale-105 shadow-lg shadow-purple-500/30">
-                        Login
-                    </button>
-                    <button className="px-6 py-3 bg-slate-700 text-white font-semibold rounded-lg hover:bg-slate-600 transition">
-                        Sign Up
-                    </button>
-                </div>
-            </div>
-        );
-    }
+
 
 
 
