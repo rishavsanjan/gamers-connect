@@ -54,7 +54,12 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
 
 
 
-
+    useEffect(() => {
+        document.body.style.overflow = isOpen ? 'hidden' : 'auto'
+        return () => {
+            document.body.style.overflow = 'auto'
+        }
+    }, []);
 
     const router = useRouter();
 
@@ -361,7 +366,7 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
             if (provider === 'github') {
                 await login();
             }
-            
+
             onLoginSuccess?.();
             router.refresh();
         } catch (error) {
@@ -434,7 +439,7 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
     };
 
     return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
+        <div className="fixed inset-0 z-50 overflow-y-auto hide-scrollbar">
             {/* Backdrop */}
             <div
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm transition-opacity"
@@ -443,8 +448,8 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
             />
 
             {/* Modal */}
-            <div className="flex min-h-full items-center justify-center p-4">
-                <div className="relative bg-slate-800 rounded-2xl shadow-2xl border border-purple-500/30 max-w-md w-full max-h-[90vh] overflow-y-auto transform transition-all">
+            <div className="flex min-h-full items-center justify-center p-4 ">
+                <div className="relative bg-slate-800 rounded-2xl shadow-2xl border border-purple-500/30 max-w-md w-full max-h-[90vh] overflow-y-auto transform transition-all hide-scrollbar">
                     {/* Header */}
                     <div className="sticky top-0 bg-slate-800 p-6 border-b border-slate-700 rounded-t-2xl z-10">
                         <div className="flex items-center justify-between">

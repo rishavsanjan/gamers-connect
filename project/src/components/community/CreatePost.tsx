@@ -10,6 +10,9 @@ import { GrClose } from 'react-icons/gr';
 import { Post } from '@/app/types/post';
 import { useRouter } from 'next/navigation'
 import ShareAsPost from '../ShareAsPost';
+import { redis } from '@/lib/redis';
+import { useLoginModal } from '@/context/LoginModalContext';
+import { useUser } from '@/context/UserContext';
 
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
@@ -35,7 +38,10 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
     const [visibility, setVisibility] = useState(false);
     const CLOUDINARY_CLOUD_NAME = "diwmvqto3";
     const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
+    const { openLoginModal } = useLoginModal();
+    const { isLoggedIn } = useUser();
 
+    
 
 
     useEffect(() => {
@@ -115,6 +121,10 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
     };
 
     const handleCreatePost = async () => {
+        if (!isLoggedIn) {
+            openLoginModal();
+            return;
+        }
         setUploading(true)
 
         const extractHashtags = (text: string): string[] => {
@@ -155,7 +165,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
         });
 
 
-
+        await redis.del('top-tags');
 
         console.log(response.data);
         if (setPosts) {
@@ -193,7 +203,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
     }
 
     return (
-        <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm h-screen w-screen overflow-y-auto">
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 p-4 backdrop-blur-sm h-screen w-screen overflow-y-auto">
             <div className="w-full max-w-2xl rounded-2xl border border-purple-500/30 bg-gradient-to-br from-gray-900 to-purple-900 p-8">
                 <h2 className="mb-6 text-2xl font-bold">Create a Post</h2>
 
@@ -390,7 +400,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
 
                 </div>
             </div>
-            
+
         </div>
     )
 }

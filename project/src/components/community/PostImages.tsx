@@ -1,8 +1,52 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Portal from '../Portal';
 
 export default function PostImages({ mediaUrls }: { mediaUrls: string[] }) {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    useEffect(() => {
+        document.body.style.overflow = selectedImage ? 'hidden' : 'auto'
+        return () => {
+            document.body.style.overflow = 'auto'
+        }
+    }, [selectedImage]);
+
+
+    function FeedImage({
+        src,
+        onClick,
+    }: {
+        src: string
+        onClick: () => void
+    }) {
+        const [isPortrait, setIsPortrait] = useState(false)
+
+        return (
+            <div
+                className={`relative cursor-pointer overflow-hidden rounded-lg bg-black
+        ${isPortrait ? 'max-h-[420px]' : ''}
+      `}
+                onClick={onClick}
+            >
+                <img
+                    src={src}
+                    onLoad={(e) => {
+                        const img = e.currentTarget
+                        setIsPortrait(img.naturalHeight > img.naturalWidth)
+                    }}
+                    className={`
+          w-full
+          ${isPortrait
+                            ? 'h-full object-contain bg-black'
+                            : 'h-auto object-cover'
+                        }
+        `}
+                    alt="post"
+                />
+            </div>
+        )
+    }
+
 
     return (
         <>
@@ -24,11 +68,11 @@ export default function PostImages({ mediaUrls }: { mediaUrls: string[] }) {
                                 }`}
                             onClick={() => setSelectedImage(image)}
                         >
-                            <img
+                            <FeedImage
                                 src={image}
-                                alt={`media-${index}`}
-                                className="w-full h-full object-cover rounded-lg hover:opacity-90 transition"
+                                onClick={() => setSelectedImage(image)}
                             />
+
 
                             {index === 3 && mediaUrls.length > 4 && (
                                 <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-xl font-bold">
@@ -42,25 +86,36 @@ export default function PostImages({ mediaUrls }: { mediaUrls: string[] }) {
 
             {/* Image Modal (Lightbox) */}
             {selectedImage && (
-                <div
-                    className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
-                    onClick={() => setSelectedImage(null)} // close when clicking outside
-                >
-                    <div className="relative max-w-4xl w-full max-h-[90vh]">
-                        <button
-                            className="absolute -top-10 right-0 text-white text-3xl hover:text-purple-400"
-                            onClick={() => setSelectedImage(null)}
+                <Portal>
+                    <div
+                        className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+                        onClick={() => setSelectedImage(null)}
+                    >
+                        <div
+                            className="relative flex items-center justify-center w-full h-full p-6"
+                            onClick={(e) => e.stopPropagation()} // prevent close on image click
                         >
-                            &times;
-                        </button>
-                        <img
-                            src={selectedImage}
-                            alt="Selected"
-                            className="w-full max-h-[90vh] object-contain rounded-lg shadow-2xl"
-                        />
+                            {/* Image container */}
+                            <div className="flex items-center justify-center bg-black rounded-lg max-w-[90vw] max-h-[90vh]">
+                                <img
+                                    src={selectedImage}
+                                    className="w-auto h-auto max-w-[90vw] max-h-[90vh] object-contain"
+                                />
+                            </div>
+
+                            {/* Close button */}
+                            <button
+                                className="absolute top-4 right-4 text-white text-4xl hover:text-purple-400"
+                                onClick={() => setSelectedImage(null)}
+                            >
+                                &times;
+                            </button>
+                        </div>
                     </div>
-                </div>
+                </Portal>
+
             )}
+
         </>
     );
 }

@@ -59,7 +59,7 @@ export default async function RootLayout({
 
               <Navbar />
               <LoginToastClient />
-              <LoginModalClient/>
+              <LoginModalClient />
               {children}
 
             </Providers>
@@ -70,6 +70,7 @@ export default async function RootLayout({
         </LoginModalProvider>
 
 
+        <div id="portal-root" />
 
       </body>
     </html>

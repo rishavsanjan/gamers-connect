@@ -9,6 +9,7 @@ import AddPostModal from '@/components/community/AddPostModal';
 import SearchCommunity from './SearchCommunity';
 import SuggestedGroups from './SuggestedGroups';
 import { PostFeedProvider } from '@/context/PostsContext';
+import { getTopTags } from '@/lib/topTags';
 export default async function GamelyCommunity() {
 
     const session = await auth().catch(() => null);
@@ -125,19 +126,22 @@ export default async function GamelyCommunity() {
     console.log(posts)
 
 
-    const topTags = await prisma.hashtag.findMany({
-        take: 5,
-        orderBy: {
-            posts: {
-                _count: 'desc',
-            },
-        },
-        include: {
-            _count: {
-                select: { posts: true },
-            },
-        },
-    });
+    // const topTags = await prisma.hashtag.findMany({
+    //     take: 5,
+    //     orderBy: {
+    //         posts: {
+    //             _count: 'desc',
+    //         },
+    //     },
+    //     include: {
+    //         _count: {
+    //             select: { posts: true },
+    //         },
+    //     },
+    // });
+
+    const topTags = await getTopTags();
+    console.log(topTags)
 
 
     const topUsers = await prisma.user.findMany({
@@ -226,18 +230,13 @@ export default async function GamelyCommunity() {
                 </div>
             </header>
 
-            <div className="mx-auto max-w-7xl md:px-6 md:py-8 px-2 py-2">
+            <div className="mx-auto max-w-7xl md:px-6  flex h-screen">
 
-                <div className="grid grid-cols-12 gap-6">
+                <div className="grid grid-cols-12 gap-6 px-2">
                     {/* Left Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-3">
+                    <div className="col-span-12 space-y-6 lg:col-span-3 py-4">
                         {/* Create Post Card */}
-                        {
-                            session ?
-                                <AddPostModal />
-                                :
-                                <PleaseLoginBanner contentType='create post' />
-                        }
+                        <AddPostModal />
 
 
                         {/* Trending Topics */}
@@ -248,14 +247,14 @@ export default async function GamelyCommunity() {
                             </h3>
                             <div className="space-y-3">
                                 {
-                                    topTags.map((tag) => (
+                                    topTags?.map((tag) => (
                                         <Link href={`/community/hashtag_posts/${tag.name}`} key={tag.name}>
                                             <ul className='flex flex-row justify-between'>
                                                 <li className='text-blue-500 cursor-pointer'>#{tag.name}</li>
                                                 <li>{tag._count.posts}</li>
                                             </ul>
                                         </Link>
-                                    ))
+                                    )) || 'No top tags!'
                                 }
                             </div>
                         </div>
@@ -285,8 +284,8 @@ export default async function GamelyCommunity() {
                         </div>
                     </div>
 
-                    {/* Right Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-3  sm:hidden">
+                    {/* Right Sidebar for samll screens */}
+                    <div className="col-span-12  lg:col-span-3  sm:hidden ">
                         {/* Quick Stats */}
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
                             <h3 className="mb-4 text-lg font-bold">Your Stats</h3>
@@ -311,71 +310,40 @@ export default async function GamelyCommunity() {
                     </div>
 
                     {/* Main Feed */}
-                    <div className="col-span-12 space-y-6 lg:col-span-6">
-
-                        {/* Posts */}
-                        {/* {
-                            loading ?
-                                <div className=' flex flex-row justify-center'>
-                                    <ClipLoader size={40} color='white' />
-                                </div>
-
-                                : */}
-                        <>
-                            <PostFeedProvider initialPosts={posts}>
-                                <InfiniteHomePostsFeed />
-                            </PostFeedProvider>
-
-
-
-                        </>
-                        {/* } */}
-
+                    <div className="col-span-12 space-y-6 lg:col-span-6 md:overflow-y-auto py-4 hide-scrollbar">
+                        <PostFeedProvider initialPosts={posts}>
+                            <InfiniteHomePostsFeed />
+                        </PostFeedProvider>
                     </div>
 
                     {/* Right Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-3 sm:flex flex-col hidden">
+                    <div className="col-span-12 space-y-6 lg:col-span-3 sm:flex flex-col hidden sticky py-4">
                         {/* Quick Stats */}
 
-                        {
-                            session ?
-                                < div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                                    <h3 className="mb-4 text-lg font-bold">Your Stats</h3>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-400">Posts</span>
-                                            <span className="font-bold text-purple-400">{myStats[0]._count.Post}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-400">Followers</span>
-                                            <span className="font-bold text-purple-400">{myStats[0]._count.followers}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-400">XP</span>
-                                            <span className="font-bold text-purple-400">{myStats[0].xp}</span>
-                                        </div>
-                                    </div>
+                        < div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
+                            <h3 className="mb-4 text-lg font-bold">Your Stats</h3>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400">Posts</span>
+                                    <span className="font-bold text-purple-400">{myStats[0]._count.Post}</span>
                                 </div>
-                                :
-                                <>
-                                    <PleaseLoginBanner contentType=' view tats' />
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400">Followers</span>
+                                    <span className="font-bold text-purple-400">{myStats[0]._count.followers}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-gray-400">XP</span>
+                                    <span className="font-bold text-purple-400">{myStats[0].xp}</span>
+                                </div>
+                            </div>
+                        </div>
 
-                                </>
-
-
-
-                        }
 
                         {/* Suggested Groups */}
                         <SuggestedGroups groups={formattedGroups} />
                     </div>
                 </div>
             </div>
-
-            {/* Create Post Modal */}
-            {/* {showPostModal && (
-                <CreatePostModal setShowPostModal={setShowPostModal} setPosts={setPosts} />
-            )} */}
         </div >
     );
 }
