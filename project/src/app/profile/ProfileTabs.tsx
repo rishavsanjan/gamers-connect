@@ -281,6 +281,8 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 <div className='pb-8 flex flex-col  '>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={ownedGames} />
+
+
                     <div className={`${ownedGamesCount === ownedGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
                         {
                             loading ?
@@ -383,7 +385,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     {
                         followersState.map((user) => {
                             return (
-                                <FollowingCard user={user} activeTab={activeTab} setFollowers={setFollowersState} setFollowersCount={setFollowerCountState}/>
+                                <FollowingCard user={user} activeTab={activeTab} setFollowers={setFollowersState} setFollowersCount={setFollowerCountState} />
                             )
                         })
                     }

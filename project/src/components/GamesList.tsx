@@ -27,8 +27,13 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
     return (
         <div
             ref={scrollRef}
-            className='grid grid-cols-1  xl:grid-cols-3 2xl:grid-cols-4 lg:grid-cols-2 md:grid-cols-2  gap-8 p-4   rounded-xl  w-full'
-
+            className="
+         grid grid-cols-1
+         min-[952px]:grid-cols-2
+         min-[1323px]:grid-cols-3
+         min-[1740px]:grid-cols-4
+         gap-8 p-4 rounded-xl
+    "
         >
             {
                 gamesList?.map((game, index) => {
@@ -43,7 +48,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                             onMouseEnter={() => { setHoverId(game.id) }}
                             onMouseLeave={() => { setHoverId(0) }}
                             key={game.id}
-                            className='flex flex-col min-w-[335px] overflow-visible shadow-lg shrink-0 rounded-xl hover:scale-105 duration-300 ease-in-out relative z-10 hover:z-50'
+                            className='flex flex-col min-w-[355.7px] overflow-visible shadow-lg shrink-0 rounded-xl hover:scale-105 duration-300 ease-in-out relative z-10 hover:z-50'
                         >
                             <div>
                                 {
@@ -156,7 +161,7 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
 
                                 <div className='relative sm:flex hidden'>
                                     {hoverId === game.id && (
-                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[363px] -left-2'>
+                                        <div className='absolute   bg-[#202020] p-2 rounded-b-xl shadow-2xl z-50 min-w-[355.7px] -left-2'>
                                             <div className='flex flex-col gap-4 w-full'>
                                                 <div className='transition-opacity duration-300 opacity-100'>
                                                     <span className='line-clamp-3 text-gray-300 font-medium'>{game?.storyline || game?.summary || 'N/A'}</span>
