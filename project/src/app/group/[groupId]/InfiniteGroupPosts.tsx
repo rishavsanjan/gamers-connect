@@ -1,5 +1,6 @@
 'use client'
 
+import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import { usePostFeed } from '@/context/PostsContext'
@@ -9,32 +10,19 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
 interface Props {
-    groupId:string
+    groupId: string
 }
 
-const InfiniteGroupPosts: React.FC<Props> = ({  groupId }) => {
-    
+const InfiniteGroupPosts: React.FC<Props> = ({ groupId }) => {
+
     const [page, setPage] = useState(1)
     const [loading, setLoading] = useState(false)
     const [hasMore, setHasMore] = useState(true)
     const [filter, setFilter] = useState('');
     const [category, setCategory] = useState('');
-    const { setPosts} = usePostFeed();
-    
-    const observer = useRef<IntersectionObserver | null>(null);
+    const { setPosts } = usePostFeed();
 
-    const lastPostRef = useCallback((node: HTMLDivElement) => {
-        if (loading) return
-        if (observer.current) observer.current.disconnect()
-
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prev => prev + 1)
-            }
-        })
-
-        if (node) observer.current.observe(node)
-    }, [loading, hasMore]);
+    const lastPostRef = useInfiniteScroll(loading, hasMore, setPage);
 
     const getPosts = async () => {
         setLoading(true);
@@ -101,7 +89,6 @@ const InfiniteGroupPosts: React.FC<Props> = ({  groupId }) => {
 
 
 
-    // Handle page changes (for infinite scroll)
     useEffect(() => {
         if (page === 1) return;
 

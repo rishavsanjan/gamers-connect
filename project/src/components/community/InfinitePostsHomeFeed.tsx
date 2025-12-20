@@ -2,6 +2,7 @@
 
 
 
+import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import { PostFeedProvider, usePostFeed } from '@/context/PostsContext'
@@ -21,20 +22,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
     const [category, setCategory] = useState('');
     const { setPosts } = usePostFeed();
 
-    const observer = useRef<IntersectionObserver | null>(null);
-
-    const lastPostRef = useCallback((node: HTMLDivElement) => {
-        if (loading) return
-        if (observer.current) observer.current.disconnect()
-
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prev => prev + 1)
-            }
-        })
-
-        if (node) observer.current.observe(node)
-    }, [loading, hasMore]);
+    const lastPostRef = useInfiniteScroll(loading, hasMore, setPage);
 
     const getPosts = async () => {
         setLoading(true);

@@ -89,6 +89,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
             } : false
 
         },
+        take:10,
 
         orderBy: { createdAt: 'desc' }
     })
@@ -135,7 +136,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         await prisma.post.count({
             where: {
                 createdAt: {
-                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000) // last 24 hours
+                    gte: new Date(Date.now() - 24 * 60 * 60 * 1000) 
                 },
                 groupId
             }
@@ -143,7 +144,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         await prisma.post.count({
             where: {
                 createdAt: {
-                    gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // last 30 days
+                    gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) 
                 },
                 groupId
             }
@@ -167,13 +168,6 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         })
 
     ])
-
-
-
-
-
-
-
 
     const admins = members.flatMap(item =>
         item.admins.map(admin => ({

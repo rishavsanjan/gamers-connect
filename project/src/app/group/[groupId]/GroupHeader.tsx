@@ -39,7 +39,7 @@ const GroupHeader: React.FC<Props> = ({ }) => {
         const height = 350
         setAspect(width / height)
     }, [])
-    console.log(groupState)
+    
 
     const handleGroupUpdate = async () => {
         setUploading(true)
@@ -199,31 +199,31 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                         <>
                             {
                                 userRole === 'owner' &&
-                                    <>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            id="edit-image"
-                                            className="hidden"
-                                            onChange={(e) => {
-                                                const file = e.target.files?.[0];
-                                                if (!file) return;
+                                <>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        id="edit-image"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
 
-                                                const imgURL = URL.createObjectURL(file);
-                                                setRawImage(imgURL);
-                                                setIsCropModalOpen(true);
-                                                setIsEditing(true)
-                                            }}
-                                        />
+                                            const imgURL = URL.createObjectURL(file);
+                                            setRawImage(imgURL);
+                                            setIsCropModalOpen(true);
+                                            setIsEditing(true)
+                                        }}
+                                    />
 
-                                        <label
-                                            htmlFor="edit-image"
-                                            className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg font-bold absolute right-6 bottom-6 cursor-pointer hover:bg-white/30 transition"
-                                        >
-                                            <Edit size={15} />
-                                            Edit
-                                        </label>
-                                    </> 
+                                    <label
+                                        htmlFor="edit-image"
+                                        className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg font-bold absolute right-6 bottom-6 cursor-pointer hover:bg-white/30 transition"
+                                    >
+                                        <Edit size={15} />
+                                        Edit
+                                    </label>
+                                </>
                             }
 
 
@@ -301,7 +301,10 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                         <div className="flex justify-end gap-4 mt-6">
                             <button
                                 className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white"
-                                onClick={() => setIsCropModalOpen(false)}
+                                onClick={() => {
+                                    setIsCropModalOpen(false)
+                                    setIsEditing(false)
+                                }}
                             >
                                 Cancel
                             </button>
