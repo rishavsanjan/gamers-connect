@@ -21,7 +21,6 @@ interface Props {
 }
 
 const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId }) => {
-    console.log(groupId)
     const router = useRouter();
 
     const [postContent, setPostContent] = useState('');
@@ -69,7 +68,6 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
                 },
                 method: 'POST'
             })
-            console.log(response.data)
             setResults(response.data);
             setLoading(false)
         }
@@ -89,7 +87,6 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
         setSelectedGame(response.data.game);
     }
 
-    console.log(category)
 
 
     const uploadToCloudinary = async (file: File, type: 'image' | 'video') => {
@@ -167,7 +164,6 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
 
         await redis.del('top-tags');
 
-        console.log(response.data);
         if (setPosts) {
             setPosts(prev => [...prev, response.data.post]);
         }

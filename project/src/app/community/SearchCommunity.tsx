@@ -59,7 +59,6 @@ const SearchCommunity = () => {
             setIsOpen(false);
             return;
         }
-        console.log('yay')
 
         try {
             setLoading(true);
@@ -70,7 +69,6 @@ const SearchCommunity = () => {
                     query: debouncedQuery
                 }
             });
-            console.log(response.data)
 
             setPeopleResult(response.data.users || []);
             setPostResult(response.data.posts || []);
@@ -107,7 +105,6 @@ const SearchCommunity = () => {
         return `${diffDays} days ago`;
     }
 
-    console.log(postResult)
 
     const renderResults = () => {
         if (loading) {

@@ -14,12 +14,12 @@ import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useUser } from '@/context/UserContext';
 import { LoginModal } from './NotLogged';
 import { createPortal } from 'react-dom';
+import { RiUserFollowLine } from "react-icons/ri";
 
 
 
 const Navbar = () => {
     const { setUser, user, isLoggedIn } = useUser();
-    console.log(isLoggedIn, user)
     const pathName = usePathname();
     const isValid = pathName.startsWith('/login');
     const [loginModal, setLoginModal] = useState(false);
@@ -70,7 +70,6 @@ const Navbar = () => {
                 },
                 method: 'POST'
             })
-            console.log(response.data)
             setResults(response.data);
             setLoading(false)
         }
@@ -108,25 +107,25 @@ const Navbar = () => {
 
                 </div>
                 <div className='md:flex hidden flex-row gap-8'>
-                    <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
-                        <LuLibrary className="text-2xl hover:text-blue-400 cursor-pointer" />
+                    <div className='flex gap-1 items-center text-gray-400 text-base font-medium hover:text-white ease-in-out duration-300'>
+                        <LuLibrary className="text-2xl  cursor-pointer" />
                         <Link href={'/library'}>
-                            <p>Library</p>
+                            <p className=''>Library</p>
                         </Link>
 
                     </div>
-                    <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
-                        <BiTrendingUp className="text-2xl hover:text-blue-400 cursor-pointer" />
+                    <div className='flex gap-1 items-center text-gray-400 text-base font-medium hover:text-white ease-in-out duration-300'>
+                        <BiTrendingUp className="text-2xl  cursor-pointer" />
                         <Link href={'/trending'}>
-                            <p>Trending</p>
+                            <p className=''>Trending</p>
                         </Link>
 
 
                     </div>
-                    <div className='flex gap-1 items-center text-gray-400 text-base font-medium'>
-                        <CgCommunity className="text-2xl hover:text-blue-400 cursor-pointer" />
+                    <div className='flex gap-1 items-center text-gray-400 text-base font-medium hover:text-white ease-in-out duration-300'>
+                        <CgCommunity className="text-2xl  cursor-pointer" />
                         <Link href='/community'>
-                            <p>Community</p>
+                            <p className=''>Community</p>
                         </Link>
 
                     </div>
@@ -164,7 +163,7 @@ const Navbar = () => {
                                     <Link
                                         className="block px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
                                         href={`/profile/follow-requests`}>
-                                        Follow requests
+                                        Follow Requests
                                     </Link>
                                 </div>
                             </div>
@@ -249,7 +248,7 @@ const Navbar = () => {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-purple-500 transition-colors"
                     >
-                        <LuLibrary className="text-2xl" />
+                        <LuLibrary className="text-2xl " />
                         <span>Library</span>
                     </Link>
 
@@ -258,7 +257,7 @@ const Navbar = () => {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-purple-500 transition-colors"
                     >
-                        <BiTrendingUp className="text-2xl" />
+                        <BiTrendingUp className="text-2xl " />
                         <span>Trending</span>
                     </Link>
 
@@ -267,7 +266,7 @@ const Navbar = () => {
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-purple-500 transition-colors"
                     >
-                        <CgCommunity className="text-2xl" />
+                        <CgCommunity className="text-2xl " />
                         <span>Community</span>
                     </Link>
 
@@ -284,6 +283,13 @@ const Navbar = () => {
                             >
                                 <BiUser className="text-2xl" />
                                 <span>My Profile</span>
+                            </Link>
+
+                            <Link
+                                className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-purple-500 transition-colors z-100"
+                                href={`/profile/follow-requests`}>
+                                <RiUserFollowLine className="text-2xl"/>
+                                Follow Requests
                             </Link>
 
                             <button

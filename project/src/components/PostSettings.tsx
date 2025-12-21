@@ -88,7 +88,6 @@ export default function PostActions({
       setIsBookmarking(false);
     }
   };
-  console.log(postOwnerId)
 
 
   return (

@@ -36,7 +36,6 @@ const Login = () => {
     useEffect(() => {
         const getUserInfo = async () => {
             const info = await getUserInformation();
-            console.log(info)
         }
 
         getUserInfo()
@@ -66,7 +65,6 @@ const Login = () => {
             })
 
 
-            console.log(response.data)
         } catch (error) {
             console.log(error)
         } finally {

@@ -73,7 +73,6 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
                 prev.filter(member => member.id !== user!.id)
             )
             setMemberCount(prev => prev - 1);
-            console.log(groupState)
             if (groupState.privacy === 'PRIVATE') {
                 window.location.reload();
             }

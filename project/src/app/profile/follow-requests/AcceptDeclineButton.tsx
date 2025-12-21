@@ -38,7 +38,6 @@ const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests }) => {
                     receiverId: user?.id
                 }
             })
-            console.log(response.data)
 
             setRequests(prev => prev.filter(req => req.id !== id));
 
@@ -60,7 +59,6 @@ const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests }) => {
                     receiverId: user?.id
                 }
             })
-            console.log(response.data)
 
             setRequests(prev => prev.filter(req => req.id !== id));
 

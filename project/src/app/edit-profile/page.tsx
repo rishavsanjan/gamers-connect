@@ -56,7 +56,6 @@ const EditProfilePage: React.FC = () => {
                 url: `/api/private/getprofile`,
                 method: 'get'
             })
-            console.log(response.data)
             const userData = response.data.user;
             setProfile(userData);
             
@@ -114,7 +113,6 @@ const EditProfilePage: React.FC = () => {
                         username: debouncedQuery
                     }
                 })
-                console.log(response.data)
                 setUsernameAvailability(response.data.available);
             } catch (error) {
                 console.log(error)
@@ -175,7 +173,6 @@ const EditProfilePage: React.FC = () => {
                 }
             })
 
-            console.log('Profile updated successfully:', response.data);
             alert('Profile updated successfully!');
 
         } catch (error) {
@@ -186,7 +183,6 @@ const EditProfilePage: React.FC = () => {
         }
     }
 
-    console.log(usernameAvailability)
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

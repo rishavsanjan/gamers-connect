@@ -49,7 +49,6 @@ const page: React.FC<Props> = async ({ params }) => {
 
     const visibility = collection.visibility === 'PUBLIC' ? true : false
 
-    console.log(collection)
 
     return (
         <div>

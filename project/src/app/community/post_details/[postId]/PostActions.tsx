@@ -24,7 +24,6 @@ export default function PostActions({ postId, bookmark }: { postId: string; book
                 postId
             }
         })
-        console.log(response.data)
         setBookmarked(prev => !prev)
     }
 

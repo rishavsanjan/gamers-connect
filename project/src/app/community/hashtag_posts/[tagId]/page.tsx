@@ -14,7 +14,6 @@ export default async function HashtagPosts({ params }: PageProps) {
     const userId = session?.user?.id ?? null;
 
     const { tagId: tag } = await params;
-    console.log(tag)
     const hashtagPosts = await prisma.hashtag.findUnique({
         where: { name: tag },
         include: {

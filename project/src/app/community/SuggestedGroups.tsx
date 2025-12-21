@@ -50,7 +50,6 @@ const SuggestedGroups: React.FC<Props> = ({ groups }) => {
 
     }
 
-    console.log(groupsState)
 
     return (
         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">

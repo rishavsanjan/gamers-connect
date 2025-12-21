@@ -9,7 +9,7 @@ interface GameProps {
 
 
 
-const GamesList: React.FC<GameProps> = ({ gamesList }) => {
+const SimilarDlcGameList: React.FC<GameProps> = ({ gamesList }) => {
     const [hoverId, setHoverId] = useState<number>(0);
     const scrollRef = useRef<HTMLDivElement>(null);
     const [selectedId, setSelectedId] = useState(0);
@@ -30,10 +30,11 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
                 ref={scrollRef}
                 className="
          grid grid-cols-1
-         min-[952px]:grid-cols-2
-         min-[1323px]:grid-cols-3
-         min-[1740px]:grid-cols-4
-         gap-8 p-4 rounded-xl
+         min-[750px]:grid-cols-2
+         min-[1163px]:grid-cols-3
+         min-[1540px]:grid-cols-4
+         min-[1840px]:grid-cols-5
+         gap-8 p-4 rounded-xl 
     "
             >
                 {
@@ -196,4 +197,4 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
     )
 }
 
-export default GamesList
+export default SimilarDlcGameList

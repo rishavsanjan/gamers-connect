@@ -30,7 +30,6 @@ const AcceptDeclineButtonGroup: React.FC<Props> = ({ senderId }) => {
 
     const handleRequestAccept = async (id: string) => {
         setAccepting(true)
-        console.log(senderId, user?.id)
         try {
             const response = await axios({
                 url: `/api/private/follow-group-requests/group-request-accept`,
@@ -40,7 +39,6 @@ const AcceptDeclineButtonGroup: React.FC<Props> = ({ senderId }) => {
                     groupId: groupState.id
                 }
             })
-            console.log(response.data)
 
             setGroupRequests(prev => prev.filter(req => req.id !== id));
 
@@ -53,7 +51,6 @@ const AcceptDeclineButtonGroup: React.FC<Props> = ({ senderId }) => {
 
     const handleRequestDecline = async (id: string) => {
         setDeclining(true)
-        console.log(senderId, user?.id)
         try {
             const response = await axios({
                 url: `/api/private/follow-group-requests/group-request-ignore`,
@@ -63,7 +60,6 @@ const AcceptDeclineButtonGroup: React.FC<Props> = ({ senderId }) => {
                     groupId: groupState.id
                 }
             })
-            console.log(response.data)
 
             setGroupRequests(prev => prev.filter(req => req.id !== id));
 

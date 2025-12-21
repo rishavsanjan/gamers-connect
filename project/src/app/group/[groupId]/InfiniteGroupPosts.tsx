@@ -34,7 +34,6 @@ const InfiniteGroupPosts: React.FC<Props> = ({ groupId }) => {
             });
 
             const newPosts = response.data.posts;
-            console.log(newPosts)
             if (page === 1) {
                 setPosts(newPosts);
             } else {
@@ -70,9 +69,7 @@ const InfiniteGroupPosts: React.FC<Props> = ({ groupId }) => {
                     data: { filter, category, groupId }
                 });
 
-                console.log(category)
                 const newPosts = response.data.posts;
-                console.log(newPosts)
                 setPosts(newPosts);
 
                 if (newPosts.length === 0) {

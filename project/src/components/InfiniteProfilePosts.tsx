@@ -34,7 +34,6 @@ const InfiniteProfilePosts: React.FC<Props> = () => {
         if (node) observer.current.observe(node)
     }, []);
 
-    console.log(page)
     const getPosts = async () => {
         const response = await axios({
             url: `/api/profile/profile-posts?page=${page}`,
@@ -47,7 +46,6 @@ const InfiniteProfilePosts: React.FC<Props> = () => {
         setPosts(prev => [...prev, ...newPosts]);
         if (newPosts.length === 0) setHasMore(false);
         setLoading(false);
-        console.log(response.data)
 
     }
 
@@ -60,12 +58,11 @@ const InfiniteProfilePosts: React.FC<Props> = () => {
 
     }, [page, hasMore])
 
-    console.log(posts)
 
     return (
         <div>
 
-            <Posts  />
+            <Posts />
 
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                 {loading && <ClipLoader color='white' size={40} />}

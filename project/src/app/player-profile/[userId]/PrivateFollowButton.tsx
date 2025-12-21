@@ -18,7 +18,6 @@ const PrivateFollowButton: React.FC<Props> = ({ receiverId, isRequestSent }) => 
     const { user } = useUser();
     const { openLoginModal } = useLoginModal();
     const [loading, setLoading] = useState(false);
-    console.log(isRequestSent)
     useEffect(() => {
         if (isRequestSent) {
             setRequestStatus('SENT')
@@ -44,7 +43,6 @@ const PrivateFollowButton: React.FC<Props> = ({ receiverId, isRequestSent }) => 
                 }
             })
 
-            console.log(response.data)
         } catch (error) {
             console.log(error)
             setRequestStatus(oldStatus);

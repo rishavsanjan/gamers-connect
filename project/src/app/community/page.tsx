@@ -39,8 +39,7 @@ export default async function GamelyCommunity() {
 
         followingUserIds = followingIds.map(f => f.followingId)
         joinedGroupIds = groupIds.map(f => f.memberInGroups.map(f => f.id)).flat()
-        console.log(followingUserIds)
-        console.log(joinedGroupIds)
+        
     }
 
 
@@ -103,7 +102,6 @@ export default async function GamelyCommunity() {
 
     });
 
-    console.log(getposts)
 
     const posts = getposts.map((post) => ({
         id: post.id,
@@ -123,7 +121,6 @@ export default async function GamelyCommunity() {
         hasBookmarked: userId ? post.bookmarks.length > 0 : false
     }));
 
-    console.log(posts)
 
 
     // const topTags = await prisma.hashtag.findMany({
@@ -141,7 +138,6 @@ export default async function GamelyCommunity() {
     // });
 
     const topTags = await getTopTags();
-    console.log(topTags)
 
 
     const topUsers = await prisma.user.findMany({
@@ -188,7 +184,6 @@ export default async function GamelyCommunity() {
             hasJoined: false
         }
     })
-    console.log(getposts)
 
 
 

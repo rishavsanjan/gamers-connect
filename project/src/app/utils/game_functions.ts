@@ -22,7 +22,6 @@ interface gameStatus {
 export const addToMyGames = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, owned_platform: string, status: string) => {
     
     setLoading(true)
-    console.log(status)
     const response = await axios({
         url: '/api/private/addgame',
         method: 'post',
@@ -54,7 +53,6 @@ export const addToMyGames = async (game: Game, model: string, setStatus: React.D
     }
     setLoading(false)
 
-    console.log(response.data)
 }
 
 export const removeFromMyGame = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
@@ -76,7 +74,6 @@ export const removeFromMyGame = async (game: Game, model: string, setStatus: Rea
     setLoading(false)
 
 
-    console.log(response.data)
 }
 
 
@@ -106,7 +103,6 @@ export const addToPlayList = async (game: Game, model: string, setStatus: React.
     }
     setPlaylistLoading(false)
 
-    console.log(response.data)
 }
 
 
@@ -127,7 +123,6 @@ export const removeFromPlayList = async (game: Game, model: string, setStatus: R
     setPlaylistLoading(false)
 
 
-    console.log(response.data)
 }
 
 export const addRating = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setRatingLoading: React.Dispatch<React.SetStateAction<boolean>>, user_rating: number) => {
@@ -157,7 +152,6 @@ export const addRating = async (game: Game, model: string, setStatus: React.Disp
     }
     setRatingLoading(false)
 
-    console.log(response.data)
 }
 
 export function pickPlatformColor(name: string): string {

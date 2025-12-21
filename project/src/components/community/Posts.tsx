@@ -33,7 +33,6 @@ const Posts: React.FC<Props> = ({  }) => {
             document.removeEventListener("mousedown", handleClickOutside)
         }
     }, [])
-    console.log(posts)
     return (
         <div className='space-y-4'>
             {

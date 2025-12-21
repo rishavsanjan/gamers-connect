@@ -53,7 +53,6 @@ const CreateGroup = () => {
                     groupName
                 }
             });
-            console.log(response.data)
             setGroupName('');
         } catch (error) {
             console.log(error)
@@ -66,7 +65,6 @@ const CreateGroup = () => {
 
 
 
-    console.log(groupName)
     return (
         <div className='flex lg:flex-row flex-col'>
             <div className='lg:w-[25%]'>

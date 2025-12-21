@@ -7,6 +7,7 @@ import GamesList from '@/components/GamesList';
 import { getStreamsByGameName } from '@/lib/streams';
 import GameStreams from '@/components/GameStreams';
 import Link from 'next/link';
+import SimilarDlcGameList from '@/components/SimilarDlcGameList';
 
 interface GameDetailProps {
   params: Promise<{id:string}>
@@ -20,7 +21,6 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
     ? `https:${game.cover.url.replace("t_thumb", "t_screenshot_med")}`
     : "/placeholder.jpg";
   const allGames = await getGameDlcs(id);
-  console.log(allGames)
   let gamesInFranchise;
   let dlcs;
   if (allGames?.franchises?.length || 0 > 0) {
@@ -33,7 +33,6 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
     );
   }
 
-  console.log(game)
 
   return (
     <div className='flex flex-col'>
@@ -68,27 +67,27 @@ const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
 
       {/* DLC Section */}
       {dlcs?.length > 0 && (
-        <section className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 overflow-visible">
+        <section className="px-2 py-6 sm:py-8 overflow-visible">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">DLC's</h2>
-          <GamesList gamesList={dlcs} />
+          <SimilarDlcGameList gamesList={dlcs} />
         </section>
       )}
 
       {/* Franchise Games Section */}
       {gamesInFranchise?.length > 0 && (
-        <section className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 overflow-visible">
+        <section className="px-2 py-6 sm:py-8 overflow-visible">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">
             More Games in the Franchise
           </h2>
-          <GamesList gamesList={gamesInFranchise} />
+          <SimilarDlcGameList gamesList={gamesInFranchise} />
         </section>
       )}
 
       {/* Similar Games Section */}
       {game.similar_games?.length > 0 && (
-        <section className="px-4 sm:px-6 md:px-8 py-6 sm:py-8 overflow-visible">
+        <section className="px-2 py-6 sm:py-8 overflow-visible">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-4">Similar Games</h2>
-          <GamesList gamesList={game.similar_games} />
+          <SimilarDlcGameList gamesList={game.similar_games} />
         </section>
       )}
 

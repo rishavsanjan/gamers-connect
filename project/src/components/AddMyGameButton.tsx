@@ -90,7 +90,6 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
         }
     }, [collectionModal]);
 
-    console.log(shareAsPost)
 
     return (
         <>

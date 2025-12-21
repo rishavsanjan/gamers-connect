@@ -5,7 +5,6 @@ interface YouTubePlayerProps {
 }
 
 const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId }) => {
-    console.log(videoId)
     return (
         <div className="relative md:w-full h-0 md:w-[450px]" style={{ paddingBottom: '56.25%' }}>
             <iframe

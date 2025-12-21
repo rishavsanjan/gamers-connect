@@ -85,7 +85,6 @@ export default function CommentSection({ postId, initialComments }: { postId: st
       openLoginModal();
       return;
     }
-    console.log(parentId);
     if (!parentId) {
       setCommentUploading(true)
     }

@@ -35,7 +35,6 @@ const InfiniteCollectionGamesList: React.FC<Props> = ({ games, totalGames, colle
                 }
             })
 
-            console.log(response.data)
         } catch (error) {
             setVisibility(!visibility);
         }
@@ -51,9 +50,6 @@ const InfiniteCollectionGamesList: React.FC<Props> = ({ games, totalGames, colle
                     collectionId
                 }
             })
-            console.log(response.data)
-            //const games = response.data.games.map((game: any) => { return game })
-           // console.log(games)
             setCollectionGames(prev => [...prev, ...response.data.games]);
 
 

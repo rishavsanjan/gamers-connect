@@ -34,7 +34,6 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
             });
 
             const newPosts = response.data.posts;
-            console.log(newPosts)
             if (page === 1) {
                 setPosts(newPosts);
             } else {
@@ -70,9 +69,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
                     data: { filter, category }
                 });
 
-                console.log(category)
                 const newPosts = response.data.posts;
-                console.log(newPosts)
                 setPosts(newPosts);
 
                 if (newPosts.length === 0) {

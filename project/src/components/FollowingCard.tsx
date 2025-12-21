@@ -16,7 +16,6 @@ interface Props {
 }
 
 const FollowingCard: React.FC<Props> = ({ user, activeTab, setFollowers, setFollowersCount, setFollowingCount }) => {
-    console.log(user)
     const { data: session } = useSession();
     const displayName = user.name ?? user.username ?? 'Anonymous'
     const firstLetter = displayName.charAt(0).toUpperCase()

@@ -41,14 +41,14 @@ const HeroHomepage = () => {
       {/* Buttons */}
       <div className="relative z-10 flex flex-row gap-4">
         <Link href={'/library'}>
-          <button className="bg-gradient-to-r from-purple-800 to-pink-600 flex items-center p-2 rounded-xl gap-2 px-4 hover:scale-105 transition">
+          <button className="bg-gradient-to-r from-purple-800 to-pink-600 flex items-center p-2 rounded-xl gap-2 px-4 hover:scale-105 transition cursor-pointer">
             <p className="text-sm text-white font-semibold">Start Exploring</p>
             <BsArrowRight className="text-lg text-white" />
           </button>
         </Link>
 
         <Link href={'/trending'}>
-          <button className="border border-purple-400 p-2 rounded-xl px-4 hover:bg-purple-900 transition">
+          <button className="border border-purple-400 p-2 rounded-xl px-4 hover:bg-purple-900 transition  cursor-pointer">
             <p className="text-sm text-white font-bold">View Trending Games</p>
           </button>
         </Link>

@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 export default function LoginToastClient() {
     const params = useSearchParams();
     const loggedIn = params.get("loggedIn");
-    console.log(params)
 
     useEffect(() => {
         if (loggedIn) {

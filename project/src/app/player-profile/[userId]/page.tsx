@@ -49,9 +49,9 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
         })
     }
 
-    if(!isFollowing  && user?.privacy === 'PRIVATE'){
-        return(
-            <PrivateProfile receiverId={user.id} senderId={loggedInId}/>
+    if (!isFollowing && user?.privacy === 'PRIVATE') {
+        return (
+            <PrivateProfile receiverId={user.id} senderId={loggedInId} />
         )
     }
 
@@ -174,7 +174,6 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
         isFollowingBack: myFollowingSet.has(f.followerId),
     }));
 
-    console.log(followers)
 
 
     const followingWithoutFormatting = await prisma.follow.findMany({
@@ -198,36 +197,29 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
 
 
 
-    console.log(following)
+    const [playlistCount, ownedGamesCount, collectionCount, ratingsCount] = await Promise.all([
+        prisma.playlist.count({
+            where: {
+                userId: userId
+            }
+        }),
+        prisma.myGame.count({
+            where: {
+                userId: userId
+            }
+        }),
+        prisma.collection.count({
+            where: {
+                userId: userId
+            }
+        }),
+        prisma.rating.count({
+            where: {
+                userId: userId
+            }
+        })
 
-
-
-    const playlistCount = await prisma.playlist.count({
-        where: {
-            userId: userId
-        }
-    })
-
-    const ownedGamesCount = await prisma.myGame.count({
-        where: {
-            userId: userId
-        }
-    })
-    const collectionCount = await prisma.collection.count({
-        where: {
-            userId: userId
-        }
-    })
-    const ratingsCount = await prisma.rating.count({
-        where: {
-            userId: userId
-        }
-    })
-
-
-
-
-
+    ])
 
 
     const socialLinks = user?.socialLinks.filter((item) => {

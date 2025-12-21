@@ -30,7 +30,6 @@ const InfiniteProfileBookmarked: React.FC<Props> = ({  }) => {
         if (node) observer.current.observe(node)
     }, []);
 
-    console.log(page)
     const getPosts = async () => {
         const response = await axios({
             url: `/api/private/getbookmarks?page=${page}`,
@@ -40,7 +39,6 @@ const InfiniteProfileBookmarked: React.FC<Props> = ({  }) => {
         setPosts(prev => [...prev, ...newPosts]);
         if (newPosts.length === 0) setHasMore(false);
         setLoading(false);
-        console.log(response.data)
 
     }
 
@@ -53,7 +51,6 @@ const InfiniteProfileBookmarked: React.FC<Props> = ({  }) => {
 
     }, [page, hasMore])
 
-    console.log(posts)
 
     return (
         <div>

@@ -21,7 +21,6 @@ export default function CTA() {
 
     const fetchGames = async (pageNum: number, cat?: string, genreId?: number, platformId?: number) => {
 
-        console.log(platformId)
         setLoading(true);
         try {
             const response = await axios.post(`/api/igdb/fetchgames`, {
@@ -32,7 +31,6 @@ export default function CTA() {
 
             });
 
-            console.log(response.data)
 
             const newGames = response.data;
             setGames((prev) => [...prev, ...newGames]);
@@ -70,7 +68,6 @@ export default function CTA() {
         }
     }, [page, category, genreCategory, platformId]);
 
-    console.log(platformId)
 
 
     const handleCategoryChange = (newCategory: string) => {
@@ -110,7 +107,6 @@ export default function CTA() {
             contentRef.current.scrollTo({ top: 0, behavior: 'instant' });
         }
     }
-    console.log(games)
 
     return (
         <div className="flex md:flex-row flex-col">

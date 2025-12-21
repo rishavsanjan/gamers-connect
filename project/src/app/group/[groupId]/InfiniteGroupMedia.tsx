@@ -43,7 +43,6 @@ const InfiniteGroupMedia: React.FC<Props> = ({ posts, groupId }) => {
             });
 
             const newPosts = response.data.posts;
-            console.log(newPosts)
             if (page === 1) {
                 setPostsState(newPosts);
             } else {

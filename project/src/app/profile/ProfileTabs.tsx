@@ -120,7 +120,6 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
         setNextPage(2);
     }, [activeTab])
 
-    console.log(playlist.length)
 
 
     return (

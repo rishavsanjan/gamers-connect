@@ -9,7 +9,6 @@ interface Props {
 }
 
 export default async function PrivateProfile({ senderId, receiverId }: Props) {
-    console.log(senderId, receiverId)
     const isPrivate = true;
     const isRequestSent =
         (await prisma.followRequest.count({
@@ -23,9 +22,7 @@ export default async function PrivateProfile({ senderId, receiverId }: Props) {
         }
     })
 
-    console.log(d)
 
-    console.log(isRequestSent)
 
     return (
         <div className="min-h-screen bg-black text-gray-100">

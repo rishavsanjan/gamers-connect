@@ -3,6 +3,7 @@ import { Game } from '@/app/types/game';
 import { formatUnixDate } from '@/app/utils/date';
 import { IoGameController } from 'react-icons/io5';
 import YouTubePlayer from '@/app/utils/ytplayer';
+import GameImages from './GameImages';
 
 interface RightSideProps {
     game: Game
@@ -18,22 +19,7 @@ const RightSide: React.FC<RightSideProps> = ({ game }) => {
                 </div>
             }
 
-            <div className='grid grid-cols-2 gap-4'>
-                {
-                    game.screenshots.map((image, index) => {
-                        const imgUrl = image?.url
-                            ? `https:${image.url.replace("t_thumb", "t_screenshot_med")}`
-                            : "/placeholder.jpg";
-                        if (index > 3) return;
-                        return (
-
-                            <div key={index}>
-                                <img src={`${imgUrl}`} alt="" />
-                            </div>
-                        )
-                    })
-                }
-            </div>
+            <GameImages screenshots={game.screenshots}/>
             <span className='text-gray-600 font-medium text-xl'>Where to buy</span>
             <div className='grid grid-cols-2 gap-4'>
                 {

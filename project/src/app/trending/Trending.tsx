@@ -19,7 +19,6 @@ const Trending = () => {
             }
         })
         setGames(response.data)
-        console.log(response.data)
     }
 
     useEffect(() => {

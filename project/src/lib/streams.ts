@@ -35,7 +35,6 @@ export async function getStreamsByGameName(gameName: string, limit: number = 10)
             }
         );
 
-        console.log(streamsResponse.data)
 
 
         const streamsData =  streamsResponse.data;

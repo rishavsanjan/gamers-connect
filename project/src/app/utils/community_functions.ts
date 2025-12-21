@@ -95,7 +95,6 @@ export const addFollow = async ({ otherPersonId, myId }: FollowingProps) => {
             followingId: otherPersonId
         }
     })
-    console.log(response.data)
 }
 
 interface GroupLeaveProps {
@@ -126,7 +125,6 @@ export const handleGroupLeave = async ({ groupId, setGroupsState }: GroupLeavePr
             )
         }
 
-        console.log(response.data)
     } catch (error) {
         console.log(error)
     }
@@ -147,7 +145,6 @@ export const handleGroupJoin = async ({ groupId, setGroupsState }: GroupJoinProp
             }
         })
 
-        console.log(response.data);
         if (setGroupsState) {
             setGroupsState(prev =>
                 prev.map((group) => {
@@ -162,7 +159,6 @@ export const handleGroupJoin = async ({ groupId, setGroupsState }: GroupJoinProp
             )
         }
 
-        console.log(response.data)
     } catch (error) {
         console.log(error)
     }

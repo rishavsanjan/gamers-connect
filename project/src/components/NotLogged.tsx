@@ -127,7 +127,6 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
                         username: debouncedQuery
                     }
                 })
-                console.log(response.data)
                 setUsernameAvailability(response.data.available);
             } catch (error) {
                 console.log(error)
@@ -166,7 +165,6 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
                         email: debouncedQueryEmail
                     }
                 })
-                console.log(response.data)
                 setEmailAvailability(response.data.available);
             } catch (error) {
                 console.log(error)
@@ -500,53 +498,39 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
                                 'you@example.com'
                             )}
 
-                            <span className={`${emailAvailability ? 'text-green-400' : 'text-red-400'} font-extralight text-sm ml-4 ${!isSignUp || formData.email.trim().length === 0 && 'hidden'}`}>
-                                {
-                                    fetchingEmailAvailability && isSignUp ?
-                                        <>
-                                            <ClipLoader size={10} color='white' />
-                                        </>
-                                        :
-                                        <>
-                                            {
-                                                formData.email.trim().length > 0 && isSignUp &&
-                                                <>
-                                                    {emailAvailability ? 'Email is available!' : 'Email not available!'}
-                                                </>
-                                            }
-                                        </>
+                            {isSignUp && formData.email.trim().length > 0 && (
+                                <span className={`${emailAvailability ? 'text-green-400' : 'text-red-400'} font-extralight text-sm ml-4`}>
+                                    {fetchingEmailAvailability ? (
+                                        <ClipLoader size={10} color='white' />
+                                    ) : (
+                                        emailAvailability ? 'Email is available!' : 'Email not available!'
+                                    )}
+                                </span>
+                            )}
 
-
-                                }
-                            </span>
 
                             {/* Username Input (Sign Up Only) */}
-                            {isSignUp && renderInput(
-                                'username',
-                                'Username',
-                                'text',
-                                <User className="w-5 h-5 text-slate-400" />,
-                                'Choose a username'
+                            {isSignUp && (
+                                <>
+                                    {renderInput(
+                                        'username',
+                                        'Username',
+                                        'text',
+                                        <User className="w-5 h-5 text-slate-400" />,
+                                        'Choose a username'
+                                    )}
+                                    {formData.username.trim().length > 0 && (
+                                        <span className={`${usernameAvailability ? 'text-green-400' : 'text-red-400'} font-extralight text-sm ml-4`}>
+                                            {fetchingAvailability ? (
+                                                <ClipLoader size={10} color='white' />
+                                            ) : (
+                                                usernameAvailability ? 'Username is available!' : 'Username not available!'
+                                            )}
+                                        </span>
+                                    )}
+                                </>
                             )}
-                            <span className={`${usernameAvailability ? 'text-green-400' : 'text-red-400'} font-extralight text-sm ml-4 ${!isSignUp || formData.username.trim().length === 0 && 'hidden'}`}>
-                                {
-                                    fetchingAvailability && isSignUp ?
-                                        <>
-                                            <ClipLoader size={10} color='white' />
-                                        </>
-                                        :
-                                        <>
-                                            {
-                                                formData.username.trim().length > 0 &&
-                                                <>
-                                                    {usernameAvailability ? 'Username is available!' : 'Username not available!'}
-                                                </>
-                                            }
-                                        </>
 
-
-                                }
-                            </span>
 
 
 
@@ -613,7 +597,7 @@ export function LoginModal({ isOpen, setLoginModal, action, onLoginSuccess }: Lo
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                disabled={loading}
+                                disabled={loading || !emailAvailability || !usernameAvailability }
                                 className="w-full bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold py-3 rounded-lg hover:from-pink-600 hover:to-purple-700 transition-transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-purple-500/30"
                             >
                                 {loading ? (

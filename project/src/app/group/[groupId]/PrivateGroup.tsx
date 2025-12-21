@@ -14,7 +14,6 @@ export default function PrivateGroupPage({ group, isRequestSent }: Props) {
     const [activeTab, setActiveTab] = useState('posts');
     const [joinRequested, setJoinRequested] = useState(isRequestSent);
     const [loading, setLoading] = useState(false);
-    console.log(group)
     const handleJoinRequest = async () => {
         const oldState = joinRequested;
         setJoinRequested(prev => !prev);

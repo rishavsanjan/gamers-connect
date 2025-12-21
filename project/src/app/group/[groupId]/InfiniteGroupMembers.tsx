@@ -30,7 +30,6 @@ const InfiniteGroupMembers: React.FC<Props> = ({
 
 }) => {
 
-    console.log(currentUserRole)
     const [page, setPage] = useState(1)
     const [hasMore, setHasMore] = useState(true)
     const [loading, setLoading] = useState(false)
@@ -173,7 +172,6 @@ const InfiniteGroupMembers: React.FC<Props> = ({
 
             }))
 
-            console.log(response.data)
 
         } catch (error) {
             console.log(error)
@@ -204,7 +202,6 @@ const InfiniteGroupMembers: React.FC<Props> = ({
 
             }))
 
-            console.log(response.data)
 
         } catch (error) {
             console.log(error)
