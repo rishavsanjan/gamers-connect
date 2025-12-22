@@ -8,18 +8,14 @@ const TOKEN = process.env.TWITCH_ACCESS_TOKEN!;
 
 export async function POST(req: Request) {
     const agent = new https.Agent({
-        rejectUnauthorized: false, // bypass SSL verification
+        rejectUnauthorized: false,
     });
     const { page, genreId, category, limit = 10, platformId } = await req.json();
 
     const offset = (page - 1) * 10;
     let query;
-    //let query = `
-    //fields name, cover.url, rating, first_release_date, genres.name;
-    //limit 10;
-    //offset ${offset};
-    //sort popularity desc;
-    //`;
+    console.log(category)
+
 
     if (category === 'last30days') {
         const now = Math.floor(Date.now() / 1000);
@@ -91,6 +87,63 @@ export async function POST(req: Request) {
          limit ${limit};
           offset ${offset};
 
+        `;
+    } else if (category === 'bestofyear') {
+        const startOfYear = Math.floor(new Date("2024-01-01").getTime() / 1000);
+        const endOfYear = Math.floor(new Date("2024-12-31").getTime() / 1000);
+        query = `
+          fields 
+            name,
+            total_rating,
+            rating_count,
+            follows,
+            hypes,
+            cover.url,
+            first_release_date,
+            platforms.name,
+            platforms.platform_logo.url,
+            genres.name,
+            summary,
+            storyline,
+            videos.video_id;
+
+          where 
+            first_release_date >= ${startOfYear}
+            & first_release_date <= ${endOfYear}
+            & total_rating != null
+            & rating_count > 50;
+
+          sort total_rating desc;
+          limit ${limit};
+          offset ${offset};
+        `;
+    } else if (category === 'popular2024') {
+        const start2025 = Math.floor(new Date("2024-01-01").getTime() / 1000);
+        const end2025 = Math.floor(new Date("2024-12-31").getTime() / 1000);
+
+         query = `
+          fields 
+            name,
+            total_rating,
+            rating_count,
+            follows,
+            hypes,
+            cover.url,
+            first_release_date,
+            platforms.name,
+            platforms.platform_logo.url,
+            genres.name,
+            summary,
+            videos.video_id;
+            
+          where 
+            first_release_date >= ${start2025}
+            & first_release_date <= ${end2025}
+            & (follows > 0 | hypes > 0);
+            
+          sort follows desc;
+          limit ${limit};
+          offset ${offset};
         `;
     }
 

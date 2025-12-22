@@ -23,6 +23,8 @@ const GamesList: React.FC<GameProps> = ({ gamesList }) => {
         return date.toLocaleDateString("en-US", options);
     }
 
+    console.log(gamesList)
+
 
     return (
         <div className='flex flex-col items-center'>
