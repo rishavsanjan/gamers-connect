@@ -1,6 +1,6 @@
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma';
-import React from 'react';
+import React, { JSX } from 'react';
 import { ProfileTabsData } from '../types/profile';
 import ProfileTabs from './ProfileTabs';
 import { Facebook, Instagram, Pencil, Plus, Twitch, Twitter } from 'lucide-react';
@@ -211,8 +211,8 @@ const Profile = async () => {
   });
 
   const postsCount = await prisma.post.count({
-    where:{
-      userId:session.user.id
+    where: {
+      userId: session.user.id
     }
   })
 
@@ -343,7 +343,22 @@ const Profile = async () => {
   //@ts-ignore
   const profileData: ProfileTabsData = { ratings, mygames, playlist, collection, stats: allMyGamesForStats, currentlyPlaying };
 
+  const ICONS: Record<string, JSX.Element> = {
+    DISCORD: <BsDiscord size={30} />,
+    YOUTUBE: <BsYoutube size={30} />,
+    FACEBOOK: <Facebook size={30} />,
+    INSTAGRAM: <Instagram size={30} />,
+    TWITCH: <Twitch size={30} />,
+    X: <Twitter size={30} />,
+    STEAM: <BsSteam size={30} />
+  };
 
+  const normalizeUrl = (url: string) => {
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      return `https://${url}`;
+    }
+    return url;
+  };
 
 
   return (
@@ -416,69 +431,18 @@ const Profile = async () => {
               <>
                 <div className='w-full p-4'>
                   <div className="flex flex-row gap-4">
-                    {
-                      socialLinks?.map((item) => (
-                        <>
-                          {
-                            item.type === 'DISCORD' &&
-                            <Link href={item.link} target='_blank'>
-                              <BsDiscord size={30} className=" text-[#9a90cb]" />
-                            </Link>
+                    {socialLinks?.map((item) => (
+                      <a
+                        key={item.type}
+                        href={normalizeUrl(item.link)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#9a90cb]"
+                      >
+                        {ICONS[item.type]}
+                      </a>
+                    ))}
 
-                          }
-
-                          {
-                            item.type === 'YOUTUBE' &&
-                            <Link href={item.link} target='_blank'>
-                              <BsYoutube size={30} className=" text-[#9a90cb]" />
-                            </Link>
-
-                          }
-                          {
-                            item.type === 'FACEBOOK' &&
-                            <Link href={item.link} target='_blank'>
-                              <Facebook size={30} className=" text-[#9a90cb]" />
-                            </Link>
-
-                          }
-
-                          {
-                            item.type === 'INSTAGRAM' &&
-                            <Link href={item.link} target='_blank'>
-                              <Instagram size={30} className=" text-[#9a90cb]" />
-                            </Link>
-
-                          }
-                          {
-                            item.type === 'TWITCH' &&
-                            <Link href={item.link} target='_blank'>
-                              <Twitch size={30} className=" text-[#9a90cb]" />
-                            </Link>
-
-                          }
-
-                          {
-                            item.type === 'X' &&
-                            <Link href={item.link} target='_blank'>
-                              <Twitter size={30} className=" text-[#9a90cb]" />
-                            </Link>
-
-                          }
-
-                          {
-                            item.type === 'STEAM' &&
-                            <Link href={item.link} target='_blank'>
-                              <BsSteam size={30} className=" text-[#9a90cb]" />
-                            </Link>
-
-                          }
-
-
-                        </>
-
-
-                      ))
-                    }
                   </div>
                 </div>
               </>

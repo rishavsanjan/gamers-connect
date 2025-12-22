@@ -1,13 +1,14 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Twitch, Twitter, Youtube, Facebook, Instagram } from 'lucide-react';
+import { Twitch, Twitter, Youtube, Facebook, Instagram, DeleteIcon, Trash2 } from 'lucide-react';
 import { BsDiscord, BsSteam } from 'react-icons/bs';
 import axios from 'axios';
 import { User } from '@prisma/client';
 import { ClipLoader } from 'react-spinners';
 import Cropper from "react-easy-crop";
 import Link from 'next/link';
+import { logout } from '@/lib/auth';
 
 
 const EditProfilePage: React.FC = () => {
@@ -45,7 +46,7 @@ const EditProfilePage: React.FC = () => {
         y: number;
     }>(null);
     const [rawImage, setRawImage] = useState<string | null>(null);
-
+    const [deleting, setDeleting] = useState(false);
     const CLOUDINARY_CLOUD_NAME = "diwmvqto3";
     const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
 
@@ -58,7 +59,7 @@ const EditProfilePage: React.FC = () => {
             })
             const userData = response.data.user;
             setProfile(userData);
-            
+
             setUsername(userData?.username || '');
             setRealName(userData?.name || '');
             setBio(userData?.bio || '');
@@ -160,7 +161,7 @@ const EditProfilePage: React.FC = () => {
                 data: {
                     username,
                     name: realName.trim(),
-                    bio: bio.trim(),
+                    bio: bio.trim().length > 0 ? bio.trim() : null,
                     profilePicture: profilePictureUrl,
                     twitch: socialLinks.twitch,
                     x: socialLinks.x,
@@ -255,6 +256,27 @@ const EditProfilePage: React.FC = () => {
     };
 
 
+    const deleteAcoount = async () => {
+        setDeleting(true);
+        try {
+            const response = await axios({
+                url: `/api/private/delete-user-account`,
+                method: 'delete',
+
+            })
+            console.log(response.data)
+            if (response.data.success) {
+                await logout();
+                window.location.href = '/';
+            }
+
+        } catch (error) {
+            console.log(error)
+        } finally{
+            setDeleting(false);
+        }
+    }
+
 
 
     return (
@@ -269,6 +291,7 @@ const EditProfilePage: React.FC = () => {
                         <span className="text-[#9a90cb] text-base font-medium">/</span>
                         <span className="text-white text-base font-medium">Edit Profile</span>
                     </div>
+
 
                     {/* Page Heading */}
                     <div className="flex flex-wrap justify-between gap-3 mb-8">
@@ -308,7 +331,7 @@ const EditProfilePage: React.FC = () => {
                         <div className='flex flex-row justify-between items-center w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 px-4 text-base '>
                             <span className=''>{privacy ? 'Public Account' : 'Private Account'}</span>
                             <div
-                                onClick={() => {setPrivacy(prev => !prev) }}
+                                onClick={() => { setPrivacy(prev => !prev) }}
                                 className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition 
                          ${privacy ? "bg-purple-600" : "bg-gray-400"}`}
                             >
@@ -489,7 +512,22 @@ const EditProfilePage: React.FC = () => {
                             </button>
                         </div>
                     </div>
+                    <button className='flex flex-row  items-center bg-red-500 rounded-md p-2 gap-2 self-end w-40 justify-center' onClick={deleteAcoount}>
+                        {
+                            deleting ?
+                                <>
+                                    <ClipLoader size={20} color='white' />
+                                </>
+                                :
+                                <>
+                                    <Trash2 />
+                                    Delete Acoount
+                                </>
+                        }
+
+                    </button>
                 </div>
+
             </main>
 
             {isCropModalOpen && (
