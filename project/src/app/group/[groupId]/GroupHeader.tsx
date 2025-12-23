@@ -8,6 +8,8 @@ import Cropper from 'react-easy-crop'
 import axios from 'axios'
 import { uploadImageToCloudinary } from '@/app/utils/community_functions'
 import { ClipLoader } from 'react-spinners'
+import { FcInvite } from 'react-icons/fc'
+import InviteMembers from './InviteMembers'
 
 interface Props {
 
@@ -33,7 +35,8 @@ const GroupHeader: React.FC<Props> = ({ }) => {
     const [aspect, setAspect] = useState(16 / 9);
     const [isEditing, setIsEditing] = useState(false);
     const [uploading, setUploading] = useState(false);
-
+    const [inviteModal, setInviteModal] = useState(false);
+    const inviteRef = useRef<HTMLDivElement>(null);
 
     const COVER_RATIO = 2.7;
 
@@ -41,8 +44,29 @@ const GroupHeader: React.FC<Props> = ({ }) => {
         setAspect(COVER_RATIO);
     }, []);
 
-    const OUTPUT_WIDTH = 1920;
-    const OUTPUT_HEIGHT = Math.round(1920 / 2.7); // ≈ 711
+    useEffect(() => {
+        if (inviteModal) {
+            // Lock scroll
+            document.body.style.overflow = "hidden";
+
+            const handleCollectionClose = (e: MouseEvent) => {
+                if (e.target === inviteRef.current) {
+                    setInviteModal(false);
+                }
+            };
+
+            const container = inviteRef.current;
+            container?.addEventListener("mousedown", handleCollectionClose);
+
+            return () => {
+                // Cleanup
+                document.body.style.overflow = "auto";
+                container?.removeEventListener("mousedown", handleCollectionClose);
+            };
+        } else {
+            document.body.style.overflow = "auto";
+        }
+    }, [inviteModal]);
 
 
 
@@ -273,6 +297,12 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                     Share
                 </button>
                 <JoinLeaveButton groupId={groupState.id} hasJoined={groupState.hasJoined} />
+                <button
+                    onClick={() => { setInviteModal(prev => !prev) }}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-[#3a3b3c] text-[#e4e6eb] rounded-md font-semibold hover:bg-[#4e4f50] transition-colors">
+                    <FcInvite size={18} />
+                    Invite
+                </button>
             </div>
             {isCropModalOpen && (
                 <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">
@@ -327,7 +357,14 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                     </div>
                 </div>
             )}
-
+            {
+                inviteModal &&
+                <div
+                    ref={inviteRef}
+                    className="h-screen w-full  fixed top-0 left-0 bg-black/50 z-[100] items-center justify-center flex flex-col gap-4">
+                    <InviteMembers />
+                </div>
+            }
         </div>
     )
 }

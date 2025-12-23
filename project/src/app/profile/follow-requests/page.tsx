@@ -1,12 +1,8 @@
 
-import React, { useState } from 'react';
-import { User, Gamepad2, Users, Bell, Settings, Power, Trash2, Check, Shield, Swords, Timer, BarChart3, UserPlus, Cross, CrossIcon } from 'lucide-react';
+
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma';
-import { GoX } from 'react-icons/go';
-import { timeAgo } from '@/app/utils/date';
-import AcceptDeclineButton from './AcceptDeclineButton';
-import InfiniteRequests from './InfiniteRequests';
+import Tabs from './Tabs';
 
 
 export default async function PendingRequestsPage() {
@@ -19,7 +15,7 @@ export default async function PendingRequestsPage() {
         select: {
             sender: {
                 select: {
-                    id: true,
+                    id: true, 
                     avatar: true,
                     username: true,
                     name: true,
@@ -29,6 +25,28 @@ export default async function PendingRequestsPage() {
             createdAt: true
         }
     });
+
+    const activeInvites = await prisma.groupInvites.findMany({
+        where: {
+            userId: session?.user.id,
+        },
+        select: {
+            group: {
+                select: {
+                    id: true,
+                    name: true,
+                    coverImage: true
+                }
+            }
+            , createdAt: true
+        },
+
+    });
+
+    const invites = activeInvites.map((req) => ({
+        ...req.group,
+        createdAt: req.createdAt
+    }))
 
     const requests = activeRequests.map((req) => ({
         ...req.sender,
@@ -46,8 +64,7 @@ export default async function PendingRequestsPage() {
                     <div className="max-w-4xl mx-auto w-full flex flex-col gap-8">
 
                         {/* Requests List */}
-                        <InfiniteRequests requests={requests} />
-
+                        <Tabs requests={requests} invites={invites} />
                     </div>
                 </div>
             </main>

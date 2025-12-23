@@ -66,6 +66,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
         };
         fetchStatus();
     }, [game]);
+    
     useEffect(() => {
         if (collectionModal) {
             // Lock scroll

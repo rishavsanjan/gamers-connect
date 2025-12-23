@@ -1,3 +1,4 @@
+'use client'
 import { useUser } from '@/context/UserContext'
 import axios from 'axios'
 import { Check } from 'lucide-react'
@@ -15,13 +16,23 @@ interface Requests {
     createdAt: Date
 }
 
+interface Invites {
+    id: string,
+    name: string,
+    coverImage: string | null,
+    createdAt: Date
+
+}
+
 
 interface Props {
     senderId: string,
-    setRequests: React.Dispatch<SetStateAction<Requests[]>>
+    setRequests?: React.Dispatch<SetStateAction<Requests[]>>
+    setInvites?: React.Dispatch<SetStateAction<Invites[]>>
+
 }
 
-const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests }) => {
+const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests, setInvites }) => {
 
     const { user } = useUser();
     const [accepting, setAccepting] = useState(false);
@@ -38,12 +49,14 @@ const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests }) => {
                     receiverId: user?.id
                 }
             })
+            if (setRequests) {
+                setRequests(prev => prev.filter(req => req.id !== id));
+            }
 
-            setRequests(prev => prev.filter(req => req.id !== id));
 
         } catch (error) {
             console.log(error);
-        } finally{
+        } finally {
             setAccepting(false);
         }
     }
@@ -59,12 +72,13 @@ const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests }) => {
                     receiverId: user?.id
                 }
             })
-
-            setRequests(prev => prev.filter(req => req.id !== id));
+            if (setRequests) {
+                setRequests(prev => prev.filter(req => req.id !== id));
+            }
 
         } catch (error) {
             console.log(error);
-        }finally{
+        } finally {
             setDeclining(false);
         }
     }
