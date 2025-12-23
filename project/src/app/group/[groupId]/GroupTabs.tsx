@@ -9,6 +9,7 @@ import GroupAsideBar from './GroupAsideBar'
 import InfiniteGroupMembers from './InfiniteGroupMembers'
 import { PostFeedProvider } from '@/context/PostsContext'
 import InfiniteGroupRequests from './InfiniteGroupRequests'
+import { useGroupDetails } from '@/context/GroupsContext'
 
 interface Props {
     groupId: string
@@ -31,10 +32,11 @@ interface Props {
 const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount30Days, postsWithMedia, mediaCount, members, currentUserId, currentUserRole }) => {
 
     const [activeTab, setActiveTab] = useState('Posts');
+    const { groupRequests, memberCount } = useGroupDetails()
     const tabs = currentUserRole === 'owner' || currentUserRole === 'admin' ? ['Posts', 'Members', 'Media', 'Group Requests'] : ['Posts', 'Members', 'Media'];
     return (
         <div>
-            
+
             <nav className="border-b border-[#3a3b3c] ">
                 <ul className="flex gap-0">
                     {tabs.map((tab) => (
@@ -46,7 +48,8 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
                                 : 'text-[#b0b3b8] hover:bg-white/5 hover:text-[#e4e6eb]'
                                 }`}
                         >
-                            {tab}
+                            
+                            {tab}{tab === 'Group Requests' && <>{' '}({groupRequests.length}){' '}</>}{tab === 'Media' && <>{' '}({mediaCount}){' '}</>}{tab === 'Members' && <>{' '}({memberCount}){' '}</>}
                             {activeTab === tab && (
                                 <div className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-[#2374e1]" />
                             )}

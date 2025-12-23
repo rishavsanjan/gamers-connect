@@ -23,7 +23,7 @@ interface Props {
 
 const AcceptDeclineButtonGroup: React.FC<Props> = ({ senderId }) => {
 
-    const { setGroupRequests, groupState } = useGroupDetails();
+    const { setGroupRequests, groupState, membersState, setMemberCount } = useGroupDetails();
     const { user } = useUser();
     const [accepting, setAccepting] = useState(false);
     const [declining, setDeclining] = useState(false);
@@ -41,7 +41,7 @@ const AcceptDeclineButtonGroup: React.FC<Props> = ({ senderId }) => {
             })
 
             setGroupRequests(prev => prev.filter(req => req.id !== id));
-
+            setMemberCount(prev => prev + 1)
         } catch (error) {
             console.log(error)
         } finally {

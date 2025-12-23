@@ -14,6 +14,8 @@ interface Props {
 }
 
 const GroupHeader: React.FC<Props> = ({ }) => {
+
+
     const { memberCount, membersState, groupState, setGroupState, userRole } = useGroupDetails();
     const [coverImage, setCoverImage] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
@@ -32,14 +34,18 @@ const GroupHeader: React.FC<Props> = ({ }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [uploading, setUploading] = useState(false);
 
-    useEffect(() => {
-        if (!containerRef.current) return
 
-        const width = containerRef.current.offsetWidth
-        const height = 350
-        setAspect(width / height)
-    }, [])
-    
+    const COVER_RATIO = 2.7;
+
+    useEffect(() => {
+        setAspect(COVER_RATIO);
+    }, []);
+
+    const OUTPUT_WIDTH = 1920;
+    const OUTPUT_HEIGHT = Math.round(1920 / 2.7); // ≈ 711
+
+
+
 
     const handleGroupUpdate = async () => {
         setUploading(true)
@@ -72,40 +78,42 @@ const GroupHeader: React.FC<Props> = ({ }) => {
     }
 
 
-    const getCroppedImg = (
+    const getCroppedImg = async (
         imageSrc: string,
         pixelCrop: { x: number; y: number; width: number; height: number }
     ): Promise<Blob> => {
+        const image = new Image();
+        image.src = imageSrc;
+        await new Promise((res) => (image.onload = res));
+
+        const OUTPUT_WIDTH = 1920;
+        const OUTPUT_HEIGHT = Math.round(OUTPUT_WIDTH / 2.7);
+
+        const canvas = document.createElement("canvas");
+        canvas.width = OUTPUT_WIDTH;
+        canvas.height = OUTPUT_HEIGHT;
+
+        const ctx = canvas.getContext("2d")!;
+        ctx.imageSmoothingQuality = "high";
+
+        ctx.drawImage(
+            image,
+            pixelCrop.x,
+            pixelCrop.y,
+            pixelCrop.width,
+            pixelCrop.height,
+            0,
+            0,
+            OUTPUT_WIDTH,
+            OUTPUT_HEIGHT
+        );
+
         return new Promise((resolve) => {
-            const image = new Image();
-            image.src = imageSrc;
-
-            image.onload = () => {
-                const canvas = document.createElement("canvas");
-                canvas.width = pixelCrop.width;
-                canvas.height = pixelCrop.height;
-
-                const ctx = canvas.getContext("2d");
-                if (!ctx) return;
-
-                ctx.drawImage(
-                    image,
-                    pixelCrop.x,
-                    pixelCrop.y,
-                    pixelCrop.width,
-                    pixelCrop.height,
-                    0,
-                    0,
-                    pixelCrop.width,
-                    pixelCrop.height
-                );
-
-                canvas.toBlob((blob) => {
-                    if (blob) resolve(blob);
-                }, "image/jpeg");
-            };
+            canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.9);
         });
     };
+
+
 
     const applyCrop = async () => {
         if (!rawImage || !croppedAreaPixels) return;
@@ -141,7 +149,7 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                         <img
                             src={preview}
                             alt="Preview"
-                            className="w-full h-[350px] object-center"
+                            className="w-full h-[350px] object-cover object-center"
                         />
                         :
                         <>
@@ -149,7 +157,7 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                                 groupState.coverImage ?
                                     <img
                                         src={groupState.coverImage}
-                                        className="w-full h-[350px] object-center"
+                                        className="w-full h-[350px] object-cover object-center"
                                     />
                                     :
                                     <div
@@ -276,14 +284,14 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                                 image={rawImage ?? undefined}
                                 crop={crop}
                                 zoom={zoom}
-                                aspect={aspect}
-
+                                aspect={2.7}
                                 cropShape="rect"
                                 showGrid={false}
                                 onCropChange={setCrop}
                                 onZoomChange={setZoom}
                                 onCropComplete={onCropComplete}
                             />
+
                         </div>
 
                         <div className="mt-4">

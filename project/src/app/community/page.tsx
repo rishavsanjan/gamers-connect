@@ -39,7 +39,7 @@ export default async function GamelyCommunity() {
 
         followingUserIds = followingIds.map(f => f.followingId)
         joinedGroupIds = groupIds.map(f => f.memberInGroups.map(f => f.id)).flat()
-        
+
     }
 
 
@@ -165,18 +165,22 @@ export default async function GamelyCommunity() {
             xp: true
         }
     })
-
+    console.log(session?.user.id)
     const suggestedGroups = await prisma.group.findMany({
         take: 3,
         where: {
-            AND: [{ visibility: 'VISIBLE' }, { OR: [{ privacy: 'PUBLIC' }, { privacy: 'PRIVATE' }] }],
-            NOT: {
-                members: { some: { id: session?.user.id } }
-            }
+            visibility: 'VISIBLE',
+            privacy: { in: ['PUBLIC', 'PRIVATE'] },
+            NOT: [
+                {
+                    OR: [
+                        { members: { some: { id: session?.user.id } } },
+                        { groupJoinRequests: { some: { user: { id: session?.user.id } } } },
+                    ],
+                },
+            ],
         },
-
-
-    })
+    });
 
     const formattedGroups = suggestedGroups.map((group) => {
         return {

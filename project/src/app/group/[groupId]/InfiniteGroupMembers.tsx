@@ -118,7 +118,6 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     // }
 
     useEffect(() => {
-        if (page === 1) return
         getMembers()
     }, [page])
 

@@ -47,6 +47,8 @@ model User {
   sentFollowRequests     FollowRequest[]    @relation("FollowRequestSender")
   receivedFollowRequests FollowRequest[]    @relation("FollowRequestReceiver")
   groupJoinRequests      GroupJoinRequest[]
+  groupInvites           GroupInvites[]
+  sentGroupInvites       GroupInvites[]     @relation("InvitedBy")
 }
 
 model FollowRequest {
@@ -79,6 +81,21 @@ model GroupJoinRequest {
   group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
 
   @@unique([userId, groupId])
+}
+
+model GroupInvites {
+  id          String   @id @default(cuid())
+  userId      String
+  groupId     String
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group       Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  invitedById String
+  invitedBy   User     @relation("InvitedBy", fields: [invitedById], references: [id]) // ✅ This stays the same
+
+  @@unique([userId, groupId])
+  @@index([groupId])
+  @@index([userId])
 }
 
 model Achievement {
@@ -355,6 +372,7 @@ model Group {
 
   createdAt         DateTime           @default(now())
   groupJoinRequests GroupJoinRequest[]
+  groupInvites      GroupInvites[]
 }
 
 model SocialLinks {

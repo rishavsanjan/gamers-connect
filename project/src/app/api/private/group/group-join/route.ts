@@ -19,9 +19,27 @@ export async function POST(req: Request) {
         })
 
         if (isMember) {
-            return NextResponse.json({ message: "Already a member" })
+
+            await prisma.group.update({
+                where: {
+                    id: groupId,
+
+                },
+                data: {
+                    members: {
+                        disconnect: {
+                            id: session.user.id
+                        }
+                    },
+                    memberCount: {
+                        decrement: 1
+                    }
+                }
+            })
+
+            return NextResponse.json({ success:true }, {status:200})
         }
-        
+
         const result = await prisma.$transaction(async (tx) => {
             const join = await tx.group.update({
                 where: {
