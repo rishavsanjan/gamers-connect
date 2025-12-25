@@ -2,6 +2,7 @@
 
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { usePostFeed } from '@/context/PostsContext'
 import axios from 'axios'
 import { Filter } from 'lucide-react'
@@ -88,29 +89,29 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount 
 
     return (
         <div>
-            <div className="flex items-center justify-between rounded-xl border m-4 border-purple-500/20 bg-white/5 px-6 py-4 backdrop-blur-lg">
+            <div className="flex items-center gap-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg mb-4 mx-4 mt-4">
                 <Filter className="h-5 w-5 text-purple-400" />
-                <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="flex-1 cursor-pointer border-none bg-transparent outline-none"
-                >
-                    <option value={''} className="bg-gray-900">All</option>
-                    <option value={'QUERY'} className="bg-gray-900">QUERY</option>
-                    <option value={'REVIEW'} className="bg-gray-900">REVIEW</option>
-                    <option value={'SCREENSHOT'} className="bg-gray-900">SCREENSHOT</option>
-                    <option value={'NEWS'} className="bg-gray-900">NEWS</option>
-                    <option value={'GUIDE'} className="bg-gray-900">GUIDE</option>
-                    <option value={'HELP'} className="bg-gray-900">HELP</option>
-                </select>
-                <select
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                    className="cursor-pointer rounded-lg border border-purple-500/20 bg-white/10 px-4 py-2 outline-none transition hover:border-purple-500/40"
-                >
-                    <option value={'latest'} className="bg-gray-900">Latest</option>
-                    <option value={'popular'} className="bg-gray-900">Popular</option>
-                </select>
+
+                <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger className="flex-1 bg-transparent">
+                        <SelectValue placeholder="All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {["ALL", "QUERY", "REVIEW", "SCREENSHOT", "NEWS", "GUIDE", "HELP"].map(item => (
+                            <SelectItem key={item} value={item}>{item}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                <Select value={filter} onValueChange={setFilter}>
+                    <SelectTrigger className="w-[120px] bg-transparent">
+                        <SelectValue placeholder="Latest" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="latest">Latest</SelectItem>
+                        <SelectItem value="popular">Popular</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
             <div className='flex md:flex-row flex-col space-x-4 mt-4 m-4 gap-2'>
                 <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg md:w-[30%] w-full">

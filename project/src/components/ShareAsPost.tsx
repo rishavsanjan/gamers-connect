@@ -1,5 +1,5 @@
 import React, { Dispatch, useEffect, useState } from 'react';
-import { X, Share2, Check } from 'lucide-react';
+import { X, Share2 } from 'lucide-react';
 import axios from 'axios';
 import { Game } from '@/app/types/game';
 import { ClipLoader } from 'react-spinners';

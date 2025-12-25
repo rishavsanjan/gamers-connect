@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, Users, Award, Lock } from 'lucide-react';
+import { Users } from 'lucide-react';
 import InfiniteHomePostsFeed from '@/components/community/InfinitePostsHomeFeed';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
@@ -250,7 +250,7 @@ export default async function GamelyCommunity() {
                     </div>
 
                     {/* Right Sidebar for samll screens */}
-                    <div className="col-span-12  lg:col-span-3 space-y-4 sm:hidden ">
+                    <div className="col-span-12  lg:col-span-3 space-y-4 lg:hidden ">
                         {/* Quick Stats */}
                         <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
 
@@ -267,7 +267,7 @@ export default async function GamelyCommunity() {
                     </div>
 
                     {/* Right Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-3 sm:flex flex-col hidden sticky py-4">
+                    <div className="col-span-12 space-y-6 lg:col-span-3 lg:flex flex-col hidden sticky py-4">
                         {/* Quick Stats */}
                         <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
 

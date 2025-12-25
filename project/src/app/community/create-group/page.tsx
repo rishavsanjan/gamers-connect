@@ -66,14 +66,17 @@ const CreateGroup = () => {
 
 
     return (
-        <div className='flex lg:flex-row flex-col'>
+        <div className='flex lg:flex-row flex-col dark:bg-[#1E1538]'>
             <div className='lg:w-[25%]'>
                 <div className="min-h-screen bg-gray-900 text-white sm:p-6 p-2 border-r border-gray-400">
                     {/* Header */}
                     <div className="flex items-center gap-4 mb-6">
-                        <button className="p-2 hover:bg-gray-800 rounded-full">
-                            <X size={24} />
-                        </button>
+                        <Link href={`/community`}>
+                            <button className="p-2 hover:bg-gray-800 rounded-full">
+                                <X size={24} />
+                            </button>
+                        </Link>
+
                         <div className='flex flex-row items-center gap-2  '>
                             <LuGamepad2 className='text-2xl text-purple-500' />
                             <Link href={'/'}>

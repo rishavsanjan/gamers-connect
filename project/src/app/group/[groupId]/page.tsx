@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Lock } from 'lucide-react';
+import React from 'react';
 import GroupTabs from './GroupTabs';
 import { prisma } from '@/lib/db';
 import GroupHeader from './GroupHeader';

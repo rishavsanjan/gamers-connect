@@ -1,5 +1,5 @@
 import { Eye, EyeClosed, Globe, Lock } from 'lucide-react'
-import React, { SetStateAction } from 'react'
+import React from 'react'
 interface Props {
 selectedVisibility:string,
 showVisibilityMenu:boolean,

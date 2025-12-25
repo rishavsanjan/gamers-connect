@@ -141,20 +141,19 @@ const SearchCommunity = () => {
                                             key={person.id}
                                             className={` px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3 rounded-full`}
                                         >
-                                            {
-                                                person.avatar ?
-                                                    <>
-                                                        <img
-                                                            src={person.avatar}
-                                                            alt={person.name}
-                                                            className="w-10 h-10 rounded-full object-cover"
-                                                        />
-                                                    </>
-                                                    :
-                                                    <h1 className='text-2xl text-center  rounded-full'>{person?.username[0].toUpperCase()}</h1>
+                                            <div className={`${person?.avatar ? '' : 'bg-purple-500  w-12 h-12 rounded-full flex flex-row items-center justify-center'}  `}>
+                                                {
+                                                    person?.avatar ?
+                                                        <>
+                                                            <img src={person.avatar} alt="" className='rounded-full w-12 h-12' />
+                                                        </>
+                                                        :
+                                                        <>
+                                                            <h1 className='text-xl text-center'>{person?.username[0].toUpperCase()}</h1>
+                                                        </>
+                                                }
 
-
-                                            }
+                                            </div>
 
                                             <div className="flex-1">
                                                 <div className="font-semibold text-white">{person.name}</div>
@@ -230,20 +229,19 @@ const SearchCommunity = () => {
                             className="px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3"
 
                         >
-                            {
-                                person.avatar ?
-                                    <>
-                                        <img
-                                            src={person.avatar}
-                                            alt={person.name}
-                                            className="w-10 h-10 rounded-full object-cover"
-                                        />
-                                    </>
-                                    :
-                                    <h1 className='text-2xl text-center  rounded-full'>{person?.username[0].toUpperCase()}</h1>
+                            <div className={`${person?.avatar ? '' : 'bg-purple-500  w-12 h-12 rounded-full flex flex-row items-center justify-center'}  `}>
+                                {
+                                    person?.avatar ?
+                                        <>
+                                            <img src={person.avatar} alt="" className='rounded-full w-12 h-12' />
+                                        </>
+                                        :
+                                        <>
+                                            <h1 className='text-xl text-center'>{person?.username[0].toUpperCase()}</h1>
+                                        </>
+                                }
 
-
-                            }
+                            </div>
                             <div className="flex-1">
                                 <div className="font-semibold text-white">{person.name}</div>
                                 <div className="text-sm text-gray-400">@{person.username}</div>

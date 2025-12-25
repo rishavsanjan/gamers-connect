@@ -16,7 +16,8 @@ interface Props {
 
 const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
     const [loginModal, setLoginModal] = useState(false);
-    const { user, isLoggedIn } = useUser();
+    const { isLoggedIn } = useUser();
+    const [loading, setLoading] = useState(false)
 
     const [liked, setLiked] = useState(hasLiked);
     const [count, setCount] = useState(likeCount);
@@ -26,10 +27,19 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
             setLoginModal(true);
             return;
         }
-
-        await handleRemoveLike(postId)
+        setLoading(true)
         setLiked(false);
         setCount(prev => prev - 1)
+        try {
+            await handleRemoveLike(postId)
+
+        } catch (error) {
+            setLiked(true);
+            setCount(prev => prev + 1)
+        } finally {
+            setLoading(false)
+        }
+
     }
 
     const handleAddReaction = async () => {
@@ -37,10 +47,19 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
             setLoginModal(true);
             return;
         }
-
-        await handleRemoveLike(postId)
+        setLoading(true)
         setLiked(true);
         setCount(prev => prev + 1)
+        try {
+            await handleLike(postId)
+
+        } catch (error) {
+            setLiked(false);
+            setCount(prev => prev - 1)
+        } finally {
+            setLoading(false)
+        }
+
     }
 
     return (
@@ -50,9 +69,10 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
                     <button
                         onClick={() => {
                             handleRemoveReaction()
-
+                                    
                         }}
-                        className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500"
+                        disabled={loading}
+                        className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500 disabled:cursor-not-allowed"
                     >
                         <BsHeartFill className="h-5 w-5" color='#B4157D' />
                         <span>{count}</span>
@@ -60,8 +80,12 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
 
                     :
                     <button
-                        onClick={() => { handleAddReaction() }}
-                        className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500"
+                        onClick={() => {
+                            handleAddReaction()
+                                
+                        }}
+                        disabled={loading}
+                        className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500 disabled:cursor-not-allowed"
                     >
                         <Heart className="h-5 w-5" />
                         <span>{count}</span>

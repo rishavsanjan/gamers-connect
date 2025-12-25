@@ -3,8 +3,6 @@ import React from 'react'
 import { Game } from '@/app/types/game';
 import LeftSide from '@/components/game-details/left';
 import RightSide from '@/components/game-details/right';
-import GamesList from '@/components/GamesList';
-import { getStreamsByGameName } from '@/lib/streams';
 import GameStreams from '@/components/GameStreams';
 import Link from 'next/link';
 import SimilarDlcGameList from '@/components/SimilarDlcGameList';

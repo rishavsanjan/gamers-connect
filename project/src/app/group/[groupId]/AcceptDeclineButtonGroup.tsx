@@ -2,7 +2,7 @@ import { useGroupDetails } from '@/context/GroupsContext'
 import { useUser } from '@/context/UserContext'
 import axios from 'axios'
 import { Check } from 'lucide-react'
-import React, { SetStateAction, useState } from 'react'
+import React, {  useState } from 'react'
 import { GoX } from 'react-icons/go'
 import { ClipLoader } from 'react-spinners'
 

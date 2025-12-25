@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Lock, Star, UserPlus, Search, Bell, X } from 'lucide-react';
+import React from 'react';
+import { Lock, Star} from 'lucide-react';
 import { prisma } from '@/lib/db';
 import PrivateFollowButton from './PrivateFollowButton';
 

@@ -2,9 +2,8 @@
 import { useLoginModal } from '@/context/LoginModalContext'
 import { useUser } from '@/context/UserContext'
 import axios from 'axios'
-import { SendToBack, UserPlus } from 'lucide-react'
+import {  UserPlus } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { CheckmarkIcon } from 'react-hot-toast'
 import { GrCheckmark } from 'react-icons/gr'
 
 interface Props {

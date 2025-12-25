@@ -4,11 +4,10 @@ import { handleGroupJoin, handleGroupLeave } from '@/app/utils/community_functio
 import { useGroupDetails } from '@/context/GroupsContext';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
-import { Check, ChevronDown, DeleteIcon, Plus, Trash2 } from 'lucide-react';
+import { Check, ChevronDown, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
-import PrivateGroupPage from './PrivateGroup';
-import { createPortal } from 'react-dom';
+
 
 interface Props {
     hasJoined: boolean,

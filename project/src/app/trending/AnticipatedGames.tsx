@@ -1,4 +1,4 @@
-import { anticipatedGames, getCollections, getFranchises, getUpcomingEvents } from '@/lib/igdb';
+import { anticipatedGames } from '@/lib/igdb';
 import React from 'react'
 import { TimeLeft } from './TimeLeft';
 import { Game } from '../types/game';

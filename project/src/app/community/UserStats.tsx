@@ -1,13 +1,14 @@
+import Link from 'next/link'
 import React from 'react'
 import { RiBarChart2Fill } from 'react-icons/ri'
 
 interface Props {
-    postCount : number
-    followers:number 
-    xp : number
+    postCount: number
+    followers: number
+    xp: number
 }
 
-const UserStats:React.FC<Props> = ({postCount, followers, xp}) => {
+const UserStats: React.FC<Props> = ({ postCount, followers, xp }) => {
     return (
         <div className="bg-white dark:bg-[#1E1538] rounded-xl p-6 shadow-lg border border-gray-200 dark:border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#D9008F]/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
@@ -30,9 +31,15 @@ const UserStats:React.FC<Props> = ({postCount, followers, xp}) => {
                 </div>
             </div>
             <div className="mt-6 pt-4 border-t border-gray-100 dark:border-white/10">
-                <a className="text-sm text-center block text-gray-500 dark:text-[#A799CC] hover:text-[#D9008F] transition-colors" href="#">
+                <Link
+                    href="/profile"
+                    className="text-sm text-center block text-gray-500 dark:text-[#A799CC] hover:text-[#D9008F] transition-colors"
+                >
                     View full profile
-                </a>
+                </Link>
+
+
+
             </div>
         </div>
     )

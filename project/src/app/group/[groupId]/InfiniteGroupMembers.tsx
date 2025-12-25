@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Crown, Shield, UserMinus, MoreVertical } from 'lucide-react'
 import axios from 'axios'
-import { Group } from '@prisma/client'
 import { GrUpgrade } from 'react-icons/gr'
 import { FcDownRight } from 'react-icons/fc'
 import { useGroupDetails } from '@/context/GroupsContext'

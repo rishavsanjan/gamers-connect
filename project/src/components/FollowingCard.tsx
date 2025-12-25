@@ -1,10 +1,9 @@
 import { Follower } from '@/app/types/follower'
 import { addFollow } from '@/app/utils/community_functions'
 import axios from 'axios'
-import { Cross, X } from 'lucide-react'
+import {  X } from 'lucide-react'
 import { useSession } from 'next-auth/react'
-import React, { SetStateAction, useState } from 'react'
-import { GrX } from 'react-icons/gr'
+import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
 interface Props {

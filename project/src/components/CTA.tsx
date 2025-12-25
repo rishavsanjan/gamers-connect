@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { SideBar } from './SideBar'
 import GamesList from './GamesList'
 import axios from 'axios'
-import { ClipLoader, FadeLoader } from 'react-spinners'
+import { ClipLoader } from 'react-spinners'
 import { Game } from '@/app/types/game'
 
 export default function CTA() {

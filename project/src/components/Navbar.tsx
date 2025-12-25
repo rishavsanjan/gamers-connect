@@ -131,40 +131,43 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div ref={searcBarDropdownRef} className='flex  items-center gap-4 relative'>
-                    <input value={query} onChange={(e) => { setQuery(e.target.value) }} className='p-2 hover:outline-purple-600 transition-all ease-in-out duration-300 hover:outline-1 outline-0 rounded-full border border-gray-400 hover:border-0 text-sm px-8 shadow-2xl text-gray-300 bg-[#3B3B3B] placeholder:font-medium placeholder:text-sm  w-44 sm:w-full h-8' placeholder='Search for games' type="text" />
+                    <input
+                        value={query}
+                        onChange={(e) => { setQuery(e.target.value) }}
+                        className='w-full flex items-center rounded-lg bg-white/10 pl-10 pr-10 py-2 transition hover:bg-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white placeholder:text-gray-400 placeholder:sm:text-md text-xs h-9'
+                        placeholder='Search for games' type="text" />
                     <BiSearch className='absolute left-2 text-gray-500' size={15} />
                     <div className="md:flex hidden relative">
                         {isLoggedIn ? (
                             <div className="relative group">
                                 {/* Profile Icon */}
-                                <div className="w-10 h-10 rounded-full overflow-hidden cursor-pointer bg-[#202020] flex items-center justify-center group-hover:bg-white transition-all duration-200">
+                                <div className="w-10 h-10 rounded-full overflow-hidden cursor-pointer bg-[#202020] flex items-center justify-center hover:bg-white transition-all duration-200">
                                     <BiUser className="text-2xl text-white group-hover:text-black transition-colors" />
                                 </div>
 
                                 {/* Dropdown */}
-                                <div className="absolute right-0 mt-2 w-48 bg-[#1f1f1f] text-white rounded-lg shadow-lg opacity-0 scale-95 transform transition-all duration-200 group-hover:opacity-100 group-hover:scale-100 z-50">
+                                <div className="absolute right-0 mt-2 w-48 bg-[#1f1f1f] text-white rounded-lg shadow-lg opacity-0 invisible scale-95 transform transition-all duration-200 group-hover:opacity-100 group-hover:visible group-hover:scale-100 z-50">
                                     <Link
                                         href="/profile"
                                         className="block px-4 py-2 hover:bg-white hover:text-black rounded-t-lg"
                                     >
                                         My Profile
                                     </Link>
-
+                                    <Link
+                                        className="block px-4 py-2 hover:bg-white hover:text-black"
+                                        href="/profile/follow-requests"
+                                    >
+                                        Follow Requests
+                                    </Link>
                                     <button
                                         onClick={async () => {
                                             await logout();
                                             setUser(null);
-                                        }
-                                        }
-                                        className="w-full text-left px-4 py-2 hover:bg-white hover:text-black"
+                                        }}
+                                        className="w-full text-left px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
                                     >
                                         Sign Out
                                     </button>
-                                    <Link
-                                        className="block px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
-                                        href={`/profile/follow-requests`}>
-                                        Follow Requests
-                                    </Link>
                                 </div>
                             </div>
                         ) : (
@@ -289,7 +292,7 @@ const Navbar = () => {
                                 className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-purple-500 transition-colors z-100"
                                 onClick={() => setIsMobileMenuOpen(false)}
                                 href={`/profile/follow-requests`}>
-                                <RiUserFollowLine className="text-2xl"/>
+                                <RiUserFollowLine className="text-2xl" />
                                 Follow Requests
                             </Link>
 

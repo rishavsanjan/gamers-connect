@@ -1,5 +1,5 @@
 import { timeAgo } from '@/app/utils/date'
-import {  Ellipsis, MessageCircle, Share2 } from 'lucide-react'
+import { Ellipsis, MessageCircle, Share2 } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import PostLikeButton from './PostLikeButton'
@@ -13,11 +13,11 @@ import { usePostFeed } from '@/context/PostsContext'
 interface Props {
 }
 
-const Posts: React.FC<Props> = ({  }) => {
+const Posts: React.FC<Props> = ({ }) => {
     const ellipsRef = useRef<HTMLDivElement | null>(null);
     const [selectedPost, setSelectedPost] = useState<string | null>(null);
     const { user } = useUser();
-    const {posts} = usePostFeed();
+    const { posts } = usePostFeed();
 
 
     useEffect(() => {
@@ -70,7 +70,7 @@ const Posts: React.FC<Props> = ({  }) => {
                                                 </>
                                             }
                                             {
-                                                post.group  &&
+                                                post.group &&
                                                 <>
                                                     <Link href={`/group/${post.group.id}`} key={post.group.id}>
                                                         <span className="text-purple-400">{post.group.name}</span>
@@ -85,7 +85,8 @@ const Posts: React.FC<Props> = ({  }) => {
                                     </div>
                                 </div>
                                 <button
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                        e.stopPropagation();
                                         setSelectedPost(prev => (prev === post.id ? null : post.id));
                                     }}
                                     className='md:mb-8 cursor-pointer p-4 sm:p-0 '
@@ -94,9 +95,9 @@ const Posts: React.FC<Props> = ({  }) => {
 
                                 </button>
                                 {
-                                    selectedPost === post.id &&
+                                    (selectedPost === post.id && selectedPost !== null) &&
                                     <div ref={ellipsRef} className='absolute bg-black/100 top-10 right-8 mt-2 z-10'>
-                                        <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id}  postOwnerId={post.user.id}/>
+                                        <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id} postOwnerId={post.user.id} />
                                     </div>
                                 }
 

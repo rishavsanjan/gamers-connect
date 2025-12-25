@@ -1,14 +1,12 @@
 'use client';
 import { useState } from 'react';
-import { Share2, MoreHorizontal, Bookmark, DeleteIcon, Delete } from 'lucide-react';
+import { Bookmark, Trash2 } from 'lucide-react';
 import { BsBookmarkFill } from 'react-icons/bs';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useUser } from '@/context/UserContext';
 import { useLoginModal } from '@/context/LoginModalContext';
-import { Post } from '@/app/types/post';
 import { usePostFeed } from '@/context/PostsContext';
-import { LuDelete } from 'react-icons/lu';
 import { ClipLoader } from 'react-spinners';
 
 interface PostActionsProps {
@@ -17,11 +15,7 @@ interface PostActionsProps {
   postOwnerId: string
 }
 
-export default function PostActions({
-  postId,
-  hasBookmarked,
-  postOwnerId
-}: PostActionsProps) {
+export default function PostActions({ postId, hasBookmarked, postOwnerId }: PostActionsProps) {
   const [bookmarked, setBookmarked] = useState(hasBookmarked);
   const [isBookmarking, setIsBookmarking] = useState(false);
 
@@ -123,10 +117,10 @@ export default function PostActions({
         >
           {
             deleting ?
-              <ClipLoader color='red' size={23}/>
+              <ClipLoader color='red' size={23} />
               :
               <div className='flex flex-row gap-1 items-center'>
-                <LuDelete className='h-5 w-5 text-red-500' />
+                <Trash2 className='h-5 w-5 text-red-500' />
                 <span className='text-red-500'>Delete Post</span>
               </div>
           }

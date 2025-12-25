@@ -1,5 +1,4 @@
 'use client'
-import GamesList from '@/components/GamesList';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { Game } from '../types/game';

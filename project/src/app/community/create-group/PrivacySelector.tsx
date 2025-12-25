@@ -1,5 +1,5 @@
 import { Globe, Lock } from 'lucide-react'
-import React, { SetStateAction } from 'react'
+import React from 'react'
 interface Props {
 selectedPrivacy:string,
 showPrivacyMenu:boolean,

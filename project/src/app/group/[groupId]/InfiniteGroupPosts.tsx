@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { usePostFeed } from '@/context/PostsContext'
 import axios from 'axios'
 import { Filter } from 'lucide-react'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, {  useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
 interface Props {

@@ -6,7 +6,6 @@ import { Game } from "@/app/types/game";
 import { FadeLoader } from "react-spinners";
 import { useUser } from "@/context/UserContext";
 import { useLoginModal } from "@/context/LoginModalContext";
-import ShareAsPost from "./ShareAsPost";
 
 interface gameStatus {
     inMyGames: {

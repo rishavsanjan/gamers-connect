@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Lock, Share2, Eye, X, Users, Shield } from 'lucide-react';
 import axios from 'axios';
-import { ClipLoader } from 'react-spinners';
 import { Group } from '@prisma/client';
 
 interface Props {

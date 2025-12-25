@@ -1,7 +1,7 @@
 import React from 'react'
 import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
-import { ArrowLeft, Filter } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import InfiniteHashTagFeed from './InfiniteHashTagFeed'
 import { PostFeedProvider } from '@/context/PostsContext'
 
@@ -94,11 +94,11 @@ export default async function HashtagPosts({ params }: PageProps) {
 
 
     return (
-        <div className='min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white' >
+        <div className='min-h-screen dark:bg-[#1E1538] text-white' >
 
             <header className="sticky top-0 z-50 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
-                <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-                    <a href="/community" className="flex items-center space-x-2 rounded-lg px-4 py-2 transition hover:bg-white/10">
+                <div className="flex max-w-7xl items-start justify-between px-6 py-4">
+                    <a href="/community" className="flex items-start space-x-2 rounded-lg px-4 py-2 transition hover:bg-white/10">
                         <ArrowLeft className="h-5 w-5" />
                         <span>Back to Community</span>
                     </a>

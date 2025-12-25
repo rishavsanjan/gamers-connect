@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import { Twitch, Twitter, Youtube, Facebook, Instagram, DeleteIcon, Trash2 } from 'lucide-react';
+import { Twitch, Twitter, Youtube, Facebook, Instagram, Trash2 } from 'lucide-react';
 import { BsDiscord, BsSteam } from 'react-icons/bs';
 import axios from 'axios';
 import { User } from '@prisma/client';

@@ -1,7 +1,6 @@
 'use client'
-import YouTubePlayer from '@/app/utils/ytplayer';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {  useState } from 'react';
 import { ProfileGame } from '@/app/types/game';
 
 interface GameProps {

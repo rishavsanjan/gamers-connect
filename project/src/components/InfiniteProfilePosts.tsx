@@ -3,7 +3,6 @@
 interface Props {
 }
 
-import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import { usePostFeed } from '@/context/PostsContext'
 import { useUser } from '@/context/UserContext'

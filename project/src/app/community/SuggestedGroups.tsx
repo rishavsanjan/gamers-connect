@@ -1,10 +1,9 @@
 'use client'
 import { Group } from '@prisma/client'
 import axios from 'axios'
-import { GroupIcon, Plus } from 'lucide-react'
+import {  Plus } from 'lucide-react'
 import Link from 'next/link'
-import React, { useEffect, useState } from 'react'
-import { CgCommunity } from 'react-icons/cg'
+import React, { useState } from 'react'
 import { FaUsers } from 'react-icons/fa'
 import { ClipLoader } from 'react-spinners'
 

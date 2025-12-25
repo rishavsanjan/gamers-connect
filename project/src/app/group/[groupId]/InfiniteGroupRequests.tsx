@@ -1,10 +1,9 @@
 'use client'
 import { timeAgo } from '@/app/utils/date'
 import { Trash2, UserPlus } from 'lucide-react'
-import React, { useState } from 'react'
+import React from 'react'
 import axios from 'axios'
 import { useUser } from '@/context/UserContext'
-import AcceptDeclineButton from '@/app/profile/follow-requests/AcceptDeclineButton'
 import { useGroupDetails } from '@/context/GroupsContext'
 import AcceptDeclineButtonGroup from './AcceptDeclineButtonGroup'
 

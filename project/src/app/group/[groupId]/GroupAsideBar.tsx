@@ -1,6 +1,5 @@
 import { useGroupDetails } from '@/context/GroupsContext'
-import { Group } from '@prisma/client'
-import { Eye, Globe, Lock } from 'lucide-react'
+import { Eye, Globe} from 'lucide-react'
 import React from 'react'
 
 interface Props {

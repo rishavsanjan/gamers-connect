@@ -14,7 +14,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Tag is required' }, { status: 400 })
         }
 
-        const { filter, category } = await req.json();
+        let { filter, category } = await req.json();
+        if (category === 'ALL') {
+            category = '';
+        }
         const session = await auth().catch(() => null);
         const userId = session?.user?.id;
 

@@ -1,9 +1,8 @@
 'use client'
 import { timeAgo } from '@/app/utils/date'
-import { Trash2, UserPlus } from 'lucide-react'
+import {  UserPlus } from 'lucide-react'
 import React, { useState } from 'react'
 import AcceptDeclineButton from './AcceptDeclineButton'
-import axios from 'axios'
 import { useUser } from '@/context/UserContext'
 import Link from 'next/link'
 

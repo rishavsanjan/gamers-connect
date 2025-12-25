@@ -1,7 +1,7 @@
 'use client'
 import ProfileGameList from '@/app/profile/ProfileGameList';
 import { ProfileGame } from '@/app/types/game';
-import { Collection, Game } from '@prisma/client'
+import { Collection } from '@prisma/client'
 import axios from 'axios';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';

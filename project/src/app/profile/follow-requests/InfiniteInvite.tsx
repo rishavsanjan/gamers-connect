@@ -1,6 +1,5 @@
 'use client'
 import { timeAgo } from '@/app/utils/date';
-import { UserPlus } from 'lucide-react';
 import React, { useState } from 'react';
 import AcceptDeclineButton from './AcceptDeclineButton';
 import { FcInvite } from 'react-icons/fc';

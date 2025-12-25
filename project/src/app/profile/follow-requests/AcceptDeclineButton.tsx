@@ -1,5 +1,4 @@
 'use client'
-import { handleGroupJoin } from '@/app/utils/community_functions'
 import { useLoginModal } from '@/context/LoginModalContext'
 import { useUser } from '@/context/UserContext'
 import axios from 'axios'

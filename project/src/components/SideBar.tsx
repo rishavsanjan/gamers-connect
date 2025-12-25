@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React from 'react'
 import { BiBarChart, BiCrown, BiLogoWindows, BiMobile, BiSkipNext, BiSolidFlame, BiStar, BiTrophy } from 'react-icons/bi'
 import { BsNintendoSwitch, BsPlaystation, BsXbox } from 'react-icons/bs';
 

@@ -1,16 +1,15 @@
 import React from 'react'
 import { prisma } from '@/lib/prisma'
-import { Heart, MessageCircle, Share2, TrendingUp, Award, ArrowLeft, MoreHorizontal, Flag, Bookmark, User, Clock, Eye } from 'lucide-react';
+import { Heart, MessageCircle, ArrowLeft, User, Clock } from 'lucide-react';
 import PostActions from './PostActions';
 import CommentSection from './CommentSection';
 import AuthorCard from './AuthorCard';
-import { getTimeAgoFormatted, timeAgo } from '@/app/utils/date';
+import { getTimeAgoFormatted } from '@/app/utils/date';
 import { auth } from '@/auth';
 import LikeButton from './LikeButton';
 import PostDescription from '@/components/community/PostDescription';
 import PostImages from '@/components/community/PostImages';
 import Link from 'next/link';
-import toast from 'react-hot-toast';
 import CopyButton from '@/components/CopyButton';
 
 interface Props {
@@ -175,7 +174,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white">
+        <div className="min-h-screen dark:bg-[#0F0B1E] text-gray-800 to-gray-900 text-white">
             {/* Header */}
             <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">

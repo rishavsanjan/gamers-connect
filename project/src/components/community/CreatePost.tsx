@@ -1,6 +1,5 @@
 'use client'
 import React, { SetStateAction, useEffect, useRef, useState } from 'react'
-import { Image, Video, FileText, Cross } from 'lucide-react';
 import { Game } from '@/app/types/game';
 import axios from 'axios';
 import { BiSearch } from 'react-icons/bi';
@@ -9,7 +8,6 @@ import { ClipLoader, RotateLoader } from 'react-spinners';
 import { GrClose } from 'react-icons/gr';
 import { Post } from '@/app/types/post';
 import { useRouter } from 'next/navigation'
-import ShareAsPost from '../ShareAsPost';
 import { redis } from '@/lib/redis';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
