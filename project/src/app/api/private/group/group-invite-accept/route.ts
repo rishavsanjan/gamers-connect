@@ -1,4 +1,3 @@
-// app/api/private/getreplies/route.ts
 import { auth } from '@/auth'
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
@@ -10,6 +9,7 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const { groupId } = await req.json();
+
         const isMember = await prisma.group.findFirst({
             where: {
                 id: groupId,
@@ -17,30 +17,50 @@ export async function POST(req: Request) {
             }
         })
 
-        if (!isMember) {
-            return NextResponse.json({ message: "Not a member" })
+        if (isMember) {
+
+            await prisma.group.update({
+                where: {
+                    id: groupId,
+
+                },
+                data: {
+                    members: {
+                        disconnect: {
+                            id: session.user.id
+                        }
+                    },
+                    memberCount: {
+                        decrement: 1
+                    }
+                }
+            })
+
+            return NextResponse.json({ success: true }, { status: 200 })
         }
-        const isAdmin = await prisma.group.count({
-            where: {
-                id: groupId,
-                admins: { some: { id: session.user.id } }
-            }
-        }) > 0 ? true : false;
 
         const result = await prisma.$transaction(async (tx) => {
+
             const join = await tx.group.update({
                 where: {
                     id: groupId
                 },
                 data: {
-
                     members: {
-                        disconnect: { id: session.user.id }
+                        connect: { id: session.user.id }
                     },
-                    admins: isAdmin ? {
-                        disconnect: { id: session.user.id },
-                    } : undefined,
-                    memberCount: { decrement: 1 }
+                    memberCount: { increment: 1 }
+
+                }
+            })
+
+
+            await tx.groupInvites.delete({
+                where: {
+                    userId_groupId: {
+                        userId: session.user.id,
+                        groupId
+                    }
                 }
             })
 

@@ -5,6 +5,7 @@ import React, { useState } from 'react'
 import AcceptDeclineButton from './AcceptDeclineButton'
 import axios from 'axios'
 import { useUser } from '@/context/UserContext'
+import Link from 'next/link'
 
 interface Requests {
     id: string,
@@ -43,7 +44,7 @@ const InfiniteRequests: React.FC<Props> = ({ requests }) => {
                                     className={`group flex flex-col sm:flex-row gap-4 bg-[#1a172e] p-5 rounded-2xl shadow-sm border border-slate-800/50 hover:border-[#3713ec]/50 transition-all  : ''
                                         }`}
                                 >
-                                    <div className="flex items-start gap-5 flex-1">
+                                    <Link className="flex items-start gap-5 flex-1" href={`/player-profile/${request.id}`} key={request.id}>
                                         {/* Avatar */}
                                         <div className="relative h-[72px] w-[72px] shrink-0">
                                             <div className={` ${request?.avatar ? '' : 'bg-purple-500 '}w-full h-full rounded-2xl overflow-hidden items-center flex justify-center`}>
@@ -85,10 +86,12 @@ const InfiniteRequests: React.FC<Props> = ({ requests }) => {
                                                 {timeAgo(request.createdAt)}
                                             </div>
                                         </div>
-                                    </div>
+                                    </Link>
+
+
 
                                     {/* Action Buttons */}
-                                    <AcceptDeclineButton senderId={request.id} setRequests={setRequestsState} />
+                                    <AcceptDeclineButton senderId={request.id} setRequests={setRequestsState} tab='request' />
                                 </div>
                             ))}
                         </div>

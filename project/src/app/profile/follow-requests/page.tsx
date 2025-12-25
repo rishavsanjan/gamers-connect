@@ -38,7 +38,8 @@ export default async function PendingRequestsPage() {
                     coverImage: true
                 }
             }
-            , createdAt: true
+            , createdAt: true,
+            
         },
 
     });

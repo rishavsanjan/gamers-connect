@@ -37,10 +37,11 @@ export async function POST(req: Request) {
                 }
             })
 
-            return NextResponse.json({ success:true }, {status:200})
+            return NextResponse.json({ success: true }, { status: 200 })
         }
 
         const result = await prisma.$transaction(async (tx) => {
+
             const join = await tx.group.update({
                 where: {
                     id: groupId
@@ -48,16 +49,13 @@ export async function POST(req: Request) {
                 data: {
                     members: {
                         connect: { id: session.user.id }
-                    }
+                    },
+                    memberCount: { increment: 1 }
+
                 }
             })
 
-            await tx.group.update({
-                where: { id: groupId },
-                data: {
-                    memberCount: { increment: 1 }
-                }
-            })
+
 
             return join;
         })

@@ -6,11 +6,24 @@ export async function POST(req: Request) {
 
     try {
         const session = await auth();
-        const { query } = await req.json();
+        const { query, groupId } = await req.json();
 
         if (!session) {
             return NextResponse.json({ msg: 'Unauthorized' }, { status: 200 })
         }
+
+        const alreadyInvited = await prisma.groupInvites.findMany({
+            where: {
+                groupId
+            },
+            select: {
+                userId: true
+            }
+        });
+
+        const userIds = alreadyInvited.map(item => item.userId)
+
+        console.log(userIds);
 
         const users = await prisma.user.findMany({
             where: {
@@ -19,7 +32,27 @@ export async function POST(req: Request) {
                     { name: { contains: query, mode: "insensitive" } },
 
                 ],
-                NOT: { id: session?.user.id }
+
+                NOT: {
+                    OR: [
+                        { id: session.user.id },
+
+                        {
+                            groupInvites: {
+                                some: {
+                                    groupId,
+                                },
+                            },
+                        },
+                        {
+                            memberInGroups: {
+                                some: {
+                                    id: groupId,
+                                },
+                            },
+                        },
+                    ],
+                },
             },
             select: {
                 id: true,
