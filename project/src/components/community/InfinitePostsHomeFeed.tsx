@@ -10,6 +10,7 @@ import axios from 'axios'
 import { Filter } from 'lucide-react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 interface Props {
 }
@@ -94,26 +95,31 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
     return (
         <div>
             {/* Filter Bar */}
-            <div className="flex items-center space-x-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg mb-4">
+            <div className="flex items-center gap-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg mb-4">
                 <Filter className="h-5 w-5 text-purple-400" />
-                <select onChange={(e) => setCategory(e.target.value)} className="flex-1 cursor-pointer border-none bg-transparent outline-none">
-                    <option value={''} className="bg-gray-900">All</option>
-                    <option value={'QUERY'} className="bg-gray-900">QUERY</option>
-                    <option value={'REVIEW'} className="bg-gray-900">REVIEW</option>
-                    <option value={'SCREENSHOT'} className="bg-gray-900">SCREENSHOT</option>
-                    <option value={'NEWS'} className="bg-gray-900">NEWS</option>
-                    <option value={'GUIDE'} className="bg-gray-900">GUIDE</option>
-                    <option value={'HELP'} className="bg-gray-900">HELP</option>
-                </select>
-                <select
-                    onChange={(e) => setFilter(e.target.value)}
-                    className="cursor-pointer border-none bg-transparent outline-none"
-                    value={filter}
-                >
-                    <option value={'latest'} className="bg-gray-900">Latest</option>
-                    <option value={'popular'} className="bg-gray-900">Popular</option>
-                </select>
+
+                <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger className="flex-1 bg-transparent">
+                        <SelectValue placeholder="All" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        {["ALL", "QUERY", "REVIEW", "SCREENSHOT", "NEWS", "GUIDE", "HELP"].map(item => (
+                            <SelectItem key={item} value={item}>{item}</SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+
+                <Select value={filter} onValueChange={setFilter}>
+                    <SelectTrigger className="w-[120px] bg-transparent">
+                        <SelectValue placeholder="Latest" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="latest">Latest</SelectItem>
+                        <SelectItem value="popular">Popular</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
+
             <Posts />
 
 

@@ -226,7 +226,7 @@ const Navbar = () => {
             {/* Mobile Menu Overlay */}
             {isMobileMenuOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+                    className="fixed inset-0 bg-black/50 bg-opacity-50 z-40 md:hidden"
                     onClick={() => setIsMobileMenuOpen(false)}
                 />
             )}
@@ -287,6 +287,7 @@ const Navbar = () => {
 
                             <Link
                                 className="flex gap-3 items-center text-gray-300 text-lg font-medium hover:text-purple-500 transition-colors z-100"
+                                onClick={() => setIsMobileMenuOpen(false)}
                                 href={`/profile/follow-requests`}>
                                 <RiUserFollowLine className="text-2xl"/>
                                 Follow Requests

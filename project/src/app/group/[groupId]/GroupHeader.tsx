@@ -101,7 +101,6 @@ const GroupHeader: React.FC<Props> = ({ }) => {
         }
     }
 
-
     const getCroppedImg = async (
         imageSrc: string,
         pixelCrop: { x: number; y: number; width: number; height: number }
@@ -297,12 +296,16 @@ const GroupHeader: React.FC<Props> = ({ }) => {
                     Share
                 </button>
                 <JoinLeaveButton groupId={groupState.id} hasJoined={groupState.hasJoined} />
-                <button
-                    onClick={() => { setInviteModal(prev => !prev) }}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-[#3a3b3c] text-[#e4e6eb] rounded-md font-semibold hover:bg-[#4e4f50] transition-colors">
-                    <FcInvite size={18} />
-                    Invite
-                </button>
+                {
+                    (userRole === 'admin' || userRole === 'owner') &&
+                    <button
+                        onClick={() => { setInviteModal(prev => !prev) }}
+                        className="flex items-center gap-2 px-5 py-2.5 bg-[#3a3b3c] text-[#e4e6eb] rounded-md font-semibold hover:bg-[#4e4f50] transition-colors">
+                        <FcInvite size={18} />
+                        Invite
+                    </button>
+                }
+
             </div>
             {isCropModalOpen && (
                 <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50">

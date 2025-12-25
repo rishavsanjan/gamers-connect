@@ -13,13 +13,13 @@ const AddPostModal: React.FC<Props> = ({ groupId }) => {
     const [showPostModal, setShowPostModal] = useState(false);
     return (
         <>
-            <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg ">
+            <div className="bg-white dark:bg-[#1E1538] rounded-xl p-5 shadow-lg border border-gray-200 dark:border-white/5">
+
                 <button
                     onClick={() => setShowPostModal(true)}
-                    className="flex w-full items-center justify-center space-x-2 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 py-3 font-semibold transition hover:from-purple-700 hover:to-pink-700"
-                >
-                    <Send className="h-5 w-5" />
-                    <span>Create Post</span>
+                    className="w-full bg-gradient-to-r from-[#9F00B5] to-[#D9008F] hover:from-[#D9008F] hover:to-[#9F00B5] text-white font-semibold py-3 px-4 rounded-xl shadow-[0_0_20px_rgba(217,0,143,0.2)] transform transition hover:-translate-y-0.5 hover:shadow-lg flex items-center justify-center gap-2 group">
+                    <Send className="h-5 w-5 material-icons-round group-hover:rotate-50 transition-transform" />
+                    Create Post
                 </button>
 
             </div>

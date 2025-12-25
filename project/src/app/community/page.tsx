@@ -10,6 +10,10 @@ import SearchCommunity from './SearchCommunity';
 import SuggestedGroups from './SuggestedGroups';
 import { PostFeedProvider } from '@/context/PostsContext';
 import { getTopTags } from '@/lib/topTags';
+import { RiBarChart2Fill } from 'react-icons/ri';
+import UserStats from './UserStats';
+import TopUsers from './TopUsers';
+import TrendingTags from './TrendingTags';
 export default async function GamelyCommunity() {
 
     const session = await auth().catch(() => null);
@@ -123,21 +127,29 @@ export default async function GamelyCommunity() {
 
 
 
-    // const topTags = await prisma.hashtag.findMany({
-    //     take: 5,
-    //     orderBy: {
-    //         posts: {
-    //             _count: 'desc',
-    //         },
-    //     },
-    //     include: {
-    //         _count: {
-    //             select: { posts: true },
-    //         },
-    //     },
-    // });
+    const topTags = await prisma.hashtag.findMany({
+        take: 5,
+        orderBy: {
+            posts: {
+                _count: 'desc',
+            },
+        },
+        include: {
+            _count: {
+                select: { posts: true },
+            },
+        },
+    });
 
-    const topTags = await getTopTags();
+    //const topTags = await getTopTags();
+
+    const tags = topTags?.map((tag) => ({
+        name: tag.name,
+        tagCount: tag._count.posts,
+        id: tag.id
+    }))
+
+    console.log(tags)
 
 
     const topUsers = await prisma.user.findMany({
@@ -147,12 +159,26 @@ export default async function GamelyCommunity() {
                 _count: 'desc',
             },
         },
-        include: {
+        select: {
             _count: {
                 select: { Post: true },
             },
+            id: true,
+            username: true,
+            avatar: true,
+            xp: true
         },
     });
+
+    const topGamers = topUsers.map((user) => ({
+        id: user.id,
+        username: user.username,
+        avatar: user.avatar,
+        xp: user.xp,
+        postCount: user._count.Post
+    }))
+
+    console.log(topGamers)
 
     const myStats = await prisma.user.findMany({
         where: {
@@ -194,13 +220,13 @@ export default async function GamelyCommunity() {
 
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 text-white z-0">
+        <div className="bg-gray-100 dark:bg-[#0F0B1E] text-gray-800 dark:text-gray-100 font-sans h-full  flex flex-col transition-colors duration-200">
             {/* Header */}
             <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md ">
                 <div className="mx-auto flex max-w-7xl items-center justify-between sm:px-6 px-1 py-4 space-x-4 ">
                     <div className="flex items-center space-x-8">
                         <h1 className="flex items-center space-x-2 sm:text-2xl text-lg font-bold">
-                            <Users className="sm:h-6 h-5 sm:w-6 h-5 text-purple-400" />
+                            <Users className="sm:h-6 h-5 sm:w-6  text-purple-400" />
                             <span>Community</span>
                         </h1>
 
@@ -209,7 +235,7 @@ export default async function GamelyCommunity() {
                 </div>
             </header>
 
-            <div className="mx-auto max-w-7xl md:px-6  flex h-screen">
+            <div className="mx-auto max-w-7xl md:px-6  flex ">
 
                 <div className="grid grid-cols-12 gap-6 px-2">
                     {/* Left Sidebar */}
@@ -219,77 +245,24 @@ export default async function GamelyCommunity() {
 
 
                         {/* Trending Topics */}
-                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                            <h3 className="mb-4 flex items-center space-x-2 text-lg font-bold">
-                                <TrendingUp className="h-5 w-5 text-purple-400" />
-                                <span>Trending Topics</span>
-                            </h3>
-                            <div className="space-y-3">
-                                {
-                                    topTags?.map((tag) => (
-                                        <Link href={`/community/hashtag_posts/${tag.name}`} key={tag.name}>
-                                            <ul className='flex flex-row justify-between'>
-                                                <li className='text-blue-500 cursor-pointer'>#{tag.name}</li>
-                                                <li>{tag._count.posts}</li>
-                                            </ul>
-                                        </Link>
-                                    )) || 'No top tags!'
-                                }
-                            </div>
-                        </div>
+                        <TrendingTags topTags={tags} />
 
                         {/* Top Gamers */}
-                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                            <h3 className="mb-4 flex items-center space-x-2 text-lg font-bold">
-                                <Award className="h-5 w-5 text-yellow-400" />
-                                <span>Top Gamers</span>
-                            </h3>
-                            <div className="space-y-3">
-                                {
-                                    topUsers.map((user) => (
-                                        <Link href={`/player-profile/${user.id}`} key={user.id}>
-                                            <ul key={user.id} className='flex flex-row justify-between'>
-                                                <li className='text-blue-500 cursor-pointer'>@{user.username || 'Anynomus'}</li>
-                                                {/* @ts-ignore */}
-                                                <li>{user._count.Post}</li>
-
-                                            </ul>
-                                        </Link>
-
-
-                                    ))
-                                }
-                            </div>
-                        </div>
+                        <TopUsers topGamers={topGamers} />
                     </div>
 
                     {/* Right Sidebar for samll screens */}
-                    <div className="col-span-12  lg:col-span-3  sm:hidden ">
+                    <div className="col-span-12  lg:col-span-3 space-y-4 sm:hidden ">
                         {/* Quick Stats */}
-                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                            <h3 className="mb-4 text-lg font-bold">Your Stats</h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-400">Posts</span>
-                                    <span className="font-bold text-purple-400">{myStats[0]._count.Post}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-400">Followers</span>
-                                    <span className="font-bold text-purple-400">{myStats[0]._count.followers}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-400">XP</span>
-                                    <span className="font-bold text-purple-400">{myStats[0].xp}</span>
-                                </div>
-                            </div>
-                        </div>
+                        <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
+
 
                         {/* Suggested Groups */}
                         <SuggestedGroups groups={formattedGroups} />
                     </div>
 
                     {/* Main Feed */}
-                    <div className="col-span-12 space-y-6 lg:col-span-6 md:overflow-y-auto py-4 hide-scrollbar">
+                    <div className="col-span-12  lg:col-span-6 md:overflow-y-auto pt-4 hide-scrollbar h-screen">
                         <PostFeedProvider initialPosts={posts}>
                             <InfiniteHomePostsFeed />
                         </PostFeedProvider>
@@ -298,24 +271,7 @@ export default async function GamelyCommunity() {
                     {/* Right Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-3 sm:flex flex-col hidden sticky py-4">
                         {/* Quick Stats */}
-
-                        < div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                            <h3 className="mb-4 text-lg font-bold">Your Stats</h3>
-                            <div className="space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-400">Posts</span>
-                                    <span className="font-bold text-purple-400">{myStats[0]._count.Post}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-400">Followers</span>
-                                    <span className="font-bold text-purple-400">{myStats[0]._count.followers}</span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <span className="text-gray-400">XP</span>
-                                    <span className="font-bold text-purple-400">{myStats[0].xp}</span>
-                                </div>
-                            </div>
-                        </div>
+                        <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
 
 
                         {/* Suggested Groups */}

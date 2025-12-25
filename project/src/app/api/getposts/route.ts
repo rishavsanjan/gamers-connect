@@ -10,7 +10,10 @@ export async function POST(req: Request) {
     const limit = Number(searchParams.get("limit") || 10);
     const skip = (page - 1) * limit;
 
-    const { filter = "latest", category } = await req.json();
+    let { filter = "latest", category } = await req.json();
+    if(category === 'ALL'){
+      category = "";
+    }
 
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
@@ -41,16 +44,16 @@ export async function POST(req: Request) {
       ...(category && { type: category }),
       ...(userId
         ? {
-            OR: [
-              { userId: { in: followingUserIds } },    
-              { groupId: { in: joinedGroupIds } },       
-              { visibility: "EVERYONE" },                
-              { userId },                                
-            ],
-          }
+          OR: [
+            { userId: { in: followingUserIds } },
+            { groupId: { in: joinedGroupIds } },
+            { visibility: "EVERYONE" },
+            { userId },
+          ],
+        }
         : {
-            visibility: "EVERYONE",
-          }),
+          visibility: "EVERYONE",
+        }),
     };
 
     const posts = await prisma.post.findMany({
@@ -80,7 +83,7 @@ export async function POST(req: Request) {
 
     const rankedPosts = posts.sort((a, b) => {
       const getRank = (post: any) => {
-        if (post.userId === userId) return 1; 
+        if (post.userId === userId) return 1;
         if (followingUserIds.includes(post.userId)) return 2;
         if (post.groupId && joinedGroupIds.includes(post.groupId)) return 3;
         if (post.visibility === "EVERYONE") return 4;
