@@ -252,7 +252,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
 
             {/* Main Container */}
-            <div className="max-w-[1100px] mx-auto px-5">
+            <div className="max-w-[1100px] mx-auto ">
                 <GroupDetailsProvider group={{ ...group, hasJoined }} members={finalUsers} totalMembers={group.memberCount} requests={requests} currentUserRole={currentUserRole}>
                     {/* Group Header */}
                     <GroupHeader />

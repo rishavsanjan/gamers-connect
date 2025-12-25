@@ -8,11 +8,14 @@ export async function POST(req: Request) {
     const page = Number(searchParams.get('page') || 1);
     const limit = Number(searchParams.get('limit') || 2);
     const skip = (page - 1) * limit
-    const { filter, category, groupId } = await req.json();
+    let { filter, category, groupId } = await req.json();
+    if (category === 'ALL') {
+        category = '';
+    }
     console.log(category)
     try {
         const session = await auth().catch(() => null);
-        
+
 
         let where: any = {};
 
@@ -30,7 +33,7 @@ export async function POST(req: Request) {
             where,
             include: {
                 game: { select: { name: true, igdb_id: true } },
-                user: { select: { name: true, id: true, username: true, avatar:true } },
+                user: { select: { name: true, id: true, username: true, avatar: true } },
                 group: { select: { name: true, id: true } },
                 Like: { where: { userId: session?.user.id } }
             },

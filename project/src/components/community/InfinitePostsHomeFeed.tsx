@@ -1,7 +1,4 @@
 'use client'
-
-
-
 import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
