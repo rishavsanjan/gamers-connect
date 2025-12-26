@@ -24,6 +24,7 @@ const InfiniteGroupRequests: React.FC<Props> = ({ }) => {
     const {groupRequests, setGroupRequests} = useGroupDetails();
     const { user } = useUser();
 
+
     const handleDeclineAll = async () => {
         try {
             const response = await axios({

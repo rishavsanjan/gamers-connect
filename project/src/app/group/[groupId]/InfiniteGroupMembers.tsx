@@ -5,6 +5,9 @@ import { GrUpgrade } from 'react-icons/gr'
 import { FcDownRight } from 'react-icons/fc'
 import { useGroupDetails } from '@/context/GroupsContext'
 import Link from 'next/link'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { fetchGroupMembers } from '@/app/queries/posts'
+import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 
 interface Member {
     name: string | null
@@ -37,54 +40,71 @@ const InfiniteGroupMembers: React.FC<Props> = ({
 
     const { membersState, setMembersState, setMemberCount, groupState } = useGroupDetails();
 
-    const observer = useRef<IntersectionObserver | null>(null)
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
+        queryKey: ['group-members',groupId],
+        queryFn: fetchGroupMembers,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        staleTime: 1000 * 30
+    });
 
-    const lastPostRef = useCallback((node: HTMLDivElement) => {
-        if (loading) return
-        if (observer.current) observer.current.disconnect()
+    useEffect(() => {
+        if (!data) return
 
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prev => prev + 1)
-            }
-        })
+        const allMembers: Member[] = data.pages.flatMap(p => p.users)
+        setMembersState(allMembers)
+    }, [data, setMembersState])
 
-        if (node) observer.current.observe(node)
-    }, [loading, hasMore])
+    const lastPostRef = useInfiniteScroll(isFetchingNextPage, hasNextPage ?? false, fetchNextPage);
 
-    const getMembers = async () => {
-        setLoading(true)
-        try {
-            const response = await axios({
-                url: `/api/get-group-members?page=${page}`,
-                method: 'post',
-                data: {
-                    groupId
-                }
-            })
+    // const observer = useRef<IntersectionObserver | null>(null)
 
-            const data = response.data;
-            const newMembers = data.users;
+    // const lastPostRef = useCallback((node: HTMLDivElement) => {
+    //     if (loading) return
+    //     if (observer.current) observer.current.disconnect()
 
-            if (page === 1) {
-                setMembersState(newMembers)
-            } else {
-                setMembersState(prev => {
-                    const existingIds = new Set(prev.map(p => p.id))
-                    const uniqueMembers = newMembers.filter((member: Member) => !existingIds.has(member.id))
-                    return [...prev, ...uniqueMembers]
-                })
-            }
+    //     observer.current = new IntersectionObserver(entries => {
+    //         if (entries[0].isIntersecting && hasMore) {
+    //             setPage(prev => prev + 1)
+    //         }
+    //     })
 
-            if (newMembers.length === 0) {
-                setHasMore(false)
-            }
-        } catch (error) {
-            console.error('Failed to fetch members:', error)
-        } finally {
-            setLoading(false)
-        }
-    }
+    //     if (node) observer.current.observe(node)
+    // }, [loading, hasMore])
+
+    // const getMembers = async () => {
+    //     setLoading(true)
+    //     try {
+    //         const response = await axios({
+    //             url: `/api/get-group-members?page=${page}`,
+    //             method: 'post',
+    //             data: {
+    //                 groupId
+    //             }
+    //         })
+
+    //         const data = response.data;
+    //         const newMembers = data.users;
+
+    //         if (page === 1) {
+    //             setMembersState(newMembers)
+    //         } else {
+    //             setMembersState(prev => {
+    //                 const existingIds = new Set(prev.map(p => p.id))
+    //                 const uniqueMembers = newMembers.filter((member: Member) => !existingIds.has(member.id))
+    //                 return [...prev, ...uniqueMembers]
+    //             })
+    //         }
+
+    //         if (newMembers.length === 0) {
+    //             setHasMore(false)
+    //         }
+    //     } catch (error) {
+    //         console.error('Failed to fetch members:', error)
+    //     } finally {
+    //         setLoading(false)
+    //     }
+    // }
 
     const handleKickMember = async (memberId: string) => {
 
@@ -116,9 +136,9 @@ const InfiniteGroupMembers: React.FC<Props> = ({
     //     return false
     // }
 
-    useEffect(() => {
-        getMembers()
-    }, [page])
+    // useEffect(() => {
+    //     getMembers()
+    // }, [page])
 
     const getInitials = (name: string | null, username: string) => {
         if (name) {

@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation'
 import { redis } from '@/lib/redis';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
+import { usePostFeed } from '@/context/PostsContext';
 
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
@@ -18,7 +19,7 @@ interface Props {
     groupId?: string
 }
 
-const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId }) => {
+const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
     const router = useRouter();
 
     const [postContent, setPostContent] = useState('');
@@ -37,8 +38,8 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
     const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
     const { openLoginModal } = useLoginModal();
     const { isLoggedIn } = useUser();
+    const { setPosts } = usePostFeed();
 
-    
 
 
     useEffect(() => {
@@ -160,13 +161,11 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, setPosts, groupId 
         });
 
 
-        await redis.del('top-tags');
+        //await redis.del('top-tags');
 
-        if (setPosts) {
-            setPosts(prev => [...prev, response.data.post]);
-        }
+        setPosts(prev => [...prev, response.data.post]);
 
-        router.refresh();
+        //router.refresh();
 
         setTimeout(() => {
             setUploading(false);

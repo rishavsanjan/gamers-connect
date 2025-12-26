@@ -6,10 +6,9 @@ import ProfileGameList from './ProfileGameList';
 import ProfileCollection from './ProfileCollection';
 import { getYearFromUnix } from '@/app/utils/date';
 import { pickPlatformColor } from '@/app/utils/game_functions';
-import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { Post } from '@/app/types/post';
-import { Group, User } from '@prisma/client';
+import { Game, Group, User } from '@prisma/client';
 import { Follower } from '@/app/types/follower';
 import InfiniteProfileBookmarked from '@/components/InfiniteProfileBookmarked';
 import { PlatformBar } from '@/components/graphs/GamePlatform';
@@ -20,6 +19,9 @@ import ProfileAchievements from './ProfileAchievements';
 import GroupsJoinedCard from './GroupsJoinedCard';
 import InfiniteProfilePosts from '@/components/InfiniteProfilePosts';
 import { PostFeedProvider } from '@/context/PostsContext';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { fetchProfileGames } from '../queries/posts';
+import Tabs from './Tabs';
 
 interface GroupsExtended extends Group {
     hasJoined: boolean
@@ -55,6 +57,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     const [followerCountState, setFollowerCountState] = useState(follower.length)
     const [followingrCountState, setFollowingrCountState] = useState(following.length)
     const [ratedgames, setRatedGames] = useState(ratings.map(item => item.game));
+    const [gameTab, setGameTab] = useState('');
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
         if (!item.game.first_release_date) return acc;
 
@@ -95,139 +98,36 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     const currentlyPlayingData = currentlyPlaying.filter((item) => item.status === 'PLAYING');
     const playing = currentlyPlayingData.map((item) => { return item.game });
 
-    const loadMore = async (tab: string) => {
+    const { data, isFetchingNextPage, fetchNextPage, hasNextPage, } = useInfiniteQuery({
+        queryKey: ['profile-games', gameTab],
+        queryFn: fetchProfileGames,
+        initialPageParam: 1,
+        getNextPageParam: (lastPage) => lastPage.nextPage,
+        staleTime: 1000 * 60,
 
-        setLoading(true);
-        const response = await axios({
-            url: `/api/private/fetchgames?page=${nextPage}&tab=${tab}`,
-            method: 'get'
-        });
 
-        const games = response.data.games.map((item: any) => { return item.game })
-        if (tab === 'myGames') {
-            setOwnedGames(prev => [...prev, ...games])
-        } else if (tab === 'playlist') {
-            setPlaylistGames(prev => [...prev, ...games])
-        } else if (tab === 'ratings') {
-            setRatedGames(prev => [...prev, ...games])
-        }
-
-        setLoading(false);
-    };
-
+    })
 
     useEffect(() => {
-        setNextPage(2);
-    }, [activeTab])
 
-
-
+        if (!data) return;
+        const games: Game[] = data.pages.flatMap(page =>
+            //@ts-ignore
+            page.games.map(item => item.game)
+        );
+        console.log(games)
+        if (gameTab === 'myGames') {
+            setOwnedGames(games)
+        } else if (gameTab === 'playlist') {
+            setPlaylistGames(games)
+        } else if (gameTab === 'ratings') {
+            setRatedGames(games)
+        }
+    }, [gameTab, data]);
+    
     return (
         <div className='flex  flex-col bg-transparent z-60'>
-            <div className='flex md:flex-row flex-wrap gap-8 justify-start p-4 '>
-                <div>
-                    <button
-                        onClick={() => { setActiveTab('overview') }}
-                        className={`${activeTab === 'overview' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >
-                        Overview
-                    </button>
-                </div>
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('playlist') }}
-                        className={`${activeTab === 'playlist' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Playlist</button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{playlistCount || 0}</span>
-                </div>
-
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('owned') }}
-                        className={`${activeTab === 'owned' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Owned</button>
-                    <span className='absolute -top-3 -right-4 text-gray-500 font-extralight'>{ownedGamesCount || 0}</span>
-
-                </div>
-
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('ratings') }}
-                        className={`${activeTab === 'ratings' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Ratings</button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{ratingsCount || 0}</span>
-
-                </div>
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('post') }}
-                        className={`${activeTab === 'post' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Posts
-                    </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{postsCount || 0}</span>
-
-                </div>
-
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('collection') }}
-                        className={`${activeTab === 'collection' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Collection</button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{collectionCount || 0}</span>
-
-                </div>
-
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('bookmark') }}
-                        className={`${activeTab === 'bookmark' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Bookmarks
-                    </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{bookmarkCount || 0}</span>
-
-                </div>
-
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('follower') }}
-                        className={`${activeTab === 'follower' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Followers
-                    </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{followerCountState || 0}</span>
-
-                </div>
-
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('following') }}
-                        className={`${activeTab === 'following' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Following
-                    </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{followingrCountState || 0}</span>
-
-                </div>
-
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('achievements') }}
-                        className={`${activeTab === 'achievements' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Achievements
-                    </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{achievementsCount || 0}</span>
-
-                </div>
-                <div className='relative '>
-                    <button
-                        onClick={() => { setActiveTab('groups') }}
-                        className={`${activeTab === 'groups' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
-                    >Groups
-                    </button>
-                    <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{groupsCount || 0}</span>
-
-                </div>
-
-
-            </div>
+            <Tabs setActiveTab={setActiveTab} setGameTab={setGameTab} activeTab={activeTab} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} ratingsCount={ratingsCount} postsCount={postsCount} collectionCount={collectionCount} bookmarkCount={bookmarkCount} followerCountState={followerCountState} followingrCountState={followingrCountState} achievementsCount={achievementsCount} groupsCount={groupsCount} />
             {
                 activeTab === 'bookmark' &&
                 <div className='p-4'>
@@ -251,19 +151,23 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 <div className='pb-8 flex flex-col  '>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={playlistGames} />
-                    <div className={`${playlistCount === playlistGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
+                    <div className='self-center'>
                         {
-                            loading ?
+                            isFetchingNextPage ?
 
                                 <ClipLoader color='gray' />
                                 :
                                 <>
                                     {
                                         playlistCount !== playlistGames.length &&
-                                        < button onClick={() => {
-                                            setNextPage(prev => prev + 1);
-                                            loadMore('playlist');
-                                        }}>
+                                        < button
+                                            className={`${playlistCount === playlistGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all `}
+                                            onClick={() => {
+                                                setNextPage(prev => prev + 1);
+                                                //loadMore('playlist');
+                                                fetchNextPage();
+
+                                            }}>
                                             Load More
                                         </button>
                                     }
@@ -272,6 +176,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
                         }
                     </div>
+
                 </div>
 
             }
@@ -282,19 +187,23 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     <ProfileGameList gamesList={ownedGames} />
 
 
-                    <div className={`${ownedGamesCount === ownedGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
+                    <div className='self-center'>
                         {
-                            loading ?
+                            isFetchingNextPage ?
 
                                 <ClipLoader color='gray' />
                                 :
                                 <>
                                     {
                                         ownedGamesCount !== ownedGames.length &&
-                                        < button onClick={() => {
-                                            setNextPage(prev => prev + 1);
-                                            loadMore('myGames');
-                                        }}>
+                                        < button
+                                            className={`${ownedGamesCount === ownedGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}
+                                            onClick={() => {
+                                                setNextPage(prev => prev + 1);
+                                                //loadMore('myGames');
+
+                                                fetchNextPage();
+                                            }}>
                                             Load More
                                         </button>
                                     }
@@ -313,19 +222,23 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 <div className='pb-8 flex flex-col  '>
                     {/* @ts-ignore */}
                     <ProfileGameList gamesList={ratedgames} />
-                    <div className={`${ratingsCount === ratedgames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}>
+                    <div className='self-center'>
                         {
-                            loading ?
+                            isFetchingNextPage ?
 
                                 <ClipLoader color='gray' />
                                 :
                                 <>
                                     {
                                         ratingsCount !== ratedgames.length &&
-                                        < button onClick={() => {
-                                            setNextPage(prev => prev + 1);
-                                            loadMore('ratings');
-                                        }}>
+                                        < button
+                                            className={`${ratingsCount === ratedgames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}
+                                            onClick={() => {
+                                                setNextPage(prev => prev + 1);
+                                                //loadMore('ratings');
+
+                                                fetchNextPage();
+                                            }}>
                                             Load More
                                         </button>
                                     }

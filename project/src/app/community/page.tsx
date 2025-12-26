@@ -239,7 +239,11 @@ export default async function GamelyCommunity() {
                     {/* Left Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-3 py-4">
                         {/* Create Post Card */}
-                        <AddPostModal />
+                        <PostFeedProvider initialPosts={posts}>
+                            <AddPostModal />
+                        </PostFeedProvider>
+
+
 
 
                         {/* Trending Topics */}

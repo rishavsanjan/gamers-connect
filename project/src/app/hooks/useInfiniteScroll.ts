@@ -1,25 +1,28 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react'
 
 export const useInfiniteScroll = (
-    loading: boolean,
-    hasMore: boolean,
-    setPage: React.Dispatch<React.SetStateAction<number>>
+    isFetching: boolean,
+    hasNextPage: boolean | undefined,
+    fetchNextPage: () => void
 ) => {
-    const observer = useRef<IntersectionObserver | null>(null);
+    const observer = useRef<IntersectionObserver | null>(null)
 
-    const lastElementRef = useCallback((node: HTMLElement | null) => {
-        if (loading) return;
+    const lastElementRef = useCallback(
+        (node: HTMLElement | null) => {
+            if (isFetching) return
 
-        if (observer.current) observer.current.disconnect();
+            if (observer.current) observer.current.disconnect()
 
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prevPage => prevPage + 1);
-            }
-        });
+            observer.current = new IntersectionObserver(entries => {
+                if (entries[0].isIntersecting && hasNextPage) {
+                    fetchNextPage()
+                }
+            })
 
-        if (node) observer.current.observe(node);
-    }, [loading, hasMore, setPage]);
+            if (node) observer.current.observe(node)
+        },
+        [isFetching, hasNextPage, fetchNextPage]
+    )
 
-    return lastElementRef;
-};
+    return lastElementRef
+}

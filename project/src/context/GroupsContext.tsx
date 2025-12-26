@@ -11,7 +11,7 @@ interface Member {
     name: string | null
     username: string
     avatar: string | null
-    role: Role
+    role?: Role
 }
 
 interface Requests {

@@ -16,7 +16,10 @@ interface Props {
     posts: Post[]
     postCount24hrs: number
     postCount30Days: number
-    postsWithMedia: PostPrisma[]
+    postsWithMedia: Array<{
+        id:string,
+        mediaUrls : string[]
+    }>
     mediaCount: number
     members: Array<{
         name: string | null,

@@ -13,7 +13,7 @@ export async function POST(req: Request) {
         const session = await auth().catch(() => null);
     
 
-        const posts = await prisma.post.findMany({
+        const media = await prisma.post.findMany({
             skip,
             take: limit,
             where: {
@@ -22,12 +22,16 @@ export async function POST(req: Request) {
                     isEmpty: false
                 }
 
+            },
+            select: {
+                id: true,
+                mediaUrls: true
             }
         })
 
 
 
-        return NextResponse.json({ posts }, { status: 200 });
+        return NextResponse.json({ media }, { status: 200 });
     } catch (error) {
         console.log(error)
         return NextResponse.json('Server Problem', { status: 500 })
