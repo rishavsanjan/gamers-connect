@@ -66,6 +66,8 @@ export async function POST(req: Request) {
             }
         })
 
+        console.log(user)
+
         return NextResponse.json({ user })
     } catch (err) {
         console.error(err)

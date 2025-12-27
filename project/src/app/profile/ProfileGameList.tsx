@@ -86,7 +86,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                                     </div>
 
                                     <div className=''>
-                                        <Link href={`/details/${game.id}`} key={game.id}>
+                                        <Link href={`/details/${game.igdb_id}`} key={game.igdb_id}>
                                             <p onClick={() => { }} className='text-xl w-80 font-[var(--font-dm-sans)] font-bold hover:text-gray-400 hover:cursor-pointer'>{index + 1}.{' '} {game?.name || 'N/A'}</p>
                                         </Link>
 

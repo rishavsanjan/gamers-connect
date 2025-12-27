@@ -46,7 +46,7 @@ export default async function RootLayout({
 
 
   return (
-    <html className="dark" lang="en">
+    <html className="dark hide-scrollbar" lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <LoginModalProvider>
           <UserProvider initialUser={initialUser}>

@@ -218,69 +218,69 @@ export default async function GamelyCommunity() {
 
 
     return (
-        <div className="bg-gray-100 dark:bg-[#0F0B1E] text-gray-800 dark:text-gray-100 font-sans h-full  flex flex-col transition-colors duration-200">
-            {/* Header */}
-            <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md ">
-                <div className="mx-auto flex max-w-7xl items-center justify-between sm:px-6 px-1 py-4 space-x-4 ">
-                    <div className="flex items-center space-x-8">
-                        <h1 className="flex items-center space-x-2 sm:text-2xl text-lg font-bold">
-                            <Users className="sm:h-6 h-5 sm:w-6  text-purple-400" />
-                            <span>Community</span>
-                        </h1>
+        <PostFeedProvider initialPosts={posts}>
+            <div className="bg-gray-100 dark:bg-[#0F0B1E] text-gray-800 dark:text-gray-100 font-sans h-full  flex flex-col transition-colors duration-200">
+                {/* Header */}
+                <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md ">
+                    <div className="mx-auto flex max-w-7xl items-center justify-between sm:px-6 px-1 py-4 space-x-4 ">
+                        <div className="flex items-center space-x-8">
+                            <h1 className="flex items-center space-x-2 sm:text-2xl text-lg font-bold">
+                                <Users className="sm:h-6 h-5 sm:w-6  text-purple-400" />
+                                <span>Community</span>
+                            </h1>
 
+                        </div>
+                        <SearchCommunity />
                     </div>
-                    <SearchCommunity />
-                </div>
-            </header>
+                </header>
 
-            <div className="mx-auto max-w-7xl md:px-6  flex ">
+                <div className="mx-auto max-w-7xl md:px-6  flex ">
 
-                <div className="grid grid-cols-12 gap-6 px-2">
-                    {/* Left Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-3 py-4">
-                        {/* Create Post Card */}
-                        <PostFeedProvider initialPosts={posts}>
+                    <div className="grid grid-cols-12 gap-6 px-2">
+                        {/* Left Sidebar */}
+                        <div className="col-span-12 space-y-6 lg:col-span-3 py-4">
+                            {/* Create Post Card */}
                             <AddPostModal />
-                        </PostFeedProvider>
 
 
 
 
-                        {/* Trending Topics */}
-                        <TrendingTags topTags={tags} />
+                            {/* Trending Topics */}
+                            <TrendingTags topTags={tags} />
 
-                        {/* Top Gamers */}
-                        <TopUsers topGamers={topGamers} />
-                    </div>
+                            {/* Top Gamers */}
+                            <TopUsers topGamers={topGamers} />
+                        </div>
 
-                    {/* Right Sidebar for samll screens */}
-                    <div className="col-span-12  lg:col-span-3 space-y-4 lg:hidden ">
-                        {/* Quick Stats */}
-                        <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
+                        {/* Right Sidebar for samll screens */}
+                        <div className="col-span-12  lg:col-span-3 space-y-4 lg:hidden ">
+                            {/* Quick Stats */}
+                            <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
 
 
-                        {/* Suggested Groups */}
-                        <SuggestedGroups groups={formattedGroups} />
-                    </div>
+                            {/* Suggested Groups */}
+                            <SuggestedGroups groups={formattedGroups} />
+                        </div>
 
-                    {/* Main Feed */}
-                    <div className="col-span-12  lg:col-span-6 md:overflow-y-auto pt-4 hide-scrollbar h-screen">
-                        <PostFeedProvider initialPosts={posts}>
+                        {/* Main Feed */}
+                        <div className="col-span-12  lg:col-span-6 md:overflow-y-auto pt-4 hide-scrollbar h-screen">
                             <InfiniteHomePostsFeed />
-                        </PostFeedProvider>
-                    </div>
+                        </div>
 
-                    {/* Right Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-3 lg:flex flex-col hidden sticky py-4">
-                        {/* Quick Stats */}
-                        <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
+                        {/* Right Sidebar */}
+                        <div className="col-span-12 space-y-6 lg:col-span-3 lg:flex flex-col hidden sticky py-4">
+                            {/* Quick Stats */}
+                            <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
 
 
-                        {/* Suggested Groups */}
-                        <SuggestedGroups groups={formattedGroups} />
+                            {/* Suggested Groups */}
+                            <SuggestedGroups groups={formattedGroups} />
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div >
+            </div >
+        </PostFeedProvider>
+
+
     );
 }

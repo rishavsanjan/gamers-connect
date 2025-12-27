@@ -1,3 +1,5 @@
+import { auth } from '@/auth'
+import { useUser } from '@/context/UserContext'
 import Link from 'next/link'
 import React from 'react'
 import { AiOutlineTrophy } from 'react-icons/ai'
@@ -7,11 +9,12 @@ interface Props {
         username: string,
         avatar: string | null
         id: string
-        postCount:number
+        postCount: number
     }>
 }
 
-const TopUsers: React.FC<Props> = ({ topGamers }) => {
+const TopUsers: React.FC<Props> = async ({ topGamers }) => {
+    const session = await auth();
     return (
         <div className="bg-white dark:bg-[#1E1538] rounded-xl p-5 shadow-lg border border-gray-200 dark:border-white/5">
             <div className="flex items-center gap-2 mb-4 border-b border-gray-100 dark:border-white/5 pb-3">
@@ -31,10 +34,10 @@ const TopUsers: React.FC<Props> = ({ topGamers }) => {
                                     </div>
                                 )}
                                 <span className={`absolute -bottom-1 -right-1 text-[10px] ${index === 0 ? 'bg-yellow-500 text-black' : 'bg-gray-500 text-white'} px-1 rounded-full font-bold`}>
-                                    {index+1}
+                                    {index + 1}
                                 </span>
                             </div>
-                            <Link href={`/player-profile/${gamer.id}`} key={gamer.id}>
+                            <Link href={`${session?.user.id === gamer.id ? `/profile` : `/player-profile/${gamer.id}`} `} key={gamer.id}>
                                 <span className="text-sm text-blue-600 dark:text-[#00BFFF] font-medium group-hover:underline">@{gamer.username}</span>
                             </Link>
                         </div>

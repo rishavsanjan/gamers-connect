@@ -85,9 +85,57 @@ export async function POST(req: Request) {
             },
         });
 
+        const newpost = await prisma.post.findFirst({
+            where: {
+                id: post.id
+            },
+            include: {
+
+                game: {
+                    select: {
+                        name: true,
+                        igdb_id: true
+                    }
+                },
+                user: {
+                    select: {
+                        name: true,
+                        id: true,
+                        username: true,
+                        avatar: true
+                    }
+                },
+                group: {
+                    select: { name: true, id: true }
+                }
+
+            }
+        })
+
+        if (!newpost) {
+            return NextResponse.json({ post }, { status: 201 })
+        }
+
+        const formattedPost = {
+            id: post.id,
+            description: newpost.description,
+            likeCount: newpost.likeCount,
+            commentCount: newpost.commentCount,
+            hasLiked: false,
+            user: newpost.user,
+            game: newpost.game,
+            createdAt: newpost.createdAt,
+            mediaUrls: newpost.mediaUrls,
+            gameId: newpost.gameId,
+            userId: newpost.userId,
+            updatedAt: newpost.updatedAt,
+            type: newpost.type,
+            group: newpost.group,
+            hasBookmarked: false
+        };
 
 
-        return NextResponse.json({ post }, { status: 201 })
+        return NextResponse.json({ post, formattedPost }, { status: 201 })
 
 
 

@@ -2,8 +2,8 @@
 import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
-import {  usePostFeed } from '@/context/PostsContext'
-import React, {  useEffect, useState } from 'react'
+import { usePostFeed } from '@/context/PostsContext'
+import React, { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchHomePosts } from '@/app/queries/posts'
@@ -32,7 +32,11 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
         if (!data) return
 
         const allPosts: Post[] = data.pages.flatMap(p => p.posts)
-        setPosts(allPosts)
+        const uniquePosts = Array.from(
+            new Map(allPosts.map(post => [post.id, post])).values()
+        )
+
+        setPosts(uniquePosts)
     }, [data, setPosts])
 
     const lastPostRef = useInfiniteScroll(isFetchingNextPage, hasNextPage ?? false, fetchNextPage);

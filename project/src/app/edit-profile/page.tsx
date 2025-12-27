@@ -9,6 +9,9 @@ import { ClipLoader } from 'react-spinners';
 import Cropper from "react-easy-crop";
 import Link from 'next/link';
 import { logout } from '@/lib/auth';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import toast from 'react-hot-toast';
+import SocialOptions from './SocialOptions';
 
 
 const EditProfilePage: React.FC = () => {
@@ -33,7 +36,7 @@ const EditProfilePage: React.FC = () => {
     const [previewProfilePic, setPreviewProfilePic] = useState('');
 
     const [fetchingAvailability, setFetchingAvailability] = useState(false);
-    const [privacy, setPrivacy] = useState<boolean>()
+    const [privacy, setPrivacy] = useState<string>('PUBLIC');
     const [loading, setLoading] = useState(false);
 
     const [isCropModalOpen, setIsCropModalOpen] = useState<boolean>(false);
@@ -67,7 +70,7 @@ const EditProfilePage: React.FC = () => {
             if (userData?.avatar) {
                 setPreviewProfilePic(userData.avatar);
             }
-            const visibility = userData.privacy === 'PUBLIC' ? true : false;
+            const visibility = userData.privacy === 'PUBLIC' ? 'PUBLIC' : 'PRIVATE';
             setPrivacy(visibility)
 
             setSocialLinks({
@@ -170,15 +173,14 @@ const EditProfilePage: React.FC = () => {
                     discord: socialLinks.discord,
                     facebook: socialLinks.facebook,
                     instagram: socialLinks.instagram,
-                    privacy: privacy ? 'PUBLIC' : 'PRIVATE'
+                    privacy: privacy === 'PUBLIC' ? 'PUBLIC' : 'PRIVATE'
                 }
             })
 
-            alert('Profile updated successfully!');
+            toast.success('Profile updated successfully!')
 
         } catch (error) {
-            console.error('Error updating profile:', error);
-            alert('Failed to update profile. Please try again.');
+            toast.error('Profile updated successfully!')
         } finally {
             setLoading(false)
         }
@@ -272,10 +274,12 @@ const EditProfilePage: React.FC = () => {
 
         } catch (error) {
             console.log(error)
-        } finally{
+        } finally {
             setDeleting(false);
         }
     }
+
+    console.log(socialLinks)
 
 
 
@@ -326,25 +330,20 @@ const EditProfilePage: React.FC = () => {
                     </div>
 
                     {/*Account Privacy Option */}
-                    <div className='flex flex-col mb-4'>
+                    <div className='flex flex-col mb-4 '>
                         <label htmlFor="username" className="text-white text-base font-medium mb-2">Accont Privacy</label>
-                        <div className='flex flex-row justify-between items-center w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 px-4 text-base '>
-                            <span className=''>{privacy ? 'Public Account' : 'Private Account'}</span>
-                            <div
-                                onClick={() => { setPrivacy(prev => !prev) }}
-                                className={`w-12 h-6 flex items-center rounded-full p-1 cursor-pointer transition 
-                         ${privacy ? "bg-purple-600" : "bg-gray-400"}`}
-                            >
-                                <div
-                                    className={`bg-white w-5 h-5 rounded-full shadow-md transform transition 
-                        ${privacy ? "translate-x-6" : ""}`}
-                                >
+                        <Select value={privacy} onValueChange={setPrivacy}>
+                            <SelectTrigger className="flex-1 bg-transparent w-full">
+                                <SelectValue placeholder={privacy} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {["PRIVATE", "PUBLIC"].map(item => (
+                                    <SelectItem key={item} value={item}>{item}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
 
-                                </div>
 
-                            </div>
-
-                        </div>
                     </div>
 
 
@@ -415,81 +414,7 @@ const EditProfilePage: React.FC = () => {
                         </div>
 
                         {/* Social Links */}
-                        <div>
-                            <h2 className="text-white text-xl font-bold tracking-tight mb-4">Social Links</h2>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="relative flex items-center">
-                                    <Twitch size={20} className="absolute left-4 text-[#9a90cb]" />
-                                    <input
-                                        type="text"
-                                        value={socialLinks.twitch}
-                                        onChange={(e) => setSocialLinks(prev => ({ ...prev, twitch: e.target.value }))}
-                                        placeholder="twitch.tv/username"
-                                        className="w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 pl-12 pr-4 text-base placeholder:text-[#9a90cb]"
-                                    />
-                                </div>
-                                <div className="relative flex items-center">
-                                    <Twitter size={20} className="absolute left-4 text-[#9a90cb]" />
-                                    <input
-                                        type="text"
-                                        value={socialLinks.x}
-                                        onChange={(e) => setSocialLinks(prev => ({ ...prev, x: e.target.value }))}
-                                        placeholder="x.com/username"
-                                        className="w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 pl-12 pr-4 text-base placeholder:text-[#9a90cb]"
-                                    />
-                                </div>
-                                <div className="relative flex items-center">
-                                    <BsSteam size={20} className="absolute left-4 text-[#9a90cb]" />
-                                    <input
-                                        type="text"
-                                        value={socialLinks.steam}
-                                        onChange={(e) => setSocialLinks(prev => ({ ...prev, steam: e.target.value }))}
-                                        placeholder="steam.com/username"
-                                        className="w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 pl-12 pr-4 text-base placeholder:text-[#9a90cb]"
-                                    />
-                                </div>
-                                <div className="relative flex items-center">
-                                    <Youtube size={20} className="absolute left-4 text-[#9a90cb]" />
-                                    <input
-                                        type="text"
-                                        value={socialLinks.youtube}
-                                        onChange={(e) => setSocialLinks(prev => ({ ...prev, youtube: e.target.value }))}
-                                        placeholder="youtube.com/username"
-                                        className="w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 pl-12 pr-4 text-base placeholder:text-[#9a90cb]"
-                                    />
-                                </div>
-                                <div className="relative flex items-center">
-                                    <BsDiscord size={20} className="absolute left-4 text-[#9a90cb]" />
-                                    <input
-                                        type="text"
-                                        value={socialLinks.discord}
-                                        onChange={(e) => setSocialLinks(prev => ({ ...prev, discord: e.target.value }))}
-                                        placeholder="discord.com/username"
-                                        className="w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 pl-12 pr-4 text-base placeholder:text-[#9a90cb]"
-                                    />
-                                </div>
-                                <div className="relative flex items-center">
-                                    <Facebook size={20} className="absolute left-4 text-[#9a90cb]" />
-                                    <input
-                                        type="text"
-                                        value={socialLinks.facebook}
-                                        onChange={(e) => setSocialLinks(prev => ({ ...prev, facebook: e.target.value }))}
-                                        placeholder="facebook.com/username"
-                                        className="w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 pl-12 pr-4 text-base placeholder:text-[#9a90cb]"
-                                    />
-                                </div>
-                                <div className="relative flex items-center">
-                                    <Instagram size={20} className="absolute left-4 text-[#9a90cb]" />
-                                    <input
-                                        type="text"
-                                        value={socialLinks.instagram}
-                                        onChange={(e) => setSocialLinks(prev => ({ ...prev, instagram: e.target.value }))}
-                                        placeholder="instagram.com/username"
-                                        className="w-full rounded-lg text-white bg-[#1d1834] border border-[#3a3168] focus:border-[#4725f4] focus:outline-none focus:ring-2 focus:ring-[#4725f4]/50 h-14 pl-12 pr-4 text-base placeholder:text-[#9a90cb]"
-                                    />
-                                </div>
-                            </div>
-                        </div>
+                        <SocialOptions socialLinks={socialLinks} setSocialLinks={setSocialLinks} />
 
                         {/* Action Buttons */}
                         <div className="flex flex-col sm:flex-row items-center justify-end gap-4 pt-6 border-t border-white/10">
@@ -499,7 +424,7 @@ const EditProfilePage: React.FC = () => {
                             <button
                                 disabled={loading}
                                 onClick={handleSave}
-                                className="w-full sm:w-auto flex items-center justify-center rounded-lg h-12 px-6 bg-[#4725f4] hover:bg-[#4725f4]/80 text-white text-base font-bold transition-colors disabled:cursor-not-allowed"
+                                className=" sm:w-auto flex items-center justify-center rounded-lg h-12 px-6 bg-[#4725f4] hover:bg-[#4725f4]/80 text-white text-base font-bold transition-colors disabled:cursor-not-allowed "
                             >
                                 {
                                     loading ?
