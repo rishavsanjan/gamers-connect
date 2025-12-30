@@ -5,10 +5,8 @@ import { fetchHashTagPosts } from '@/app/queries/posts'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import PostsFilterButton from '@/components/PostsFilterButton'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { usePostFeedStore } from '@/zustland/postFeedStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Filter } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
@@ -22,7 +20,7 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount 
     const [filter, setFilter] = useState('latest')
     const [category, setCategory] = useState('')
 
-    const { posts, setPosts } = usePostFeedStore();
+    const { setPosts } = usePostFeedStore();
 
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
         queryKey: ['hashtag-posts', filter, category, tag],
@@ -41,8 +39,10 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount 
 
     const lastPostRef = useInfiniteScroll(isFetchingNextPage, hasNextPage ?? false, fetchNextPage);
     const updatePost = usePostFeedStore((s) => s.updatePost)
-        const toggleBookmark = usePostFeedStore((s) => s.toggleBookmark)
-        const deletePost = usePostFeedStore((s) => s.deletePost)
+    const toggleBookmark = usePostFeedStore((s) => s.toggleBookmark)
+    const deletePost = usePostFeedStore((s) => s.deletePost)
+    const posts = usePostFeedStore((s) => s.posts);
+
     return (
         <div>
             <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter} />
@@ -64,7 +64,7 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount 
                     </div>
                 </div>
                 <div className='md:w-[70%] w-full'>
-                    <Posts actions={{ updatePost, toggleBookmark, deletePost }} />
+                    <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts}/>
 
                     <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                         {isFetchingNextPage && <ClipLoader color='white' size={40} />}
