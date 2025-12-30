@@ -7,10 +7,10 @@ import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 import { fetchOwnPosts } from '@/app/queries/posts'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
-import { usePostFeed } from '@/context/PostsContext'
 import { useUser } from '@/context/UserContext'
+import { usePostFeedStore } from '@/zustland/postFeedStore'
+import { useProfilePostsStore } from '@/zustland/profilePostsStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
@@ -20,7 +20,7 @@ const InfiniteProfilePosts: React.FC<Props> = () => {
         return;
     }
     const userId = user?.id;
-    const { setPosts } = usePostFeed();
+    const { setPosts } = useProfilePostsStore();
 
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
         queryKey: ['profile-posts', userId],
@@ -38,12 +38,14 @@ const InfiniteProfilePosts: React.FC<Props> = () => {
     }, [data, setPosts])
 
     const lastPostRef = useInfiniteScroll(isFetchingNextPage, hasNextPage ?? false, fetchNextPage);
-
-
+    const updatePost = useProfilePostsStore((s) => s.updatePost)
+    const toggleBookmark = useProfilePostsStore((s) => s.toggleBookmark)
+    const deletePost = useProfilePostsStore((s) => s.deletePost)
+    const posts = useProfilePostsStore((s) => s.posts)
     return (
         <div>
 
-            <Posts />
+            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts}/>
 
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                 {isFetchingNextPage && <ClipLoader color='white' size={40} />}

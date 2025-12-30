@@ -5,10 +5,8 @@ import { fetchGroupPosts } from '@/app/queries/posts'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import PostsFilterButton from '@/components/PostsFilterButton'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { usePostFeed } from '@/context/PostsContext'
+import { useGroupPostsStore } from '@/zustland/groupPostsStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { Filter } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
@@ -18,14 +16,14 @@ interface Props {
 
 const InfiniteGroupPosts: React.FC<Props> = ({ groupId }) => {
 
-    
+
     const [filter, setFilter] = useState('');
     const [category, setCategory] = useState('');
-    const { setPosts } = usePostFeed();
 
+    const { setPosts } = useGroupPostsStore();
 
     const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-        queryKey: ['group-posts',groupId, filter, category],
+        queryKey: ['group-posts', groupId, filter, category],
         queryFn: fetchGroupPosts,
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -40,12 +38,15 @@ const InfiniteGroupPosts: React.FC<Props> = ({ groupId }) => {
     }, [data, setPosts])
 
     const lastPostRef = useInfiniteScroll(isFetchingNextPage, hasNextPage ?? false, fetchNextPage);
-
+    const updatePost = useGroupPostsStore((s) => s.updatePost)
+    const toggleBookmark = useGroupPostsStore((s) => s.toggleBookmark)
+    const deletePost = useGroupPostsStore((s) => s.deletePost)
+    const posts = useGroupPostsStore((s) => s.posts);
     return (
         <div>
             {/* Filter Bar */}
-            <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter}/>
-            <Posts />
+            <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter} />
+            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts}/>
 
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                 {isFetchingNextPage && <ClipLoader color='white' size={40} />}

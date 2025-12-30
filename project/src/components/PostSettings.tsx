@@ -6,22 +6,27 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import { useUser } from '@/context/UserContext';
 import { useLoginModal } from '@/context/LoginModalContext';
-import { usePostFeed } from '@/context/PostsContext';
 import { ClipLoader } from 'react-spinners';
+import { usePostFeedStore } from '@/zustland/postFeedStore';
+import { Post } from '@/app/types/post';
 
 interface PostActionsProps {
   postId: string;
   hasBookmarked: boolean;
   postOwnerId: string
+  actions: {
+    updatePost: (id: string, data: Partial<Post>) => void
+    toggleBookmark: (id: string) => void
+    deletePost: (id: string) => void
+  }
 }
 
-export default function PostActions({ postId, hasBookmarked, postOwnerId }: PostActionsProps) {
+export default function PostActions({ postId, hasBookmarked, postOwnerId , actions}: PostActionsProps) {
   const [bookmarked, setBookmarked] = useState(hasBookmarked);
   const [isBookmarking, setIsBookmarking] = useState(false);
 
   const { isLoggedIn, user } = useUser();
   const { openLoginModal } = useLoginModal();
-  const { toggleBookamrk, deletePost } = usePostFeed();
   const [deleting, setDeleting] = useState(false);
 
   const handleDeletePost = async () => {
@@ -38,7 +43,7 @@ export default function PostActions({ postId, hasBookmarked, postOwnerId }: Post
 
       if (response.data.success) {
         toast.success('Post deleted!');
-        deletePost(postId);
+        actions.deletePost(postId);
 
       }
     } catch (error) {
@@ -69,7 +74,7 @@ export default function PostActions({ postId, hasBookmarked, postOwnerId }: Post
 
       if (response.data.success) {
         toast.success(bookmarked ? 'Bookmark removed' : 'Post bookmarked');
-        toggleBookamrk(postId);
+        actions.toggleBookmark(postId);
 
       }
 

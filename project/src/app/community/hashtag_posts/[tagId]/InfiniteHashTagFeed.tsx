@@ -6,10 +6,10 @@ import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import PostsFilterButton from '@/components/PostsFilterButton'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { usePostFeed } from '@/context/PostsContext'
+import { usePostFeedStore } from '@/zustland/postFeedStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Filter } from 'lucide-react'
-import React, {  useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
 interface Props {
@@ -22,10 +22,10 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount 
     const [filter, setFilter] = useState('latest')
     const [category, setCategory] = useState('')
 
-    const { posts, setPosts } = usePostFeed();
+    const { posts, setPosts } = usePostFeedStore();
 
-     const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
-        queryKey: ['hashtag-posts',filter, category, tag],
+    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useInfiniteQuery({
+        queryKey: ['hashtag-posts', filter, category, tag],
         queryFn: fetchHashTagPosts,
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -40,10 +40,12 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount 
     }, [data, setPosts])
 
     const lastPostRef = useInfiniteScroll(isFetchingNextPage, hasNextPage ?? false, fetchNextPage);
-
+    const updatePost = usePostFeedStore((s) => s.updatePost)
+        const toggleBookmark = usePostFeedStore((s) => s.toggleBookmark)
+        const deletePost = usePostFeedStore((s) => s.deletePost)
     return (
         <div>
-            <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter}/>
+            <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter} />
             <div className='flex md:flex-row flex-col space-x-4 mt-4 m-4 gap-2'>
                 <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg md:w-[30%] w-full">
                     <h3 className="mb-4 text-lg font-bold">About This Hashtag</h3>
@@ -62,7 +64,7 @@ const InfiniteHashTagFeed: React.FC<Props> = ({ tag, postCount, recentPostCount 
                     </div>
                 </div>
                 <div className='md:w-[70%] w-full'>
-                    <Posts />
+                    <Posts actions={{ updatePost, toggleBookmark, deletePost }} />
 
                     <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                         {isFetchingNextPage && <ClipLoader color='white' size={40} />}

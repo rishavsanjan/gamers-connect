@@ -4,6 +4,7 @@ import { auth } from '@/auth'
 import { ArrowLeft } from 'lucide-react'
 import InfiniteHashTagFeed from './InfiniteHashTagFeed'
 import { PostFeedProvider } from '@/context/PostsContext'
+import InitPosts from '@/context/InitPosts'
 
 interface PageProps {
     params: Promise<{ tagId: string }>
@@ -110,10 +111,8 @@ export default async function HashtagPosts({ params }: PageProps) {
                     </div> */}
                 </div>
             </header>
-
-            <PostFeedProvider initialPosts={initialPosts}>
+                <InitPosts posts={initialPosts}/>
                 <InfiniteHashTagFeed tag={tag}  postCount={postCount} recentPostCount={recentPostCount} />
-            </PostFeedProvider>
 
 
 

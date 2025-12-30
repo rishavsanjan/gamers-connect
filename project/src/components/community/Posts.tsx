@@ -8,17 +8,22 @@ import PostImages from './PostImages'
 import toast from 'react-hot-toast'
 import PostSettings from '../PostSettings'
 import { useUser } from '@/context/UserContext'
-import { usePostFeed } from '@/context/PostsContext'
+import { usePostFeedStore } from '@/zustland/postFeedStore'
+import { Post } from '@/app/types/post'
 
 interface Props {
+    actions: {
+        updatePost: (id: string, data: Partial<Post>) => void
+        toggleBookmark: (id: string) => void
+        deletePost: (id: string) => void
+    }
+    posts: Post[]
 }
 
-const Posts: React.FC<Props> = ({ }) => {
+const Posts: React.FC<Props> = ({ actions, posts }) => {
     const ellipsRef = useRef<HTMLDivElement | null>(null);
     const [selectedPost, setSelectedPost] = useState<string | null>(null);
     const { user } = useUser();
-    const { posts } = usePostFeed();
-
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -97,7 +102,7 @@ const Posts: React.FC<Props> = ({ }) => {
                                 {
                                     (selectedPost === post.id && selectedPost !== null) &&
                                     <div ref={ellipsRef} className='absolute bg-black/100 top-10 right-8 mt-2 z-10'>
-                                        <PostSettings hasBookmarked={post.hasBookmarked} postId={post.id} postOwnerId={post.user.id} />
+                                        <PostSettings actions={actions} hasBookmarked={post.hasBookmarked} postId={post.id} postOwnerId={post.user.id} />
                                     </div>
                                 }
 

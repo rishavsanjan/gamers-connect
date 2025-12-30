@@ -22,6 +22,8 @@ import { PostFeedProvider } from '@/context/PostsContext';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchProfileGames } from '../queries/posts';
 import Tabs from './Tabs';
+import InitProfilePosts from '@/context/InitProfilePosts';
+import InitProfileBookmarkPosts from '@/context/InitBookmarkPosts';
 
 interface GroupsExtended extends Group {
     hasJoined: boolean
@@ -124,25 +126,23 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
             setRatedGames(games)
         }
     }, [gameTab, data]);
-    
+
     return (
         <div className='flex  flex-col bg-transparent z-60'>
             <Tabs setActiveTab={setActiveTab} setGameTab={setGameTab} activeTab={activeTab} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} ratingsCount={ratingsCount} postsCount={postsCount} collectionCount={collectionCount} bookmarkCount={bookmarkCount} followerCountState={followerCountState} followingrCountState={followingrCountState} achievementsCount={achievementsCount} groupsCount={groupsCount} />
             {
                 activeTab === 'bookmark' &&
                 <div className='p-4'>
-                    <PostFeedProvider initialPosts={bookmarkedPosts} >
+                    <InitProfileBookmarkPosts posts={bookmarkedPosts}/>
                         <InfiniteProfileBookmarked />
-                    </PostFeedProvider>
 
                 </div>
             }
             {
                 activeTab === 'post' &&
                 <div className='p-4'>
-                    <PostFeedProvider initialPosts={posts}>
-                        <InfiniteProfilePosts />
-                    </PostFeedProvider>
+                    <InitProfilePosts posts={posts} />
+                    <InfiniteProfilePosts />
 
                 </div>
             }

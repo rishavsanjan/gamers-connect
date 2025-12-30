@@ -11,6 +11,7 @@ import { PostFeedProvider } from '@/context/PostsContext';
 import UserStats from './UserStats';
 import TopUsers from './TopUsers';
 import TrendingTags from './TrendingTags';
+import InitPosts from '@/context/InitPosts';
 
 export default async function GamelyCommunity() {
 
@@ -263,6 +264,7 @@ export default async function GamelyCommunity() {
                         </div>
 
                         {/* Main Feed */}
+                        <InitPosts posts={posts}/>
                         <div className="col-span-12  lg:col-span-6 md:overflow-y-auto pt-4 hide-scrollbar h-screen">
                             <InfiniteHomePostsFeed />
                         </div>
