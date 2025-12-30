@@ -272,59 +272,60 @@ const Profile = async () => {
   });
 
   const groups = await prisma.group.findMany({
-    where: {
-      members: { some: { id: session.user.id } }
+    where:{
+      members:{some:{userId:session.user.id}}
     }
   })
+
+  console.log(groups)
 
 
   const formattedGroups = groups.map((group) => {
     return { ...group, hasJoined: true }
   })
 
-  const groupsCount = await prisma.group.count({
-    where: {
-      members: { some: { id: session.user.id } }
-    }
-  })
 
 
 
 
+  const [groupsCount, playlistCount, ownedGamesCount, collectionCount, ratingsCount, bookmarkCount, achievementsCount] = await Promise.all([
+    prisma.groupMember.count({
+      where: {
+        userId: session.user.id
+      }
+    }),
+    prisma.playlist.count({
+      where: {
+        userId: session.user.id
+      }
+    }),
+    prisma.myGame.count({
+      where: {
+        userId: session.user.id
+      }
+    }),
+    prisma.collection.count({
+      where: {
+        userId: session.user.id
+      }
+    }),
+    prisma.rating.count({
+      where: {
+        userId: session.user.id
+      }
+    }),
+    await prisma.bookmark.count({
+      where: {
+        userId: session.user.id
+      }
+    }),
+    await prisma.userAchievement.count({
+      where: {
+        userId: session.user.id
+      }
+    })
+  ])
 
-
-  const playlistCount = await prisma.playlist.count({
-    where: {
-      userId: session.user.id
-    }
-  })
-
-  const ownedGamesCount = await prisma.myGame.count({
-    where: {
-      userId: session.user.id
-    }
-  })
-  const collectionCount = await prisma.collection.count({
-    where: {
-      userId: session.user.id
-    }
-  })
-  const ratingsCount = await prisma.rating.count({
-    where: {
-      userId: session.user.id
-    }
-  })
-  const bookmarkCount = await prisma.bookmark.count({
-    where: {
-      userId: session.user.id
-    }
-  });
-
-  const achievementsCount = await prisma.userAchievement.count({
-    where: {
-      userId: session.user.id
-    }
-  })
 
 
 

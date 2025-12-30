@@ -16,12 +16,18 @@ export async function POST(req: Request) {
             const updatedGroup = await tx.group.update({
                 where: { id: groupId },
                 data: {
-                    members: {
-                        disconnect: { id: memberId }
-                    },
                     memberCount: { decrement: 1 }
                 }
             });
+
+            await tx.groupMember.delete({
+                where: {
+                    userId_groupId: {
+                        userId: memberId,
+                        groupId
+                    }
+                }
+            })
 
             await tx.like.deleteMany({
                 where: {

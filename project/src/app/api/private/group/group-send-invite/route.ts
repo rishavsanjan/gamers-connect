@@ -9,17 +9,16 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const { invitedPersons, groupId } = await req.json();
-        console.log(invitedPersons)
-        const isAdmin = await prisma.group.count({
+        const isAdmin = await prisma.groupMember.count({
             where: {
-                id: groupId,
-                OR: [
-                    { ownerId: session.user.id },
-                    {
-                        admins: {
-                            some: { id: session.user.id }
-                        }
-                    }
+                userId: session.user.id,
+                groupId,
+                OR: [{
+                    role: 'ADMIN'
+                },
+                {
+                    role: 'OWNER'
+                }
                 ]
             }
         }) > 0 ? true : false;

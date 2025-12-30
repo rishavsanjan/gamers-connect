@@ -22,14 +22,17 @@ export async function POST(req: Request) {
                     name: groupName.trim(),
                     privacy,
                     ownerId: session.user.id,
+                    memberCount: 1
                 }
             })
 
-            await tx.group.update({
-                where: { id: group.id },
+
+
+            await tx.groupMember.create({
                 data: {
-                    members: { connect: { id: session.user.id } },
-                    admins: { connect: { id: session.user.id } },
+                    userId: session.user.id,
+                    groupId: group.id,
+                    role: "OWNER"
                 }
             });
 

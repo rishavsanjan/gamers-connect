@@ -11,47 +11,56 @@ export async function POST(req: Request) {
         }
         const { groupId } = await req.json();
 
-        const isMember = await prisma.group.findFirst({
+        const isMember = await prisma.groupMember.findFirst({
             where: {
-                id: groupId,
-                members: { some: { id: session.user.id } }
+                userId: session.user.id,
+                groupId
             }
         })
 
         if (isMember) {
 
-            await prisma.group.update({
-                where: {
-                    id: groupId,
-
-                },
-                data: {
-                    members: {
-                        disconnect: {
-                            id: session.user.id
+            await prisma.$transaction(async (tx) => {
+                await tx.groupMember.delete({
+                    where: {
+                        userId_groupId: {
+                            userId: session.user.id,
+                            groupId
                         }
-                    },
-                    memberCount: {
-                        decrement: 1
                     }
-                }
+                })
+
+                await tx.group.update({
+                    where: {
+                        id: groupId
+                    },
+                    data: {
+                        memberCount: { decrement: 1 }
+                    }
+                })
             })
 
-            return NextResponse.json({ success: true }, { status: 200 })
+            return NextResponse.json({ success: true, msg:'group left' }, { status: 200 })
         }
 
         const result = await prisma.$transaction(async (tx) => {
 
-            const join = await tx.group.update({
+            const join = await tx.groupMember.create({
+                data: {
+                    groupId,
+                    userId: session.user.id,
+                    role: 'MEMBER'
+                }
+            })
+
+            await tx.group.update({
                 where: {
                     id: groupId
                 },
                 data: {
-                    members: {
-                        connect: { id: session.user.id }
-                    },
-                    memberCount: { increment: 1 }
-
+                    memberCount: {
+                        increment: 1
+                    }
                 }
             })
 

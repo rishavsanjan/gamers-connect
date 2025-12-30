@@ -10,10 +10,10 @@ export async function POST(req: Request) {
         }
         const { groupId, memberId } = await req.json();
 
-        const isMember = await prisma.group.findFirst({
+        const isMember = await prisma.groupMember.findFirst({
             where: {
-                id: groupId,
-                members: { some: { id: session.user.id } }
+                groupId,
+                userId: memberId,
             }
         })
 
@@ -21,10 +21,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "Not a member" })
         }
 
-        const alreadyAdmin = await prisma.group.findFirst({
+        const alreadyAdmin = await prisma.groupMember.findFirst({
             where: {
-                id: groupId,
-                admins: { some: { id: memberId } }
+                groupId,
+                userId: memberId,
+                role: 'ADMIN'
             }
         })
 
@@ -32,17 +33,18 @@ export async function POST(req: Request) {
             return NextResponse.json({ message: "User is not an admin" })
         }
 
-        const admin = await prisma.group.update({
+        const admin = await prisma.groupMember.update({
             where: {
-                id: groupId
+                userId_groupId: {
+                    userId: memberId,
+                    groupId
+                }
             },
             data: {
-                admins: {
-                    disconnect: { id: memberId }
-                }
+                role: 'MEMBER'
             }
         })
-    
+
         return NextResponse.json({ admin })
     } catch (err) {
         console.error(err)

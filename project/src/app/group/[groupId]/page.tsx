@@ -24,7 +24,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         include: {
             members: {
                 where: {
-                    id: session?.user.id
+                    userId: session?.user.id
                 },
                 select: {
                     id: true
@@ -116,19 +116,18 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
 
     const [members, postCount24hrs, postCount30Days, postWithMedia, mediaCount] = await Promise.all([
-        await prisma.group.findMany({
+        await prisma.groupMember.findMany({
             take: 5,
             where: {
-                id: groupId
+                groupId: groupId
             },
-            include: {
-                members: {
-                    select: { username: true, id: true, name: true, avatar: true }
+            select: {
+                user: {
+                    select: {
+                        username: true, id: true, name: true, avatar: true
+                    },
                 },
-                admins: {
-                    select: { username: true, id: true, name: true, avatar: true }
-                },
-
+                role: true
             },
         }),
 
@@ -172,21 +171,20 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
     ])
 
-    console.log(postWithMedia)
+    const allMembers = members
+        .filter(f => f.role === 'MEMBER')
+        .map(f => ({
+            ...f.user,
+            role: 'member'
+        }));
 
-    const admins = members.flatMap(item =>
-        item.admins.map(admin => ({
-            ...admin,
-            role: "admin"
-        }))
-    );
+    const admins = members
+        .filter(f => f.role === 'ADMIN' || f.role === 'OWNER')
+        .map(f => ({
+            ...f.user,
+            role: 'admin'
+        }));
 
-    const allMembers = members.flatMap(item =>
-        item.members.map(member => ({
-            ...member,
-            role: "member"
-        }))
-    );
 
     const roleMap = new Map();
 
@@ -210,12 +208,11 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
     } else if (group.ownerId === currentUserId) {
         currentUserRole = 'owner';
     } else {
-        const isAdmin = await prisma.group.findFirst({
+        const isAdmin = await prisma.groupMember.findFirst({
             where: {
                 id: groupId,
-                admins: {
-                    some: { id: currentUserId }
-                }
+                userId:session.user.id,
+                role:'ADMIN'
             },
             select: { id: true }
         });
@@ -249,6 +246,8 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
             createdAt: req.createdAt,
         }));
     }
+
+    console.log(allMembers, admins, finalUsers, members, currentUserRole)
 
 
 

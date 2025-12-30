@@ -8,6 +8,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchHomePosts } from '@/app/queries/posts'
 import PostsFilterButton from '../PostsFilterButton'
 import { usePostFeedStore } from '@/zustland/postFeedStore'
+import PostsSkeleton from '../PostSkeleton'
 
 
 interface Props {
@@ -51,11 +52,18 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
         <div>
             {/* Filter Bar */}
             <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter} />
-            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts}/>
+            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts} />
+            <div className='mt-4'>
+                {
+                    isFetchingNextPage &&
+                    <PostsSkeleton count={1} />
+                }
+            </div>
 
 
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
-                {isFetchingNextPage && <ClipLoader color='white' size={40} />}
+                {/* {isFetchingNextPage && <ClipLoader color='white' size={40} />} */}
+
                 {!hasNextPage && <p className="text-gray-500">No more posts</p>}
             </div>
         </div>

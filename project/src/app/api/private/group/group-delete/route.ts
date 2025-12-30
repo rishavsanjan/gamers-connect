@@ -9,6 +9,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const { groupId } = await req.json();
+        const result = await prisma.$transaction(async (tx) => {
+
+        })
         const isOwner = await prisma.group.findFirst({
             where: {
                 id: groupId,
@@ -22,46 +25,24 @@ export async function POST(req: Request) {
                 { status: 403 }
             );
         }
+        
+        await prisma.$transaction(async (tx) => {
+            tx.group.delete({
+                where: { id: groupId },
+            });
 
+            tx.groupMember.deleteMany({
+                where: {
+                    groupId
+                }
+            })
 
-
-        // const result = await prisma.$transaction(async (tx) => {
-        //     await tx.commentReaction.deleteMany({
-        //         where: {
-        //             comment: {
-        //                 post: {
-        //                     groupId
-        //                 }
-        //             }
-        //         }
-        //     })
-
-        //     await tx.comment.deleteMany({
-        //         where: {
-        //             post: {
-        //                 groupId
-        //             }
-        //         }
-        //     })
-
-        //     await tx.post.deleteMany({
-        //         where: {
-        //             groupId
-        //         }
-        //     })
-
-        //     await tx.group.delete({
-        //         where: {
-        //             id: groupId
-        //         }
-        //     })
-        // })
-
-        await prisma.group.delete({
-            where: { id: groupId },
-        });
-
-
+            tx.groupInvites.deleteMany({
+                where: {
+                    groupId
+                }
+            })
+        })
 
         return NextResponse.json({ success: true })
     } catch (err) {

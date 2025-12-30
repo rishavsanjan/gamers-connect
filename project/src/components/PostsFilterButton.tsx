@@ -11,7 +11,7 @@ interface Props {
 
 const PostsFilterButton: React.FC<Props> = ({ category, filter, setCategory, setFilter }) => {
     return (
-        <div className="flex items-center gap-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg mb-4 mx-4 mt-4">
+        <div className="flex items-center gap-4 rounded-2xl border border-purple-500/20 bg-white/5 p-4 backdrop-blur-lg mb-4  mt-4">
             <Filter className="h-5 w-5 text-purple-400" />
 
             <Select value={category} onValueChange={setCategory}>

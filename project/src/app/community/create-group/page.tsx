@@ -11,6 +11,7 @@ import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { useUser } from '@/context/UserContext';
 import { useLoginModal } from '@/context/LoginModalContext';
+import toast from 'react-hot-toast';
 
 
 const CreateGroup = () => {
@@ -54,6 +55,7 @@ const CreateGroup = () => {
                 }
             });
             setGroupName('');
+            toast.success('Group created successfully!')
         } catch (error) {
             console.log(error)
         } finally {

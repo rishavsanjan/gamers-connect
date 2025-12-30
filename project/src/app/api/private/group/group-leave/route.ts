@@ -10,37 +10,42 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
         }
         const { groupId } = await req.json();
-        const isMember = await prisma.group.findFirst({
+        const isMember = await prisma.groupMember.findFirst({
             where: {
-                id: groupId,
-                members: { some: { id: session.user.id } }
+                userId: session.user.id,
+                groupId
             }
         })
 
         if (!isMember) {
             return NextResponse.json({ message: "Not a member" })
         }
-        const isAdmin = await prisma.group.count({
+        const isAdmin = await prisma.groupMember.count({
             where: {
-                id: groupId,
-                admins: { some: { id: session.user.id } }
+                groupId: groupId,
+                userId: session.user.id,
+                role: 'ADMIN'
             }
         }) > 0 ? true : false;
 
         const result = await prisma.$transaction(async (tx) => {
-            const join = await tx.group.update({
+            const join = await tx.groupMember.delete({
+                where: {
+                    userId_groupId: {
+                        userId: session.user.id,
+                        groupId
+                    }
+                }
+            })
+
+            await tx.group.update({
                 where: {
                     id: groupId
                 },
                 data: {
-
-                    members: {
-                        disconnect: { id: session.user.id }
-                    },
-                    admins: isAdmin ? {
-                        disconnect: { id: session.user.id },
-                    } : undefined,
-                    memberCount: { decrement: 1 }
+                    memberCount: {
+                        decrement: 1
+                    }
                 }
             })
 

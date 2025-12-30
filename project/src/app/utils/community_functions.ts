@@ -125,6 +125,8 @@ export const handleGroupLeave = async ({ groupId, setGroupsState }: GroupLeavePr
             )
         }
 
+        console.log(response.data)
+
     } catch (error) {
         console.log(error)
     }

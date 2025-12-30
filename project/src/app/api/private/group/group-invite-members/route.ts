@@ -45,7 +45,7 @@ export async function POST(req: Request) {
                             },
                         },
                         {
-                            memberInGroups: {
+                            groupMembers: {
                                 some: {
                                     id: groupId,
                                 },

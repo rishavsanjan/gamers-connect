@@ -5,6 +5,7 @@ import { fetchGroupPosts } from '@/app/queries/posts'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import PostsFilterButton from '@/components/PostsFilterButton'
+import PostsSkeleton from '@/components/PostSkeleton'
 import { useGroupPostsStore } from '@/zustland/groupPostsStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
@@ -46,10 +47,16 @@ const InfiniteGroupPosts: React.FC<Props> = ({ groupId }) => {
         <div>
             {/* Filter Bar */}
             <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter} />
-            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts}/>
+            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts} />
+            <div className='mt-4'>
+                {
+                    isFetchingNextPage &&
+                    <PostsSkeleton count={1} />
+                }
+            </div>
 
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
-                {isFetchingNextPage && <ClipLoader color='white' size={40} />}
+                {/* {isFetchingNextPage && <ClipLoader color='white' size={40} />} */}
                 {!hasNextPage && <p className="text-gray-500">No more posts</p>}
             </div>
         </div>

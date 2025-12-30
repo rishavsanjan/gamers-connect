@@ -6,6 +6,7 @@ import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
 import { Check, ChevronDown, Plus, Trash2 } from 'lucide-react';
 import React, { useState } from 'react'
+import toast from 'react-hot-toast';
 import { ClipLoader } from 'react-spinners';
 
 
@@ -52,6 +53,7 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
             setMembersState(prev => [...prev, userJoined])
 
             setMemberCount(prev => prev + 1);
+            toast.success('Group joined successfully!');
         } catch (error) {
             console.log(error)
         } finally {
@@ -75,6 +77,8 @@ const JoinLeaveButton: React.FC<Props> = ({ hasJoined, groupId }) => {
             if (groupState.privacy === 'PRIVATE') {
                 window.location.reload();
             }
+
+            
         } catch (error) {
             console.log(error)
         } finally {

@@ -9,43 +9,57 @@ export async function POST(req: Request) {
     const limit = Number(searchParams.get('limit') || 2);
     const skip = (page - 1) * limit
     const { groupId } = await req.json();
-    
+
     try {
         const session = await auth().catch(() => null);
-        
 
-
-        const members = await prisma.group.findMany({
+        const members = await prisma.groupMember.findMany({
             skip,
             take: limit,
             where: {
-                id: groupId
+                groupId: groupId
             },
-            include: {
-                members: {
-                    select: { username: true, id: true, name: true, avatar: true }
+            select: {
+                user: {
+                    select: {
+                        username: true, id: true, name: true, avatar: true
+                    },
                 },
-                admins: {
-                    select: { username: true, id: true, name: true, avatar: true }
-                },
-
+                role: true
             },
-
         })
 
-        const admins = members.flatMap(item =>
-            item.admins.map(admin => ({
-                ...admin,
-                role: "admin"
-            }))
-        );
+        // const members = await prisma.group.findMany({
+        //     skip,
+        //     take: limit,
+        //     where: {
+        //         id: groupId
+        //     },
+        //     include: {
+        //         members: {
+        //             select: { username: true, id: true, name: true, avatar: true }
+        //         },
+        //         admins: {
+        //             select: { username: true, id: true, name: true, avatar: true }
+        //         },
 
-        const allMembers = members.flatMap(item =>
-            item.members.map(member => ({
-                ...member,
-                role: "member"
-            }))
-        );
+        //     },
+
+        // })
+
+        const allMembers = members
+            .filter(f => f.role === 'MEMBER')
+            .map(f => ({
+                ...f.user,
+                role: 'member'
+            }));
+
+        const admins = members
+            .filter(f => f.role === 'ADMIN' || f.role === 'OWNER')
+            .map(f => ({
+                ...f.user,
+                role: 'admin'
+            }));
 
         const roleMap = new Map();
 

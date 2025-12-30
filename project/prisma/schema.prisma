@@ -29,7 +29,7 @@ model User {
   MyGame          MyGame[]
   Playlist        Playlist[]
   Collection      Collection[]
-  Favourite       Favourite[]
+  Favourite       Favorite[]
   Post            Post[]
   Like            Like[]
   Comment         Comment[]
@@ -41,14 +41,14 @@ model User {
   bookmarks              Bookmark[]
   userAchievements       UserAchievement[]
   ownedGroups            Group[]            @relation("GroupOwner")
-  adminInGroups          Group[]            @relation("GroupAdmins")
-  memberInGroups         Group[]            @relation("GroupMembers")
   socialLinks            SocialLinks[]
   sentFollowRequests     FollowRequest[]    @relation("FollowRequestSender")
   receivedFollowRequests FollowRequest[]    @relation("FollowRequestReceiver")
   groupJoinRequests      GroupJoinRequest[]
   groupInvites           GroupInvites[]
   sentGroupInvites       GroupInvites[]     @relation("InvitedBy")
+  groupMembers           GroupMember[]
+  groups                 Group[]
 }
 
 model FollowRequest {
@@ -174,7 +174,7 @@ model Game {
   myGames            MyGame[]
   playlists          Playlist[]
   collections        Collection[] @relation("CollectionGames")
-  Favourite          Favourite[]
+  Favourite          Favorite[]
   Post               Post[]
 }
 
@@ -211,7 +211,7 @@ model Playlist {
   @@unique([userId, gameId])
 }
 
-model Favourite {
+model Favorite {
   id     String @id @default(cuid())
   userId String
   gameId String
@@ -276,6 +276,11 @@ model Post {
   Like      Like[]
   Comment   Comment[]
   bookmarks Bookmark[]
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([groupId, createdAt])
+  @@index([visibility, createdAt])
 }
 
 enum PostPrivacy {
@@ -350,15 +355,16 @@ model Follow {
   following User @relation("Followers", fields: [followingId], references: [id], onDelete: Cascade)
 
   @@unique([followerId, followingId])
+  @@index([followingId])
+  @@index([followerId])
 }
 
 model Group {
   id String @id @default(cuid())
 
-  groupOwner  User    @relation("GroupOwner", fields: [ownerId], references: [id], onDelete: Cascade)
+  groupOwner  User          @relation("GroupOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   ownerId     String
-  admins      User[]  @relation("GroupAdmins")
-  members     User[]  @relation("GroupMembers")
+  members     GroupMember[]
   posts       Post[]
   name        String
   description String?
@@ -373,6 +379,29 @@ model Group {
   createdAt         DateTime           @default(now())
   groupJoinRequests GroupJoinRequest[]
   groupInvites      GroupInvites[]
+  user              User?              @relation(fields: [userId], references: [id])
+  userId            String?
+}
+
+model GroupMember {
+  id       String    @id @default(cuid())
+  userId   String
+  groupId  String
+  role     GroupRole @default(MEMBER)
+  joinedAt DateTime  @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@index([groupId])
+  @@index([userId])
+}
+
+enum GroupRole {
+  OWNER
+  ADMIN
+  MEMBER
 }
 
 model SocialLinks {

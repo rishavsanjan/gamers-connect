@@ -31,17 +31,17 @@ export default async function GamelyCommunity() {
 
         const groupIds = await prisma.user.findMany({
             where: { id: userId },
-            include: {
-                memberInGroups: {
-                    select: {
-                        id: true
+            select: {
+                groupMembers:{
+                    select:{
+                        id:true
                     }
                 }
             }
         })
 
         followingUserIds = followingIds.map(f => f.followingId)
-        joinedGroupIds = groupIds.map(f => f.memberInGroups.map(f => f.id)).flat()
+        joinedGroupIds = groupIds.map(f => f.groupMembers.map(f => f.id)).flat()
 
     }
 

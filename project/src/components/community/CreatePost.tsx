@@ -2,7 +2,6 @@
 import React, { SetStateAction, useEffect, useRef, useState } from 'react'
 import { Game } from '@/app/types/game';
 import axios from 'axios';
-import { BiSearch } from 'react-icons/bi';
 import { getYearFromUnix } from '@/app/utils/date';
 import { ClipLoader, RotateLoader } from 'react-spinners';
 import { GrClose } from 'react-icons/gr';
@@ -15,6 +14,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { IoCreate } from 'react-icons/io5';
 import { RiImageAddFill } from 'react-icons/ri';
 import SearchGames from '../SearchGames';
+import { useGroupPostsStore } from '@/zustland/groupPostsStore';
+import { usePostFeedStore } from '@/zustland/postFeedStore';
 
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
@@ -36,9 +37,10 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
     const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
     const { openLoginModal } = useLoginModal();
     const { isLoggedIn } = useUser();
-    const { setPosts, posts } = usePostFeed();
-    console.log(posts)
-
+    const setHomeFeedPosts = usePostFeedStore((s) => s.setPosts);    
+    const setGroupPosts = useGroupPostsStore((s) => s.setPosts);
+    const homePosts = usePostFeedStore((s) => s.posts)
+    const groupPosts = useGroupPostsStore((s) => s.posts)
     const selectedGameData = async (id: number) => {
         const response = await axios({
             url: `/api/private/gamedetails`,
@@ -127,8 +129,13 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
 
 
         //await redis.del('top-tags');
-        console.log(response.data.formattedPost)
-        setPosts(prev => [response.data.formattedPost, ...prev]);
+        console.log(response.data.formattedPost);
+        const newPost = response.data.formattedPost;
+        if(!groupId){
+            setHomeFeedPosts([response.data.formattedPost, ...homePosts]);
+        }else{
+            setGroupPosts([ response.data.formattedPost, ...groupPosts]);
+        }
 
         //router.refresh();
 

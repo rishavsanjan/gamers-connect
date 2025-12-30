@@ -3,13 +3,13 @@
 import { Send } from 'lucide-react'
 import React, { useState } from 'react'
 import CreatePostModal from './CreatePost';
+import { usePostFeedStore } from '@/zustland/postFeedStore';
 
 interface Props {
     groupId?: string
 }
 
 const AddPostModal: React.FC<Props> = ({ groupId }) => {
-
     const [showPostModal, setShowPostModal] = useState(false);
     return (
         <>

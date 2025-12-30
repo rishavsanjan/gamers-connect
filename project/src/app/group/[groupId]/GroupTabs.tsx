@@ -4,13 +4,10 @@ import AddPostModal from '@/components/community/AddPostModal'
 import React, { useState } from 'react'
 import InfiniteGroupPosts from './InfiniteGroupPosts'
 import InfiniteGroupMedia from './InfiniteGroupMedia'
-import { Post as PostPrisma } from '@prisma/client'
 import GroupAsideBar from './GroupAsideBar'
 import InfiniteGroupMembers from './InfiniteGroupMembers'
-import { PostFeedProvider } from '@/context/PostsContext'
 import InfiniteGroupRequests from './InfiniteGroupRequests'
 import { useGroupDetails } from '@/context/GroupsContext'
-import InitPosts from '@/context/InitPosts'
 import InitGroupPostsStore from '@/context/InitGroupPosts'
 
 interface Props {

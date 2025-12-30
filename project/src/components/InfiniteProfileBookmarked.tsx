@@ -9,8 +9,9 @@ import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import { useProfileBookmarkStore } from '@/zustland/profileBookmarkStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import React, {  useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { ClipLoader } from 'react-spinners'
+import PostsSkeleton from './PostSkeleton'
 
 const InfiniteProfileBookmarked: React.FC<Props> = ({ }) => {
 
@@ -40,11 +41,16 @@ const InfiniteProfileBookmarked: React.FC<Props> = ({ }) => {
 
     return (
         <div>
-            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts}/>
-
+            <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts} />
+            <div className='mt-4'>
+                {
+                    isFetchingNextPage &&
+                    <PostsSkeleton count={1} />
+                }
+            </div>
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
-                {isFetchingNextPage || isLoading && <ClipLoader color='white' size={40} />}
-                {!hasNextPage  && <p className="text-gray-500">No more posts</p>}
+                {/* {isFetchingNextPage || isLoading && <ClipLoader color='white' size={40} />} */}
+                {!hasNextPage && <p className="text-gray-500">No more posts</p>}
             </div>
         </div>
     )

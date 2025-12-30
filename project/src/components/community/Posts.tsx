@@ -8,8 +8,8 @@ import PostImages from './PostImages'
 import toast from 'react-hot-toast'
 import PostSettings from '../PostSettings'
 import { useUser } from '@/context/UserContext'
-import { usePostFeedStore } from '@/zustland/postFeedStore'
 import { Post } from '@/app/types/post'
+import PostsSkeleton from '../PostSkeleton'
 
 interface Props {
     actions: {
@@ -37,7 +37,8 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside)
         }
-    }, [])
+    }, []);
+
     return (
         <div className='space-y-4'>
             {
