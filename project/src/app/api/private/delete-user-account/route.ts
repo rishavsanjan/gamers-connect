@@ -80,8 +80,7 @@ export async function DELETE(req: Request) {
             await tx.user.update({
                 where: { id: userId },
                 data: {
-                    adminInGroups: { set: [] },
-                    groupMembers : {set : []}
+                    groupMembers : {set : []},
                 }
             });
 
