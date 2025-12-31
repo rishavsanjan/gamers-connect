@@ -10,18 +10,7 @@ export async function GET(req: Request) {
         const session = await auth().catch(() => null);
         
 
-        const details = await prisma.group.findFirst({
-            where: {
-                id: groupId
-            },
-            include: {
-                members: {
-                    include: {
-                        _count: true
-                    }
-                }
-            }
-        })
+        
 
 
 
