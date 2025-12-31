@@ -81,7 +81,7 @@ export async function DELETE(req: Request) {
                 where: { id: userId },
                 data: {
                     adminInGroups: { set: [] },
-                    memberInGroups: { set: [] }
+                    groupMembers : {set : []}
                 }
             });
 
