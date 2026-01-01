@@ -1,6 +1,6 @@
 import React from 'react'
 import { prisma } from '@/lib/prisma'
-import { Heart, MessageCircle, ArrowLeft, User, Clock } from 'lucide-react';
+import { Heart, MessageCircle, ArrowLeft, User, Clock, Flag } from 'lucide-react';
 import PostActions from './PostActions';
 import CommentSection from './CommentSection';
 import AuthorCard from './AuthorCard';
@@ -11,6 +11,7 @@ import PostDescription from '@/components/community/PostDescription';
 import PostImages from '@/components/community/PostImages';
 import Link from 'next/link';
 import CopyButton from '@/components/CopyButton';
+import RelatedPosts from './RelatedPosts';
 
 interface Props {
     params: Promise<{ postId: string }>
@@ -21,7 +22,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
     const userId = session?.user?.id ?? null;
     const { postId } = await params;
 
-   
+
     let posts = await prisma.post.findFirst({
         where: {
             id: postId
@@ -33,7 +34,8 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                     id: true,
                     username: true,
                     xp: true,
-                    avatar: true
+                    avatar: true,
+                    privacy: true
 
                 }
             },
@@ -87,20 +89,26 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                 }
             ]
         },
-        include: {
+        select: {
             user: {
                 select: {
                     name: true,
                     username: true,
                     id: true
                 }
-            }
+            },
+            id: true,
+            description: true,
+            likeCount: true,
+            commentCount: true
         },
         take: 5,
         orderBy: { createdAt: "desc" }
     });
 
     let bookmark = false;
+    let isRequestSent = false;
+
 
     if (session?.user?.id) {
         bookmark = !!(await prisma.bookmark.findFirst({
@@ -109,7 +117,24 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                 postId
             }
         }));
+
+        isRequestSent = await prisma.followRequest.count({
+            where: {
+                senderId: session.user.id,
+                receiverId: post.user.id
+            }
+        }) > 0 ? true : false
+
+        const res = await prisma.followRequest.findFirst({
+            where: {
+                senderId: session.user.id,
+                receiverId: post.user.id
+            }
+        })
+        console.log(res)
     }
+
+    console.log(isRequestSent)
 
     const gameCount = await prisma.myGame.count({
         where: {
@@ -189,7 +214,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
             <div className="mx-auto max-w-7xl md:px-6 md:py-8 py-2 px-2">
                 <div className="grid grid-cols-12 gap-6">
                     {/* Main Content */}
-                    <div className="col-span-12 space-y-3 lg:col-span-8">
+                    <div className="col-span-12 space-y-3 lg:col-span-8 overflow-y-auto h-screen hide-scrollbar">
                         {/* Post Card */}
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 md:p-8 p-2 backdrop-blur-lg">
                             {/* Post Header */}
@@ -244,15 +269,6 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                             )}
 
-                            {/* Tags */}
-                            {/* <div className="mb-6 flex flex-wrap gap-2">
-                                {post.tags.map((tag, idx) => (
-                                    <span key={idx} className="cursor-pointer rounded-full bg-purple-500/20 px-4 py-1 text-sm text-purple-300 transition hover:bg-purple-500/30">
-                                        {tag}
-                                    </span>
-                                ))}
-                            </div> */}
-
                             {/* Post Actions */}
                             <div className="flex items-center justify-between border-t border-white/10 pt-6">
                                 <div className="flex items-center space-x-6">
@@ -276,37 +292,10 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
 
                     {/* Right Sidebar */}
                     <div className="col-span-12 space-y-6 lg:col-span-4">
-                        <AuthorCard name={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp} profilePicture={post?.user?.avatar} username={post.user.username} userId={session?.user.id} />
+                        <AuthorCard name={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp} profilePicture={post?.user?.avatar} username={post.user.username} userId={session?.user.id} privacy={post.user.privacy} isRequestSent={isRequestSent} />
 
                         {/* related posts */}
-                        <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
-                            <h3 className="mb-4 text-lg font-bold">Related Posts</h3>
-                            <div className="space-y-4">
-                                {relatedPosts.map(relatedPost => (
-                                    <Link
-                                        key={relatedPost.id}
-                                        href={`/community/post_details/${relatedPost.id}`}
-                                        className="block cursor-pointer rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-purple-500/40 hover:bg-white/10"
-                                    >
-                                        <div className="mb-2 flex items-center space-x-2">
-                                            <User className="h-4 w-4 text-purple-400" />
-                                            <p className="text-sm font-medium text-purple-400">{relatedPost.user.username}</p>
-                                        </div>
-                                        <p className="mb-3 text-sm text-gray-200">{relatedPost.description}</p>
-                                        <div className="flex items-center space-x-4 text-xs text-gray-400">
-                                            <span className="flex items-center space-x-1">
-                                                <Heart className="h-3 w-3" />
-                                                <span>{relatedPost.likeCount}</span>
-                                            </span>
-                                            <span className="flex items-center space-x-1">
-                                                <MessageCircle className="h-3 w-3" />
-                                                <span>{relatedPost.commentCount}</span>
-                                            </span>
-                                        </div>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
+                        <RelatedPosts relatedPosts={relatedPosts} />
 
                         {/* report */}
                         {/* <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6 backdrop-blur-lg">
@@ -320,7 +309,7 @@ const PostDetails: React.FC<Props> = async ({ params }) => {
                             <button className="w-full rounded-lg border border-red-500/40 py-2 text-sm font-semibold text-red-400 transition hover:bg-red-500/10">
                                 Report
                             </button>
-                        </div>  */}
+                        </div>   */}
                     </div>
                 </div>
             </div>

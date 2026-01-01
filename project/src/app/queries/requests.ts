@@ -49,3 +49,33 @@ export const declineGroupInvite = async ({
     { groupId }
   );
 };
+
+export const handleAddFollow = async ({
+  followerId,
+  followingId
+}: {
+  followerId: string,
+  followingId: string
+}) => {
+  await axios.post(
+    "/api/private/addfollow",
+    { followerId, followingId }
+  );
+}
+
+export const handleAddRequest = async ({
+  senderId,
+  receiverId
+}: {
+  senderId: string,
+  receiverId: string
+}) => {
+  await axios.post(
+    `/api/private/follow-request`,
+    { senderId, receiverId }
+  );
+}
+
+
+
+

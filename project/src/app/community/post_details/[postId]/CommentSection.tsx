@@ -7,6 +7,7 @@ import { Send } from 'lucide-react'
 import { ClipLoader } from 'react-spinners'
 import { useUser } from '@/context/UserContext'
 import { useLoginModal } from '@/context/LoginModalContext'
+import CommentSkeleton from '@/skeleton/CommentSkeleton'
 
 export default function CommentSection({ postId, initialComments }: { postId: string, initialComments: Comment[] }) {
   const { isLoggedIn } = useUser();
@@ -52,6 +53,7 @@ export default function CommentSection({ postId, initialComments }: { postId: st
 
   useEffect(() => {
     if (page === 1) return;
+    if(!hasMore) return;  
     setLoading(true);
     getComments();
 
@@ -135,9 +137,14 @@ export default function CommentSection({ postId, initialComments }: { postId: st
       {comments.map(c => (
         <CommentItem key={c.id} comment={c} postId={postId} onReply={handleAddComment} />
       ))}
+      {
+        loading &&
+        <CommentSkeleton count={2} />
+      }
       <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
-        {loading && <ClipLoader color='white' size={40} />}
-        {!hasMore && <p className="text-gray-500">No more comments</p>}
+
+        {/* {loading && <ClipLoader color='white' size={40} />} */}
+        {/* {!hasMore && <p className="text-gray-500">No more comments</p>} */}
       </div>
     </div>
   )

@@ -8,6 +8,7 @@ import { Heart, Send } from 'lucide-react'
 import { BsHeartFill } from 'react-icons/bs'
 import { ClipLoader } from 'react-spinners'
 import Link from 'next/link'
+import CommentSkeleton from '@/skeleton/CommentSkeleton'
 
 interface CommentItemProps {
     comment: Comment
@@ -102,16 +103,16 @@ export default function CommentItem({ comment, postId, level = 0, onReply }: Com
                         <button
                             onClick={handleViewReplies}
                             className=" text-sm text-purple-400 hover:text-pink-400"
-                        >
-                            {loading
-                                ? 'Loading...'
-                                : showReplies
+                        >{
+                                showReplies
                                     ? 'Hide replies'
-                                    : `View replies (${replyCount})`}
+                                    : `View replies (${replyCount})`
+                            }
                         </button>
                     }
                 </div>
                 {showReplyBox && (
+
                     <div className="mt-3 ml-6">
                         <textarea
                             value={replyText}
@@ -136,7 +137,15 @@ export default function CommentItem({ comment, postId, level = 0, onReply }: Com
                         </button>
                     </div>
                 )}
+
             </div>
+            {
+                loading &&
+                <div style={{ marginLeft: level+1 * 24 }}>
+                    <CommentSkeleton count={1} />
+                </div>
+
+            }
 
             {showReplies &&
                 replies.map((reply) => (

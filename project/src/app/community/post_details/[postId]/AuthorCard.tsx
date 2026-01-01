@@ -1,40 +1,67 @@
 'use client';
+import { handleAddFollow, handleAddRequest } from '@/app/queries/requests';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
+import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
+import { error } from 'console';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ClipLoader } from 'react-spinners';
 
-export default function AuthorCard({ name, authorId, gameCount, postCount, collectionCount, following, xp, profilePicture, username, userId }: { name: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean, xp: number, profilePicture: string | null, username: string, userId: string | undefined }) {
-    const { isLoggedIn } = useUser();
+export default function AuthorCard({ name, authorId, gameCount, postCount, collectionCount, following, xp, profilePicture, username, userId, privacy, isRequestSent }: { name: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean, xp: number, profilePicture: string | null, username: string, userId: string | undefined, privacy: 'PRIVATE' | 'PUBLIC', isRequestSent: boolean }) {
+    const { isLoggedIn, user } = useUser();
     const { openLoginModal } = useLoginModal();
 
     const { data: session, status } = useSession()
     const [isFollowing, setIsFollowing] = useState(following);
-    const [loading, setLoading] = useState(false);
+    const [requestSent, setRequestSent] = useState(isRequestSent);
 
+    console.log(following, isRequestSent)
 
-    const addFollow = async () => {
-        if(!isLoggedIn){
-            openLoginModal();
-            return;
-        }
-        setLoading(true)
-        const response = await axios({
-            url: `/api/private/addfollow`,
-            method: 'post',
-            data: {
-                followerId: session?.user.id,
-                followingId: authorId
+    const addFollowMutation = useMutation({
+        mutationFn: async () => {
+            if (!session) throw new Error('Not logged in!');
+            handleAddFollow({ followerId: session.user.id, followingId: authorId })
+        },
+        onMutate: async () => {
+            if (!isLoggedIn) {
+                openLoginModal();
+                throw new Error("Not logged in");
             }
-        })
 
-        setIsFollowing(prev => !prev)
+            const previous = isFollowing;
+            setIsFollowing(prev => !prev);
 
-        setLoading(false)
-    }
+            return { previous }
+        },
+        onError: (_err, _vars, context) => {
+            setIsFollowing(context?.previous || (prev => !prev))
+        },
+    })
+
+    const followRequestMutation = useMutation({
+        mutationFn: async () => {
+            if (!session) throw new Error('Not logged in!');
+            handleAddRequest({ senderId: session?.user.id, receiverId: authorId })
+        },
+        onMutate: async () => {
+            if (!isLoggedIn) {
+                openLoginModal();
+                throw new Error("Not logged in");
+            }
+
+            const previous = requestSent;
+            setRequestSent(prev => !prev);
+
+            return { previous }
+        },
+        onError: (_err, _vars, context) => {
+            setRequestSent(context?.previous || (prev => !prev))
+        },
+    })
+
 
     return (
         <div className="rounded-2xl border border-purple-500/20 bg-white/5 p-6 backdrop-blur-lg">
@@ -71,27 +98,57 @@ export default function AuthorCard({ name, authorId, gameCount, postCount, colle
                     <p className="text-xs text-gray-400">Collections</p>
                 </div>
             </div>
+            {
+                userId === authorId ?
+                    <Link
+                        className={`w-full self-center flex flex-row justify-center rounded-lg py-3 font-semibold transition border border-purple-500 bg-transparent hover:bg-purple-500/10`}
+                        href={'/profile'}>
+                        My Profile
+                    </Link>
+                    :
+                    <button
+                        onClick={() => { privacy === 'PUBLIC' ? addFollowMutation.mutate() : followRequestMutation.mutate() }}
+                        disabled={addFollowMutation.isPending || userId === authorId}
+                        className={`w-full rounded-lg py-3 font-semibold transition ${isFollowing || requestSent
+                            ? 'border border-purple-500 bg-transparent hover:bg-purple-500/10'
+                            : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
+                            } disabled:cursor-not-allowed cursor-pointer`}
+                    >
+                        {
+                            addFollowMutation.isPending ?
+                                <ClipLoader color='white' size={20} />
+                                :
+                                <>
+                                    {
+                                        isFollowing
+                                            ? 'Following'
+                                            :
+                                            <>
+                                                {
+                                                    privacy === 'PRIVATE' ?
+                                                        <>
+                                                            {
+                                                                requestSent ? 'Requested' : 'Request'
+                                                            }
+                                                        </>
+                                                        :
 
-            <button
-                onClick={() => addFollow()}
-                disabled={loading || userId === authorId}
-                className={`w-full rounded-lg py-3 font-semibold transition ${isFollowing
-                    ? 'border border-purple-500 bg-transparent hover:bg-purple-500/10'
-                    : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700'
-                    } disabled:cursor-not-allowed`}
-            >
-                {
-                    loading ?
-                        <ClipLoader color='white' size={20} />
-                        :
-                        <>
-                            {isFollowing ? 'Following' : 'Follow'}
-                        </>
+                                                        <>
+                                                            Follow
+                                                        </>
 
-                }
+                                                }
+                                            </>
+
+                                    }
+                                </>
+
+                        }
 
 
-            </button>
+                    </button>
+            }
+
         </div>
     );
 }

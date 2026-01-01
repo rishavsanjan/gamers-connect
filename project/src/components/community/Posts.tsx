@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 import PostSettings from '../PostSettings'
 import { useUser } from '@/context/UserContext'
 import { Post } from '@/app/types/post'
-import PostsSkeleton from '../PostSkeleton'
+import PostsSkeleton from '../../skeleton/PostSkeleton'
 
 interface Props {
     actions: {

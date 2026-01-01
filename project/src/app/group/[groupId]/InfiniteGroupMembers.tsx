@@ -1,15 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Crown, Shield, UserMinus, MoreVertical } from 'lucide-react'
-import axios from 'axios'
 import { GrUpgrade } from 'react-icons/gr'
 import { FcDownRight } from 'react-icons/fc'
 import { useGroupDetails } from '@/context/GroupsContext'
-import Link from 'next/link'
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query'
 import { fetchGroupMembers } from '@/app/queries/posts'
 import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 import { handleAdminCreate, handleKickMember } from '@/app/queries/group'
 import MemberCard from './MemberCard'
+import MemberCardSkeleton from '@/skeleton/MemberSkeleton'
 
 interface Member {
     name: string | null
@@ -205,12 +204,16 @@ const InfiniteGroupMembers: React.FC<Props> = ({
                     </div>
                 )
             })}
+            {
+                isLoading &&
+                <MemberCardSkeleton count={2}/>
+            }
 
-            {isLoading && (
+            {/* {isLoading && (
                 <div className="flex items-center justify-center py-4">
                     <div className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
                 </div>
-            )}
+            )} */}
 
             {!hasNextPage && membersState.length > 0 && (
                 <p className="text-center text-gray-500 py-4">No more members to load</p>

@@ -252,7 +252,7 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
 
 
     return (
-        <div className="min-h-screen bg-[#18191a] text-[#e4e6eb]">
+        <div className="min-h-screen dark:bg-[#0F0B1E] text-white">
 
 
             {/* Main Container */}

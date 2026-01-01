@@ -8,7 +8,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchHomePosts } from '@/app/queries/posts'
 import PostsFilterButton from '../PostsFilterButton'
 import { usePostFeedStore } from '@/zustland/postFeedStore'
-import PostsSkeleton from '../PostSkeleton'
+import PostsSkeleton from '../../skeleton/PostSkeleton'
 
 
 interface Props {
@@ -55,7 +55,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
             <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts} />
             <div className='mt-4'>
                 {
-                    isFetchingNextPage &&
+                    isFetchingNextPage || isLoading &&
                     <PostsSkeleton count={1} />
                 }
             </div>

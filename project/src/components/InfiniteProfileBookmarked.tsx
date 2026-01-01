@@ -11,7 +11,7 @@ import { useProfileBookmarkStore } from '@/zustland/profileBookmarkStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import React, { useEffect } from 'react'
 import { ClipLoader } from 'react-spinners'
-import PostsSkeleton from './PostSkeleton'
+import PostsSkeleton from '../skeleton/PostSkeleton'
 
 const InfiniteProfileBookmarked: React.FC<Props> = ({ }) => {
 
