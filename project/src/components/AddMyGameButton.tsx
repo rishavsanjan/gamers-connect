@@ -3,7 +3,7 @@ import { addToMyGames, addToPlayList, removeFromMyGame, removeFromPlayList } fro
 import { Game } from "@/app/types/game"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
-import { FadeLoader } from "react-spinners"
+import { ClipLoader, FadeLoader } from "react-spinners"
 import { IoGameController } from "react-icons/io5"
 import { LuGamepad2 } from "react-icons/lu"
 import RatingSlider from "./RatingSlider"
@@ -66,7 +66,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
         };
         fetchStatus();
     }, [game]);
-    
+    console.log(status)
     useEffect(() => {
         if (collectionModal) {
             // Lock scroll
@@ -97,55 +97,95 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
             <div className="flex flex-col gap-4">
                 <div className="flex sm:flex-row flex-wrap gap-4">
                     <button
+                        disabled={loading}
                         onClick={() => {
                             if (!isLoggedIn) {
                                 openLoginModal();
                                 return;
                             }
-                            status.inMyGames ? removeFromMyGame(game, 'myGame', setStatus, setLoading) : setShowPlatformModal(true)
+                            status.inMyGames
+                                ? removeFromMyGame(game, 'myGame', setStatus, setLoading, status)
+                                : setShowPlatformModal(true)
                         }}
-                        className={`${status.inMyGames ? 'bg-green-500' : 'bg-white'}  rounded-xl p-1 gap-4  flex flex-row  px-8 items-center hover:bg-red-300 hover:backdrop-blur-2xl hover:shadow-2xl transition-all ease-in-out duration-300 cursor-pointer`}>
-                        {
-                            loading ?
-                                <FadeLoader color="gray" />
-                                :
-                                <>
-                                    <div>
-                                        {
-                                            status.inMyGames ?
-                                                <>
-                                                    <p className='text-white text-lg'>Owned</p>
-                                                    <p className="text-gray-200">{status.inMyGames.owned_platform}</p>
-                                                    <p className="text-gray-200">{status.inMyGames.status}</p>
-                                                </>
+                        className={`
+                            group relative overflow-hidden cursor-pointer
+                            ${status.inMyGames
+                                ? 'bg-linear-to-r from-green-500 to-green-600'
+                                : 'bg-white border-2 border-gray-200'
+                            }
+                            rounded-2xl px-6 py-4
+                            flex items-center justify-between gap-4
+                            min-w-[200px]
+                            shadow-lg hover:shadow-2xl
+                            transform hover:scale-105 hover:-translate-y-1
+                            transition-all duration-300 ease-out
+                            disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none
+                            disabled:hover:shadow-lg
+                        `}
+                    >
+                        <>
+                            <div className="flex-1 text-left">
+                                {status.inMyGames ? (
+                                    <>
+                                        <p className="text-white font-bold text-lg mb-1">
+                                            Owned
+                                        </p>
+                                        <p className="text-green-100 text-sm font-medium">
+                                            {status.inMyGames.owned_platform}
+                                        </p>
+                                        <p className="text-green-50 text-xs mt-0.5 capitalize">
+                                            {status.inMyGames.status}
+                                        </p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-gray-500 text-xs font-medium uppercase tracking-wide mb-0.5">
+                                            Add to
+                                        </p>
+                                        <p className="text-gray-900 text-lg font-medium">
+                                            My Games
+                                        </p>
+                                    </>
+                                )}
+                            </div>
 
-                                                :
+                            <div className={`
+                flex items-center justify-center
+                w-12 h-12 rounded-full
+                ${status.inMyGames
+                                    ? 'bg-white/20 group-hover:bg-white/30'
+                                    : 'bg-gray-100 group-hover:bg-gray-200'
+                                }
+                transition-colors duration-300
+            `}>
+                                {status.inMyGames ? (
+                                    <GoCheck
+                                        color="white"
+                                        size={28}
+                                        className="drop-shadow-md"
+                                    />
+                                ) : (
+                                    <img
+                                        className="w-7 h-7 opacity-70 group-hover:opacity-100 transition-opacity"
+                                        src="https://img.icons8.com/?size=100&id=102544&format=png&color=000000"
+                                        alt="Add game"
+                                    />
+                                )}
+                            </div>
+                        </>
 
-                                                <>
-                                                    <p className='text-gray-400 text-left text-sm'>Add to</p>
-                                                    <p className='text-black text-lg'>My Games</p>
-                                                </>
-                                        }
-                                    </div>
-                                    <div>
-                                        {
-                                            status.inMyGames ?
-                                                <GoCheck color="white" size={40} />
-                                                :
-                                                <>
-                                                    <img className='w-12 h-12' src="https://img.icons8.com/?size=100&id=102544&format=png&color=000000" alt="" />
-
-                                                </>
-                                        }
-                                    </div>
-
-                                </>
-                        }
-
-
-
+                        {/* Subtle shine effect on hover */}
+                        <div className={`
+        absolute inset-0 
+        bg-linear-to-r from-transparent via-white to-transparent
+        opacity-0 group-hover:opacity-20
+        transform -translate-x-full group-hover:translate-x-full
+        transition-all duration-700
+        pointer-events-none
+    `} />
                     </button>
                     <button
+                        disabled={playlistLoading}
                         onClick={() => {
                             if (!isLoggedIn) {
                                 openLoginModal();
@@ -153,44 +193,39 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                             }
                             status.inPlaylist ? removeFromPlayList(game, 'playlist', setStatus, setPlaylistLoading) : addToPlayList(game, 'playlist', setStatus, setPlaylistLoading)
                         }}
-                        className='bg-transparent hover:bg-gray-50/10 ease-in-out duration-300 cursor-pointer rounded-xl p-2 gap-4  flex flex-row justify-between items-center border border-white '>
-                        {
-                            playlistLoading ?
-                                <FadeLoader color="gray" />
-                                :
-                                <>
-                                    {
-                                        status.inPlaylist ?
+                        className='bg-transparent hover:bg-gray-50/10 ease-in-out duration-300 cursor-pointer rounded-xl p-2 gap-4  flex flex-row justify-between items-center border border-white disabled:cursor-not-allowed'>
+                        <>
+                            {
+                                status.inPlaylist ?
 
-                                            <div>
-                                                <p className='text-white '>In Playlist</p>
-                                            </div>
-                                            :
-                                            <div >
-                                                <p className='text-gray-400 text-left'>Add to</p>
-                                                <p className='text-white '>Playlist</p>
-                                            </div>
+                                    <div>
+                                        <p className='text-white '>In Playlist</p>
+                                    </div>
+                                    :
+                                    <div >
+                                        <p className='text-gray-400 text-left'>Add to</p>
+                                        <p className='text-white '>Playlist</p>
+                                    </div>
 
-                                    }
+                            }
 
-                                    {
-                                        status.inPlaylist ?
+                            {
+                                status.inPlaylist ?
 
-                                            <div>
-                                                <LuGamepad2 className='text-2xl text-purple-500' />
-                                            </div>
-                                            :
-                                            <div>
-                                                <IoGameController className='text-3xl' />
-                                            </div>
+                                    <div>
+                                        <LuGamepad2 className='text-2xl text-purple-500' />
+                                    </div>
+                                    :
+                                    <div>
+                                        <IoGameController className='text-3xl' />
+                                    </div>
 
-                                    }
+                            }
 
 
 
-                                </>
+                        </>
 
-                        }
 
                     </button>
                     <button
@@ -232,7 +267,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                 collectionModal &&
                 <div
                     ref={collectionRef}
-                    className="h-screen w-full  fixed top-0 left-0 bg-black/50 z-[100] items-center justify-center flex flex-col gap-4">
+                    className="h-screen w-full  fixed top-0 left-0 bg-black/50 z-100 items-center justify-center flex flex-col gap-4">
                     <CollectionModal game={game} />
                 </div>
             }
@@ -240,7 +275,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                 <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm  ">
                     <div className="bg-gray-800 rounded-2xl p-8 max-w-md w-full border-2 border-purple-500 shadow-2xl">
                         <h3 className="text-2xl font-bold text-white mb-6">Select Platform</h3>
-                        <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto ">
+                        <div className="grid grid-cols-2 gap-3 max-h-96 overflow-y-auto hide-scrollbar">
                             {platforms.map((platform) => (
                                 <button
                                     onClick={() => {
@@ -278,15 +313,18 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                                             openLoginModal();
                                             return;
                                         }
+
+
                                         setCurrentGameStatus(gameStatus)
                                         setOwnedGame(prev => ({ ...prev, status: gameStatus }));
+
                                         setShowStatusModal(false);
                                         addToMyGames(game, 'myGame', setStatus, setLoading, ownGame.owned_platform, gameStatus);
                                         setSharePayload({
                                             type: "myGame",
                                             gameId: game.id,
                                             gameName: game.name,
-                                            status:gameStatus
+                                            status: gameStatus
                                         })
                                         setShareAsPost(true);
                                     }}
@@ -308,7 +346,7 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
             )}
             {
                 shareAsPost &&
-                <ShareAsPost shareAsPost={shareAsPost}  setShareAsPost={setShareAsPost}   {...sharePayload} />
+                <ShareAsPost shareAsPost={shareAsPost} setShareAsPost={setShareAsPost}   {...sharePayload} />
             }
         </>
 

@@ -55,7 +55,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
             <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts} />
             <div className='mt-4'>
                 {
-                    isFetchingNextPage || isLoading &&
+                    isFetchingNextPage &&
                     <PostsSkeleton count={1} />
                 }
             </div>

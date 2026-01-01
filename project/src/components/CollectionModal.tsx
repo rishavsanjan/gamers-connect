@@ -5,6 +5,9 @@ import axios from 'axios';
 import CreateCollectionModal from './modals/CreateCollectionModal';
 import { GrAdd } from 'react-icons/gr';
 import { LiaAngleRightSolid, LiaCheckSolid } from "react-icons/lia";
+import { ClipLoader } from 'react-spinners';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCollections } from '@/app/queries/games';
 
 interface CollectionProps {
     game: Game
@@ -23,15 +26,25 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
     const [collection, setCollection] = useState<Collection[]>();
     const [createCollectionModal, setCreateCollectionModal] = useState(false);
     const createCollectionRef = useRef<HTMLDivElement>(null);
-    const getCollection = async () => {
-        const response = await axios({
-            url: `/api/private/getcollection?gameId=${game.id}`,
-            method: 'GET'
-        })
-        setCollection(response.data.collections)
-    }
+    const [adding, setAdding] = useState('');
+    const gameId = game.id;
+
+    const { data, isLoading } = useQuery({
+        queryKey: ['get-collections', gameId],
+        queryFn: fetchCollections,
+        enabled: !!gameId,
+    })
+
+    useEffect(() => {
+        if (!data) return
+        setCollection(data.collections)
+    }, [data])
+
+
+
 
     const handleAddInCollection = async (collectionId: string) => {
+        setAdding(collectionId)
         const response = await axios({
             url: `/api/private/addgameincollection?gameId=${game.id}`,
             method: 'POST',
@@ -60,11 +73,10 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
             }
             return item;
         }))
-    }
+        setAdding('')
 
-    useEffect(() => {
-        getCollection();
-    }, [])
+    }   
+
 
     useEffect(() => {
         const createCollectionContainer = createCollectionRef.current;
@@ -102,13 +114,20 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                     <p>Add to list</p>
                 </div>
             </div>
-           
+
             <button
                 onClick={() => { setCreateCollectionModal(true) }}
                 className='flex flex-row justify-between items-center w-96 border-b border-gray-600 px-4 py-2 cursor-pointer hover:bg-gray-400 ease-in-out duration-300 transition-all'>
                 <p>Create new list</p>
                 <LiaAngleRightSolid />
             </button>
+            {
+                isLoading &&
+                <div className='py-4 self-center'>
+                    <ClipLoader color='white' />
+                </div>
+
+            }
             {
                 collection?.length === 0 ?
                     <p className='text-center text-gray-300 font-medium text-xl'>No collections yet!</p>
@@ -117,7 +136,7 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                     <>
                         {
                             collection?.map((item, index) => (
-                                <div key={index} className='flex flex-row justify-between   px-4 my-2 items-center' >
+                                <div key={index} className='flex flex-row justify-between   px-4 my-2 items-center cursor-pointer' >
                                     <div className='flex flex-row items-center gap-2'>
                                         {
                                             item.hasGame ?
@@ -126,9 +145,18 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                                                 </button>
 
                                                 :
-                                                <button onClick={() => { handleAddInCollection(item.id) }}>
-                                                    <GrAdd />
-                                                </button>
+                                                <>
+                                                    {
+                                                        adding === item.id ?
+                                                            <ClipLoader color='white' size={10} />
+                                                            :
+                                                            <button onClick={() => { handleAddInCollection(item.id) }}>
+                                                                <GrAdd />
+                                                            </button>
+                                                    }
+
+                                                </>
+
 
 
                                         }
