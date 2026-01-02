@@ -1,41 +1,54 @@
 'use client'
+import { createCollection } from '@/app/queries/games'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
 import React, { SetStateAction, useState } from 'react'
+import { ClipLoader } from 'react-spinners'
 
 interface Collection {
     id: string
     name: string,
     description: string,
-    hasGame:boolean
+    hasGame: boolean
 }
 
 interface CreateCollectionProps {
-    setCollection: React.Dispatch<React.SetStateAction<Collection[] | undefined>>
     setCreateCollectionModal: React.Dispatch<React.SetStateAction<boolean>>
+    gameId:number
 }
 
-const CreateCollectionModal: React.FC<CreateCollectionProps> = ({ setCollection, setCreateCollectionModal }) => {
+const CreateCollectionModal: React.FC<CreateCollectionProps> = ({ setCreateCollectionModal , gameId}) => {
     const [formData, setFormData] = useState({
         name: "",
         description: ""
     });
 
 
-    const handleCollectionCreation = async () => {
-        const response = await axios({
-            url: '/api/private/createcollection',
-            method: 'POST',
-            data: {
-                name: formData.name,
-                description: formData.description
-            }
-        })
+    const queryClient = useQueryClient();
 
-        //@ts-ignore
-        setCollection(prev => [...prev, response.data.collection])
-        setCreateCollectionModal(false)
-        console.log(response.data)
-    }
+    const createMutation = useMutation({
+        mutationFn: createCollection,
+        onSuccess: (newCollection) => {
+            queryClient.setQueryData(
+                ['get-collections', gameId],
+                (old: any) => {
+                    if (!old) {
+                        return { collections: [newCollection] }
+                    }
+                    return {
+                        collections: [
+                            newCollection,
+                            ...old.collections,
+                        ],
+                    }
+                }
+            )
+            setCreateCollectionModal(false)
+        }
+
+    })
+
+
 
     return (
         <div className='bg-[#1F1F1F]  flex flex-col  py-4 w-96 p-4 gap-4'>
@@ -53,9 +66,15 @@ const CreateCollectionModal: React.FC<CreateCollectionProps> = ({ setCollection,
                     className='placeholder:text-gray-600 border p-2 rounded-md border-gray-500' placeholder='Enter Description' type="text" />
             </div>
             <button
-                onClick={() => { handleCollectionCreation() }}
+                onClick={() => { createMutation.mutate({ name: formData.name, description: formData.description }) }}
                 className='bg-purple-400 p-2 px-4 cursor-pointer'>
-                Create List
+                {
+                    createMutation.isPending ?
+                        <ClipLoader color='white' />
+                        :
+                        'Create List'
+                }
+
             </button>
         </div>
     )

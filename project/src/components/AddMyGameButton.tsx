@@ -59,13 +59,19 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
     const [sharePayload, setSharePayload] = useState<any>(null);
 
 
+
     useEffect(() => {
+        setLoading(true);
+        setPlaylistLoading(true);
         const fetchStatus = async () => {
             const res = await axios.get(`/api/private/checkGameStatus?igdb_id=${game.id}`);
             setStatus(res.data);
+            setLoading(false);
+            setPlaylistLoading(false);
         };
         fetchStatus();
     }, [game]);
+
     console.log(status)
     useEffect(() => {
         if (collectionModal) {

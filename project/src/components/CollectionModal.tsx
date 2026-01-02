@@ -6,8 +6,8 @@ import CreateCollectionModal from './modals/CreateCollectionModal';
 import { GrAdd } from 'react-icons/gr';
 import { LiaAngleRightSolid, LiaCheckSolid } from "react-icons/lia";
 import { ClipLoader } from 'react-spinners';
-import { useQuery } from '@tanstack/react-query';
-import { fetchCollections } from '@/app/queries/games';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { addGameToCollection, fetchCollections } from '@/app/queries/games';
 
 interface CollectionProps {
     game: Game
@@ -23,7 +23,6 @@ interface Collection {
 
 const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
 
-    const [collection, setCollection] = useState<Collection[]>();
     const [createCollectionModal, setCreateCollectionModal] = useState(false);
     const createCollectionRef = useRef<HTMLDivElement>(null);
     const [adding, setAdding] = useState('');
@@ -35,47 +34,60 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
         enabled: !!gameId,
     })
 
-    useEffect(() => {
-        if (!data) return
-        setCollection(data.collections)
-    }, [data])
 
+    const collections = data?.collections;
 
+    const queryClient = useQueryClient()
 
+    const addGameMutation = useMutation({
+        mutationFn: addGameToCollection,
 
-    const handleAddInCollection = async (collectionId: string) => {
-        setAdding(collectionId)
-        const response = await axios({
-            url: `/api/private/addgameincollection?gameId=${game.id}`,
-            method: 'POST',
-            data: {
-                name: game.name,
-                igdb_id: game.id,
-                summary: game.summary,
-                storyline: game.storyline,
-                first_release_date: game.first_release_date,
-                total_rating: game.total_rating,
-                cover: game.cover,
-                game_type: game.game_type.type,
-                genres: game.genres,
-                platforms: game.platforms,
-                collectionId
-            }
-        })
+        onMutate: async ({ collectionId }) => {
+            setAdding(collectionId)
 
+            await queryClient.cancelQueries({
+                queryKey: ['get-collections', gameId],
+            })
 
-        setCollection(prev => prev?.map((item) => {
-            if (item.id === collectionId) {
-                return {
-                    ...item,
-                    hasGame: true
+            const previous =
+                queryClient.getQueryData<{
+                    collections: Collection[]
+                }>(['get-collections', gameId])
+
+            queryClient.setQueryData(
+                ['get-collections', gameId],
+                (old: any) => {
+                    if (!old) return old
+
+                    return {
+                        collections: old.collections.map((c: Collection) =>
+                            c.id === collectionId
+                                ? { ...c, hasGame: true }
+                                : c
+                        ),
+                    }
                 }
-            }
-            return item;
-        }))
-        setAdding('')
+            )
 
-    }   
+            return { previous }
+        },
+
+        onError: (_err, _vars, context) => {
+            queryClient.setQueryData(
+                ['get-collections', gameId],
+                context?.previous
+            )
+            setAdding('')
+        },
+
+        onSettled: () => {
+            setAdding('')
+            queryClient.invalidateQueries({
+                queryKey: ['get-collections', gameId],
+            })
+        },
+    })
+
 
 
     useEffect(() => {
@@ -129,13 +141,13 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
 
             }
             {
-                collection?.length === 0 ?
+                collections?.length === 0 ?
                     <p className='text-center text-gray-300 font-medium text-xl'>No collections yet!</p>
                     :
 
                     <>
                         {
-                            collection?.map((item, index) => (
+                            collections?.map((item, index) => (
                                 <div key={index} className='flex flex-row justify-between   px-4 my-2 items-center cursor-pointer' >
                                     <div className='flex flex-row items-center gap-2'>
                                         {
@@ -150,9 +162,12 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                                                         adding === item.id ?
                                                             <ClipLoader color='white' size={10} />
                                                             :
-                                                            <button onClick={() => { handleAddInCollection(item.id) }}>
+                                                            <button onClick={() => { addGameMutation.mutate({ gameId, collectionId: item.id, game }) }}>
                                                                 <GrAdd />
                                                             </button>
+
+
+
                                                     }
 
                                                 </>
@@ -178,7 +193,7 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                     ref={createCollectionRef}
                     className="h-screen w-full  absolute top-0 left-0 bg-black/50 z-[100] items-center justify-center flex flex-col gap-4">
 
-                    <CreateCollectionModal setCollection={setCollection} setCreateCollectionModal={setCreateCollectionModal} />
+                    <CreateCollectionModal setCreateCollectionModal={setCreateCollectionModal} gameId={gameId} />
                 </div>
             }
 
