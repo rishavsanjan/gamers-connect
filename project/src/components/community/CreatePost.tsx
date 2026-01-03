@@ -9,7 +9,6 @@ import { Post } from '@/app/types/post';
 import { redis } from '@/lib/redis';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
-import { usePostFeed } from '@/context/PostsContext';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { IoCreate } from 'react-icons/io5';
 import { RiImageAddFill } from 'react-icons/ri';
@@ -37,10 +36,28 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
     const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
     const { openLoginModal } = useLoginModal();
     const { isLoggedIn } = useUser();
-    const setHomeFeedPosts = usePostFeedStore((s) => s.setPosts);    
+    const modalRef = useRef(null);
+
+
+    const setHomeFeedPosts = usePostFeedStore((s) => s.setPosts);
     const setGroupPosts = useGroupPostsStore((s) => s.setPosts);
     const homePosts = usePostFeedStore((s) => s.posts)
-    const groupPosts = useGroupPostsStore((s) => s.posts)
+    const groupPosts = useGroupPostsStore((s) => s.posts);
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            //@ts-ignore
+            if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+                setShowPostModal(false);
+            }
+        }
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [setShowPostModal]);
+
     const selectedGameData = async (id: number) => {
         const response = await axios({
             url: `/api/private/gamedetails`,
@@ -101,7 +118,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
 
         if (images.length > 0) {
             const uploadPromises = images.map((file) => uploadToCloudinary(file, 'image'));
-            uploadedUrls = await Promise.all(uploadPromises); 
+            uploadedUrls = await Promise.all(uploadPromises);
         }
 
         const response = await axios({
@@ -131,10 +148,10 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
         //await redis.del('top-tags');
         console.log(response.data.formattedPost);
         const newPost = response.data.formattedPost;
-        if(!groupId){
+        if (!groupId) {
             setHomeFeedPosts([response.data.formattedPost, ...homePosts]);
-        }else{
-            setGroupPosts([ response.data.formattedPost, ...groupPosts]);
+        } else {
+            setGroupPosts([response.data.formattedPost, ...groupPosts]);
         }
 
         //router.refresh();
@@ -169,7 +186,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
 
     return (
         <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm h-screen w-screen overflow-y-auto">
-            <div className="w-full max-w-2xl rounded-2xl border border-purple-500/30 bg-gradient-to-br from-gray-900 to-purple-900           px-4 py-4 mt-32">
+            <div ref={modalRef} className="w-full max-w-2xl rounded-4xl border border-purple-500/30 bg-gradient-to-br from-gray-900 to-purple-900           px-4  py-4 mx-2">
                 <div className='flex flex-row items-center gap-1 mb-6'>
                     <IoCreate className='text-pink-500 w-6 h-6' />
                     <h2 className="text-2xl font-bold">Create a Post</h2>

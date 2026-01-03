@@ -12,6 +12,7 @@ import UserStats from './UserStats';
 import TopUsers from './TopUsers';
 import TrendingTags from './TrendingTags';
 import InitPosts from '@/context/InitPosts';
+import PostCreate from './PostCreate';
 
 export default async function GamelyCommunity() {
 
@@ -32,9 +33,9 @@ export default async function GamelyCommunity() {
         const groupIds = await prisma.user.findMany({
             where: { id: userId },
             select: {
-                groupMembers:{
-                    select:{
-                        id:true
+                groupMembers: {
+                    select: {
+                        id: true
                     }
                 }
             }
@@ -48,62 +49,47 @@ export default async function GamelyCommunity() {
 
     const getposts = await prisma.post.findMany({
         take: 2,
-        where:
-            userId ? {
-                OR: [
-                    {
-                        userId: { in: followingUserIds }
-                    },
-                    {
-                        groupId: { in: joinedGroupIds }
-                    },
-                    {
-                        visibility: 'EVERYONE'
-                    },
-                    {
-                        userId
-                    }
-                ]
 
+        where: {
+            visibility: 'EVERYONE',
+        },
 
-            } : {
-                OR: [
-                    {
-                        visibility: 'EVERYONE'
-                    }
-                ]
-            },
         include: {
-
             game: {
                 select: {
                     name: true,
-                    igdb_id: true
-                }
+                    igdb_id: true,
+                },
             },
             user: {
                 select: {
-                    name: true,
                     id: true,
+                    name: true,
                     username: true,
-                    avatar: true
-                }
+                    avatar: true,
+                },
             },
             group: {
-                select: { name: true, id: true }
+                select: {
+                    id: true,
+                    name: true,
+                },
             },
             Like: userId
                 ? { where: { userId } }
                 : false,
-            bookmarks: userId ? {
-                where: { userId },
-                select: { postId: true }
-            } : false
+            bookmarks: userId
+                ? { where: { userId }, select: { postId: true } }
+                : false,
         },
 
-        orderBy: { createdAt: 'desc' }
-
+        orderBy: {
+            createdAt: 'desc',
+        },
     });
+
+
+
 
 
     const posts = getposts.map((post) => ({
@@ -201,6 +187,7 @@ export default async function GamelyCommunity() {
                     OR: [
                         { members: { some: { id: session?.user.id } } },
                         { groupJoinRequests: { some: { user: { id: session?.user.id } } } },
+                        { ownerId: session?.user.id }
                     ],
                 },
             ],
@@ -241,7 +228,7 @@ export default async function GamelyCommunity() {
                         {/* Left Sidebar */}
                         <div className="col-span-12 space-y-6 lg:col-span-3 py-4">
                             {/* Create Post Card */}
-                            <AddPostModal />
+                            {/* <AddPostModal /> */}
 
 
 
@@ -264,10 +251,18 @@ export default async function GamelyCommunity() {
                         </div>
 
                         {/* Main Feed */}
-                        <InitPosts posts={posts}/>
-                        <div className="col-span-12  lg:col-span-6 md:overflow-y-auto pt-4 hide-scrollbar h-screen">
-                            <InfiniteHomePostsFeed />
+                        <div className=' col-span-12  lg:col-span-6 md:overflow-y-auto  hide-scrollbar h-screen'>
+                            <InitPosts posts={posts} />
+                            <div className='py-4'>
+                                <PostCreate />
+                            </div>
+                            <div className="">
+                                <InfiniteHomePostsFeed />
+                            </div>
                         </div>
+
+
+
 
                         {/* Right Sidebar */}
                         <div className="col-span-12 space-y-6 lg:col-span-3 lg:flex flex-col hidden sticky py-4">

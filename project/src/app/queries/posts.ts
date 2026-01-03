@@ -44,11 +44,11 @@ export const fetchHomePosts = async ({
     pageParam?: number
     queryKey: string[]
 }): Promise<PostsResponse> => {
-    const [, filter, category] = queryKey
+    const [, filter, category, feedType] = queryKey
 
     const res = await axios.post<PostsResponse>(
         `/api/getposts?page=${pageParam}`,
-        { filter, category }
+        { filter, category, feedType }
     )
 
     return {
