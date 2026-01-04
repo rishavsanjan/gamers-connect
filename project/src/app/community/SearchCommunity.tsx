@@ -3,6 +3,8 @@ import axios from 'axios';
 import { Search, User, FileText, X, Loader2 } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react';
 import Link from 'next/link'
+import { Group } from '@prisma/client';
+import { FaLock } from 'react-icons/fa';
 
 
 interface User {
@@ -11,6 +13,7 @@ interface User {
     username: string,
     profilePicture: string,
     avatar: string
+    privacy: string
 }
 
 interface Post {
@@ -24,10 +27,11 @@ const SearchCommunity = () => {
     const [debouncedQuery, setDebouncedQuery] = useState('');
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
-    const [activeTab, setActiveTab] = useState<'all' | 'posts' | 'people'>('all');
+    const [activeTab, setActiveTab] = useState<'all' | 'posts' | 'people' | 'group'>('all');
     const searchBarDropDownRef = useRef<HTMLDivElement>(null);
     const [peopleResult, setPeopleResult] = useState<User[]>([]);
     const [postResult, setPostResult] = useState<Post[]>([]);
+    const [groupsResult, setGroupResult] = useState<Group[]>([]);
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -69,9 +73,10 @@ const SearchCommunity = () => {
                     query: debouncedQuery
                 }
             });
-
+            console.log(response.data)
             setPeopleResult(response.data.users || []);
             setPostResult(response.data.posts || []);
+            setGroupResult(response.data.groups || []);
             setIsOpen(true);
         } catch (error) {
             console.error('Search error:', error);
@@ -81,6 +86,8 @@ const SearchCommunity = () => {
             setLoading(false);
         }
     }
+
+    console.log(groupsResult.length)
 
     useEffect(() => {
         getResults();
@@ -116,7 +123,7 @@ const SearchCommunity = () => {
             );
         }
 
-        const hasResults = peopleResult.length > 0 || postResult.length > 0;
+        const hasResults = peopleResult.length > 0 || postResult.length > 0 || groupsResult.length > 0;
 
         if (!hasResults) {
             return (
@@ -150,13 +157,22 @@ const SearchCommunity = () => {
                                                         :
                                                         <>
                                                             <h1 className='text-xl text-center'>{person?.username[0].toUpperCase()}</h1>
+
                                                         </>
                                                 }
 
                                             </div>
 
                                             <div className="flex-1">
-                                                <div className="font-semibold text-white">{person.name}</div>
+                                                <div className="font-semibold text-white flex flex-row items-center space-x-2">
+
+                                                    <span>{person.name}</span>
+                                                    {
+                                                        person.privacy === 'PRIVATE' &&
+                                                        <FaLock className='w-3 h-3 ' />
+                                                    }
+
+                                                </div>
                                                 <div className="text-sm text-gray-400">@{person.username}</div>
                                             </div>
                                             <User className="w-4 h-4 text-gray-400" />
@@ -187,9 +203,45 @@ const SearchCommunity = () => {
                                         </div>
                                     </div>
                                 </Link>
-
-
                             ))}
+                        </div>
+                    )}
+
+                    {groupsResult.length > 0 && (
+                        <div>
+                            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase">Groups</div>
+                            {groupsResult.map(group => (
+                                <Link href={`/community/groups/${group.id}`} key={group.id}>
+                                    <div className="px-4 py-3 hover:bg-white/10 transition-colors flex items-center gap-3 cursor-pointer">
+
+                                        {/* Avatar */}
+                                        <div className="w-12 h-12 rounded-full overflow-hidden bg-purple-500 flex items-center justify-center shrink-0">
+                                            {group.coverImage ? (
+                                                <img src={group.coverImage} className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-lg font-semibold text-white">
+                                                    {group.name[0].toUpperCase()}
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-white font-semibold truncate">
+                                                    {group.name}
+                                                </span>
+                                                {group.privacy === 'PRIVATE' && (
+                                                    <FaLock className="w-3 h-3 text-gray-400" />
+                                                )}
+                                            </div>
+                                            <span className="text-xs text-gray-400">{group.privacy === 'PRIVATE' ? 'Private' : 'Public'} group</span>
+                                        </div>
+
+                                    </div>
+                                </Link>
+                            ))}
+
                         </div>
                     )}
                 </>
@@ -221,7 +273,53 @@ const SearchCommunity = () => {
                     <div className="font-medium">No posts found</div>
                 </div>
             );
-        } else {
+        } else if (activeTab === 'group') {
+            return groupsResult.length > 0 ? (
+                <div>
+                    <div className="px-4 py-2 text-xs font-semibold text-gray-400 upper case">Groups</div>
+                    {groupsResult.map(group => (
+                        <Link href={`/community/groups/${group.id}`} key={group.id}>
+                            <div className="px-4 py-3 hover:bg-white/10 transition-colors flex items-center gap-3 cursor-pointer">
+
+                                {/* Avatar */}
+                                <div className="w-12 h-12 rounded-full overflow-hidden bg-purple-500 flex items-center justify-center shrink-0">
+                                    {group.coverImage ? (
+                                        <img src={group.coverImage} className="w-full h-full object-cover" />
+                                    ) : (
+                                        <span className="text-lg font-semibold text-white">
+                                            {group.name[0].toUpperCase()}
+                                        </span>
+                                    )}
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-white font-semibold truncate">
+                                            {group.name}
+                                        </span>
+                                        {group.privacy === 'PRIVATE' && (
+                                            <FaLock className="w-3 h-3 text-gray-400" />
+                                        )}
+                                    </div>
+                                    <span className="text-xs text-gray-400">{group.privacy === 'PRIVATE' ? 'Private' : 'Public'} group</span>
+                                </div>
+
+                            </div>
+                        </Link>
+                    ))}
+
+                </div>
+            ) : (
+                <div className="px-4 py-8 text-center text-gray-400">
+                    <FileText className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <div className="font-medium">No groups found</div>
+                </div>
+            );
+        }
+
+
+        else {
             return peopleResult.length > 0 ? (
                 peopleResult.map(person => (
                     <Link href={`/player-profile/${person.id}`} key={person.id}>
@@ -269,7 +367,7 @@ const SearchCommunity = () => {
                     value={query}
                     onChange={(e) => { setQuery(e.target.value) }}
                     onFocus={() => query.trim() && setIsOpen(true)}
-                    className='w-full flex items-center rounded-lg bg-white/10 pl-10 pr-10 py-2 transition hover:bg-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white placeholder:text-gray-400 placeholder:sm:text-md text-xs' placeholder='Search for posts, people...'
+                    className='w-full flex items-center rounded-lg bg-white/10 pl-10 pr-10 py-2 transition hover:bg-white/20 focus:bg-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500/50 text-white placeholder:text-gray-400 placeholder:sm:text-md text-xs' placeholder='Search for posts, people, groups...'
                     type="text"
                 />
                 {query && (
@@ -313,6 +411,15 @@ const SearchCommunity = () => {
                                 }`}
                         >
                             People ({peopleResult.length})
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('group')}
+                            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === 'group'
+                                ? 'text-purple-400 border-b-2 border-purple-400'
+                                : 'text-gray-400 hover:text-white'
+                                }`}
+                        >
+                            Group ({groupsResult.length})
                         </button>
                     </div>
 

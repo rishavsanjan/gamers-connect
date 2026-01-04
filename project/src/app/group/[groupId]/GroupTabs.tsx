@@ -9,6 +9,8 @@ import InfiniteGroupMembers from './InfiniteGroupMembers'
 import InfiniteGroupRequests from './InfiniteGroupRequests'
 import { useGroupDetails } from '@/context/GroupsContext'
 import InitGroupPostsStore from '@/context/InitGroupPosts'
+import CreateGroup from '@/app/community/create-group/page'
+import PostCreate from '@/app/community/PostCreate'
 
 interface Props {
     groupId: string
@@ -73,7 +75,7 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
                     <div className="flex flex-col gap-4 lg:overflow-y-auto pr-1 hide-scrollbar pt-4">
 
                         {/* Active Tab */}
-                        
+
                         {
                             activeTab === 'Media' &&
                             <InfiniteGroupMedia posts={postsWithMedia} groupId={groupId} />
@@ -106,7 +108,7 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
                             <>
                                 {/* Post Composer */}
                                 <InitGroupPostsStore posts={posts} />
-                                <AddPostModal groupId={groupId} />
+                                <PostCreate groupId={groupId} />
                                 <InfiniteGroupPosts groupId={groupId} />
 
 

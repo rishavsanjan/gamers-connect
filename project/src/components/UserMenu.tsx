@@ -2,11 +2,17 @@
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
 import { logout } from '@/lib/auth';
+import { useGroupPostsStore } from '@/zustland/groupPostsStore';
+import { usePostFeedStore } from '@/zustland/postFeedStore';
+import { useProfileBookmarkStore } from '@/zustland/profileBookmarkStore';
+import { useProfilePostsStore } from '@/zustland/profilePostsStore';
+import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import React from 'react'
 import { BiUser } from 'react-icons/bi';
 
 const UserMenu = () => {
+    const queryClient = useQueryClient();
     const { setUser, isLoggedIn } = useUser();
 
     const { openLoginModal } = useLoginModal();
@@ -37,7 +43,12 @@ const UserMenu = () => {
                         <button
                             onClick={async () => {
                                 await logout();
+                                queryClient.clear();
                                 setUser(null);
+                                usePostFeedStore.getState().reset();
+                                useGroupPostsStore.getState().reset();
+                                useProfileBookmarkStore.getState().reset();
+                                useProfilePostsStore.getState().reset();
                             }}
                             className="w-full text-left px-4 py-2 hover:bg-white hover:text-black rounded-b-lg"
                         >

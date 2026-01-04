@@ -17,7 +17,7 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
     const { userId } = await params;
     const session = await auth().catch(() => null);
     const loggedInId = session?.user.id;
-    
+    console.log(session?.user.id)
 
 
     const user = await prisma.user.findUnique({

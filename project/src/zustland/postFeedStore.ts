@@ -7,6 +7,7 @@ interface PostFeedState {
     updatePost: (id: string, data: Partial<Post>) => void
     toggleBookmark: (id: string) => void
     deletePost: (id: string) => void
+    reset : () => void
 }
 
 export const usePostFeedStore = create<PostFeedState>((set) => ({
@@ -32,4 +33,8 @@ export const usePostFeedStore = create<PostFeedState>((set) => ({
         set((state) => ({
             posts: state.posts.filter((post) => post.id !== id),
         })),
+
+    reset: () => set({ posts: [] })
+
+
 }))

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Lock, Star} from 'lucide-react';
+import { Lock, Star } from 'lucide-react';
 import { prisma } from '@/lib/db';
 import PrivateFollowButton from './PrivateFollowButton';
 
@@ -10,19 +10,21 @@ interface Props {
 
 export default async function PrivateProfile({ senderId, receiverId }: Props) {
     const isPrivate = true;
-    const isRequestSent =
-        (await prisma.followRequest.count({
-            where: { senderId, receiverId },
-        })) > 0 ? true : false;
+    let isRequestSent = false;
+    if (senderId) {
+        isRequestSent =
+            (await prisma.followRequest.count({
+                where: { senderId, receiverId },
+            })) > 0 ? true : false;
+    }
+
 
     const d = await prisma.followRequest.findFirst({
-        where:{
+        where: {
             senderId,
             receiverId
         }
     })
-
-
 
     return (
         <div className="min-h-screen bg-black text-gray-100">

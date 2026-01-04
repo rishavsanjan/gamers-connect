@@ -19,15 +19,15 @@ const UserStats: React.FC<Props> = ({ postCount, followers, xp }) => {
             <div className="space-y-4 relative z-10">
                 <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-default">
                     <span className="text-gray-600 dark:text-gray-300 font-medium">Posts</span>
-                    <span className="text-xl font-bold text-[#D9008F]">{postCount}</span>
+                    <span className="text-xl font-bold text-[#D9008F]">{postCount || 0}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-default">
                     <span className="text-gray-600 dark:text-gray-300 font-medium">Followers</span>
-                    <span className="text-xl font-bold text-[#9F00B5]">{followers}</span>
+                    <span className="text-xl font-bold text-[#9F00B5]">{followers || 0}</span>
                 </div>
                 <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-default">
                     <span className="text-gray-600 dark:text-gray-300 font-medium">XP</span>
-                    <span className="text-xl font-bold text-green-400">{xp}</span>
+                    <span className="text-xl font-bold text-green-400">{xp || 0}</span>
                 </div>
             </div>
             <div className="mt-6 pt-4 border-t border-gray-100 dark:border-white/10">

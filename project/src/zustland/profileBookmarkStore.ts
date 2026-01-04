@@ -5,6 +5,8 @@ import { PostActions } from '@/store/PostActions'
 interface ProfilePostsState extends PostActions {
     posts: Post[]
     setPosts: (posts: Post[]) => void
+        reset : () => void
+
 }
 
 export const useProfileBookmarkStore = create<ProfilePostsState>((set) => ({
@@ -30,4 +32,7 @@ export const useProfileBookmarkStore = create<ProfilePostsState>((set) => ({
         set((state) => ({
             posts: state.posts.filter((p) => p.id !== id),
         })),
+
+    reset: () => set({ posts: [] })
+
 }))

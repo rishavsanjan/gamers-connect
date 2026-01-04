@@ -5,6 +5,7 @@ import axios from 'axios';
 import { BsBookmarkFill } from 'react-icons/bs';
 import { useUser } from '@/context/UserContext';
 import { useLoginModal } from '@/context/LoginModalContext';
+import toast from 'react-hot-toast';
 
 export default function PostActions({ postId, bookmark }: { postId: string; bookmark: boolean }) {
     const [bookmarked, setBookmarked] = useState(bookmark);
@@ -42,12 +43,15 @@ export default function PostActions({ postId, bookmark }: { postId: string; book
 
                 }
             </button>
-            <button className="rounded-lg p-2 transition hover:bg-white/10">
+            <button
+                onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast.success("Link copied to clipboard!");
+                }}
+                className="rounded-lg p-2 transition hover:bg-white/10 cursor-pointer">
                 <Share2 className="h-5 w-5" />
             </button>
-            <button className="rounded-lg p-2 transition hover:bg-white/10">
-                <MoreHorizontal className="h-5 w-5" />
-            </button>
+            
         </div>
     );
 }

@@ -19,7 +19,8 @@ export async function POST(req: Request) {
                 id: true,
                 name: true,
                 username: true,
-                avatar:true
+                avatar: true,
+                privacy:true
             }, take: 5
         })
 
@@ -32,11 +33,25 @@ export async function POST(req: Request) {
             select: {
                 id: true,
                 description: true,
-                createdAt:true
+                createdAt: true
             }, take: 5
         })
 
-        return NextResponse.json({users, posts}, {status:200})
+        const groups = await prisma.group.findMany({
+            where: {
+                OR: [
+                    { name: { contains: query, mode: 'insensitive' } }
+                ]
+            },
+            select: {
+                id: true,
+                name: true,
+                coverImage:true,
+                privacy:true
+            }, take:5
+        })
+
+        return NextResponse.json({ users, posts, groups }, { status: 200 })
     } catch (error) {
         console.log(error);
         return NextResponse.json('Server Error', { status: 500 })

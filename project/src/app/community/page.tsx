@@ -163,19 +163,24 @@ export default async function GamelyCommunity() {
         postCount: user._count.Post
     }))
 
-    console.log(topGamers)
+    let myStats = null;
 
-    const myStats = await prisma.user.findMany({
-        where: {
-            id: session?.user.id
-        },
-        select: {
-            _count: {
-                select: { Post: true, followers: true }
+    if (userId) {
+        myStats = await prisma.user.findUnique({
+            where: {
+                id: session?.user.id
             },
-            xp: true
-        }
-    })
+            select: {
+                _count: {
+                    select: { Post: true, followers: true }
+                },
+                xp: true
+            }
+        })
+    }
+
+
+
     console.log(session?.user.id)
     const suggestedGroups = await prisma.group.findMany({
         take: 3,
@@ -243,7 +248,7 @@ export default async function GamelyCommunity() {
                         {/* Right Sidebar for samll screens */}
                         <div className="col-span-12  lg:col-span-3 space-y-4 lg:hidden ">
                             {/* Quick Stats */}
-                            <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
+                            <UserStats postCount={myStats?._count?.Post || 0} followers={myStats?._count?.followers || 0} xp={myStats?.xp || 0} />
 
 
                             {/* Suggested Groups */}
@@ -267,7 +272,7 @@ export default async function GamelyCommunity() {
                         {/* Right Sidebar */}
                         <div className="col-span-12 space-y-6 lg:col-span-3 lg:flex flex-col hidden sticky py-4">
                             {/* Quick Stats */}
-                            <UserStats postCount={myStats[0]._count.Post} followers={myStats[0]._count.followers} xp={myStats[0].xp} />
+                            <UserStats postCount={myStats?._count?.Post || 0} followers={myStats?._count?.followers || 0} xp={myStats?.xp || 0} />
 
 
                             {/* Suggested Groups */}

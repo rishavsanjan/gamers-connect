@@ -96,7 +96,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
             <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
                 {/* {isFetchingNextPage && <ClipLoader color='white' size={40} />} */}
 
-                {!hasNextPage && <p className='text-gray-500 text-lg font-serif'>No more posts</p>}
+                {!hasNextPage && posts.length > 0 && <p className='text-gray-500 text-lg font-serif'>No more posts</p>}
             </div>
         </div>
     )

@@ -3,11 +3,10 @@ import { handleAddFollow, handleAddRequest } from '@/app/queries/requests';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
 import { useMutation } from '@tanstack/react-query';
-import axios from 'axios';
-import { error } from 'console';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { FaLock } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
 
 export default function AuthorCard({ name, authorId, gameCount, postCount, collectionCount, following, xp, profilePicture, username, userId, privacy, isRequestSent }: { name: string | null; authorId: string; gameCount: number; postCount: number; collectionCount: number, following: boolean, xp: number, profilePicture: string | null, username: string, userId: string | undefined, privacy: 'PRIVATE' | 'PUBLIC', isRequestSent: boolean }) {
@@ -80,7 +79,15 @@ export default function AuthorCard({ name, authorId, gameCount, postCount, colle
                     }
                 </Link>
                 <div className="flex-1">
-                    <p className="text-lg font-bold">{username || name}</p>
+                    <div className='flex flex-row  items-center gap-2'>
+                        <p className="text-lg font-bold">{username || name}</p>
+                        {
+                            privacy === 'PRIVATE' &&
+                            <FaLock color='white' />
+                        }
+
+                    </div>
+
                     <p className="text-sm text-gray-400">{xp} XP</p>
                 </div>
             </div>
