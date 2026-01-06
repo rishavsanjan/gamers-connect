@@ -10,7 +10,7 @@ import { usePostFeedStore } from '@/zustland/postFeedStore'
 import PostsSkeleton from '../../skeleton/PostSkeleton'
 import Lottie, { useLottie } from "lottie-react";
 import animationData from '../../assets/Not Found.json'
-import PostCreate from '@/app/community/PostCreate'
+import { MdExplore } from "react-icons/md";
 
 interface Props {
 }
@@ -80,14 +80,27 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
             </div>
             {
                 posts.length === 0 &&
-                <div className="flex flex-col items-center py-8">
+                <div className="flex flex-col items-center py-4 space-y-4">
                     <Lottie
                         animationData={animationData}
                         loop={true}
-                        style={{ height: 300, width: 300 }}
+                       style={{width:300}}
                     />
-                    <span className='text-gray-500 text-lg font-light'>You don't have any activity yet.</span>
-                    <span className='text-gray-500 text-lg font-light'>Connect with more people.</span>
+                    <div className='flex flex-col items-center'>
+                        <span className='text-gray-500 text-lg font-light'>You don't have any activity yet.</span>
+                        <span className='text-gray-500 text-lg font-light'>Connect with more people.</span>
+                    </div>
+
+                    <button
+                        onClick={() => {
+                            setFeedType('FORYOU')
+                        }}
+                        className='flex flex-row items-center bg-pink-400 p-2 px-4 gap-2 rounded-md cursor-pointer'
+                    >
+                        <MdExplore color='white' />
+                        <span>Discover here</span>
+
+                    </button>
                 </div>
             }
 

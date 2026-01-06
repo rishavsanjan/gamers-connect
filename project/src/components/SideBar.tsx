@@ -21,7 +21,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                 <div className='flex md:flex-col flex-row gap-2 overflow-x-auto md:overflow-x-visible hide-scrollbar'>
                     <button
                         onClick={() => { onCategoryChange('last30days') }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${selectedCategory === 'last30days' && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiStar className={`${selectedCategory === 'last30days' && 'text-black'}`} size={20} />
                         </div>
@@ -29,7 +29,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                     </button>
                     <button
                         onClick={() => { onCategoryChange('thisweek') }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${selectedCategory === 'thisweek' && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiSolidFlame className={`${selectedCategory === 'thisweek' && 'text-black'}`} size={20} />
                         </div>
@@ -37,7 +37,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                     </button>
                     <button
                         onClick={() => { onCategoryChange('nextweek') }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${selectedCategory === 'nextweek' && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiSkipNext className={`${selectedCategory === 'nextweek' && 'text-black'}`} size={20} />
                         </div>
@@ -52,7 +52,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                 <div className='flex md:flex-col flex-row gap-2 overflow-x-auto md:overflow-x-visible hide-scrollbar'>
                     <button
                         onClick={() => { onCategoryChange('bestofyear') }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${selectedCategory === 'bestofyear' && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiTrophy className={`${selectedCategory === 'bestofyear' && 'text-black'}`} size={20} />
                         </div>
@@ -61,7 +61,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
 
                     <button
                         onClick={() => { onCategoryChange('popular2024') }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${selectedCategory === 'popular2024' && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiBarChart className={`${selectedCategory === 'popular2024' && 'text-black'}`} size={20} />
                         </div>
@@ -69,7 +69,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                     </button>
                     <button
                         onClick={() => { onCategoryChange('top250') }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${selectedCategory === 'top250' && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiCrown className={`${selectedCategory === 'top250' && 'text-black'}`} size={20} />
                         </div>
@@ -84,49 +84,49 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                 <div className='flex md:flex-col flex-row gap-2 overflow-x-auto md:overflow-x-visible hide-scrollbar pb-2'>
                     <button
                         onClick={() => { onGenreChange(5) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/w400/wp12288391.jpg" alt="" />
                         <p className='text-md md:text-base'>Shooter</p>
                     </button>
                     <button
                         onClick={() => { onGenreChange(12) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/w400/wp13554867.jpg" alt="" />
                         <p className='text-md md:text-base'>Role-playing</p>
                     </button>
                     <button
                         onClick={() => { onGenreChange(31) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/w400/wp14860452.webp" alt="" />
                         <p className='text-md md:text-base'>Adventure</p>
                     </button>
                     <button
                         onClick={() => { onGenreChange(10) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/fuwp-510/uwp4281937.jpeg" alt="" />
                         <p className='text-md md:text-base'>Racing</p>
                     </button>
                     <button
                         onClick={() => { onGenreChange(13) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/wpr/wp15742887.jpg" alt="" />
                         <p className='text-md md:text-base'>Simulator</p>
                     </button>
                     <button
                         onClick={() => { onGenreChange(32) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/w400/wp2966135.png" alt="" />
                         <p className='text-md md:text-base'>Indie</p>
                     </button>
                     <button
                         onClick={() => { onGenreChange(33) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/w400/wp10403504.jpg" alt="" />
                         <p className='text-md md:text-base'>Arcade</p>
                     </button>
                     <button
                         onClick={() => { onGenreChange(9) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <img className='w-8 h-8 object-cover rounded-md flex-shrink-0' src="https://wallpapercave.com/w400/wp4761185.jpg" alt="" />
                         <p className='text-md md:text-base'>Puzzle</p>
                     </button>
@@ -139,7 +139,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                 <div className='flex md:flex-col flex-row gap-2 overflow-x-auto md:overflow-x-visible hide-scrollbar pb-2'>
                     <button
                         onClick={() => { onPlatformChange(6) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${platformId === 6 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiLogoWindows className={`${platformId === 6 && 'text-black'}`} size={20} />
                         </div>
@@ -147,7 +147,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                     </button>
                     <button
                         onClick={() => { onPlatformChange(48) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${platformId === 48 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BsPlaystation className={`${platformId === 48 && 'text-black'}`} size={20} />
                         </div>
@@ -155,7 +155,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                     </button>
                     <button
                         onClick={() => { onPlatformChange(169) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${platformId === 169 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BsXbox className={`${platformId === 169 && 'text-black'}`} size={20} />
                         </div>
@@ -163,7 +163,7 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                     </button>
                     <button
                         onClick={() => { onPlatformChange(508) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${platformId === 508 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BsNintendoSwitch className={`${platformId === 508 && 'text-black'}`} size={20} />
                         </div>
@@ -171,11 +171,11 @@ export function SideBar({ selectedCategory, onCategoryChange, onGenreChange, onP
                     </button>
                     <button
                         onClick={() => { onPlatformChange(34) }}
-                        className="flex flex-row items-center gap-2 group whitespace-nowrap">
+                        className="flex flex-row items-center gap-2 group whitespace-nowrap cursor-pointer">
                         <div className={`${platformId === 34 && 'text-black bg-white'} bg-[#202020] p-1.5 rounded-md text-white group-hover:bg-white group-hover:text-black transition-colors duration-200`}>
                             <BiMobile className={`${platformId === 34 && 'text-black'}`} size={20} />
                         </div>
-                        <p className='text-md md:text-base'>Mobile</p>
+                        <p className='text-md md:text-base'> Mobile </p>
                     </button>
                 </div>
             </div>

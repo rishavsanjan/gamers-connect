@@ -47,11 +47,11 @@ const GameImages: React.FC<Props> = ({ screenshots }) => {
                         onClick={() => setSelectedImage(null)}
                     >
                         <div
-                            className="relative flex items-center justify-center w-full h-full p-6"
+                            className="relative flex items-center justify-center w-full h-full p-6 cursor-pointer"
                             onClick={(e) => e.stopPropagation()} // prevent close on image click
                         >
                             {/* Image container */}
-                            <div className="flex items-center justify-center bg-black rounded-lg  w-full h-full">
+                            <div className="flex items-center justify-center bg-black rounded-lg  w-full h-full cursor-pointer">
                                 <img
                                     src={selectedImage}
                                     className=" w-full h-full  object-contain"
@@ -60,7 +60,7 @@ const GameImages: React.FC<Props> = ({ screenshots }) => {
 
                             {/* Close button */}
                             <button
-                                className="absolute top-4 right-4 text-white text-4xl hover:text-purple-400"
+                                className="absolute top-4 right-4 text-white text-4xl hover:text-purple-400 cursor-pointer"
                                 onClick={() => setSelectedImage(null)}
                             >
                                 &times;

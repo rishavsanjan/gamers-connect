@@ -95,7 +95,7 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
                                         e.stopPropagation();
                                         setSelectedPost(prev => (prev === post.id ? null : post.id));
                                     }}
-                                    className='md:mb-8 cursor-pointer p-4 sm:p-0 '
+                                    className='md:mb-8 cursor-pointer p-4 sm:p-0 cursor-pointer'
                                 >
                                     <Ellipsis color='white' />
 
@@ -122,7 +122,7 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
                             {/* Post Actions */}
                             <div className="flex items-center space-x-6 border-t border-white/10 pt-4">
                                 <PostLikeButton postId={post.id} likeCount={post.likeCount} hasLiked={post.hasLiked} />
-                                <button className="flex items-center space-x-2 text-gray-400 transition hover:text-purple-400">
+                                <button className="flex items-center space-x-2 text-gray-400 transition hover:text-purple-400 cursor-pointer">
                                     <MessageCircle className="h-5 w-5" />
                                     <span>{post.commentCount}</span>
                                 </button>
@@ -132,7 +132,7 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
                                         navigator.clipboard.writeText(url)
                                         toast.success("Link copied to clipboard!");
                                     }}
-                                    className="flex items-center space-x-2 text-gray-400 transition hover:text-blue-400">
+                                    className="flex items-center space-x-2 text-gray-400 transition hover:text-blue-400 cursor-pointer">
                                     <Share2 className="h-5 w-5" />
                                     <span>Share</span>
                                 </button>

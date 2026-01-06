@@ -72,7 +72,7 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
                                     
                         }}
                         disabled={loading}
-                        className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500 disabled:cursor-not-allowed"
+                        className="flex items-center cursor-pointer space-x-2 text-gray-400 transition hover:text-pink-500 disabled:cursor-not-allowed"
                     >
                         <BsHeartFill className="h-5 w-5" color='#B4157D' />
                         <span>{count}</span>
@@ -85,7 +85,7 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
                                 
                         }}
                         disabled={loading}
-                        className="flex items-center space-x-2 text-gray-400 transition hover:text-pink-500 disabled:cursor-not-allowed"
+                        className="flex items-center cursor-pointer space-x-2 text-gray-400 transition hover:text-pink-500 disabled:cursor-not-allowed"
                     >
                         <Heart className="h-5 w-5" />
                         <span>{count}</span>

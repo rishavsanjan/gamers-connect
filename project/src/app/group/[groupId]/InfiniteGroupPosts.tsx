@@ -9,7 +9,6 @@ import PostsSkeleton from '@/skeleton/PostSkeleton'
 import { useGroupPostsStore } from '@/zustland/groupPostsStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import React, { useEffect, useState } from 'react'
-import { ClipLoader } from 'react-spinners'
 
 interface Props {
     groupId: string
@@ -44,7 +43,7 @@ const InfiniteGroupPosts: React.FC<Props> = ({ groupId }) => {
     const deletePost = useGroupPostsStore((s) => s.deletePost)
     const posts = useGroupPostsStore((s) => s.posts);
     return (
-        <div>
+        <div className='space-y-4'>
             {/* Filter Bar */}
             <PostsFilterButton category={category} filter={filter} setCategory={setCategory} setFilter={setFilter} />
             <Posts actions={{ updatePost, toggleBookmark, deletePost }} posts={posts} />

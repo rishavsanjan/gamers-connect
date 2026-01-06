@@ -74,7 +74,7 @@ export default function PostImages({ mediaUrls }: { mediaUrls: string[] }) {
 
                             <button
                                 aria-label="Close"
-                                className="absolute -top-10 right-0 text-white text-4xl hover:text-purple-400"
+                                className="absolute -top-10 right-0 text-white text-4xl hover:text-purple-400 cursor-pointer"
                                 onClick={() => setSelectedImage(null)}
                             >
                                 &times;

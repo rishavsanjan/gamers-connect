@@ -152,7 +152,10 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                                     <div className='flex flex-row items-center gap-2'>
                                         {
                                             item.hasGame ?
-                                                <button onClick={() => { }}>
+                                                <button
+                                                    className='cursor-pointer'
+                                                    onClick={() => { }}
+                                                >
                                                     <LiaCheckSolid color='green' />
                                                 </button>
 
@@ -162,7 +165,9 @@ const CollectionModal: React.FC<CollectionProps> = ({ game }) => {
                                                         adding === item.id ?
                                                             <ClipLoader color='white' size={10} />
                                                             :
-                                                            <button onClick={() => { addGameMutation.mutate({ gameId, collectionId: item.id, game }) }}>
+                                                            <button
+                                                                className='cursor-pointer'
+                                                                onClick={() => { addGameMutation.mutate({ gameId, collectionId: item.id, game }) }}>
                                                                 <GrAdd />
                                                             </button>
 

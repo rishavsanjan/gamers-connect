@@ -1,6 +1,5 @@
 'use client'
 import { Post } from '@/app/types/post'
-import AddPostModal from '@/components/community/AddPostModal'
 import React, { useState } from 'react'
 import InfiniteGroupPosts from './InfiniteGroupPosts'
 import InfiniteGroupMedia from './InfiniteGroupMedia'
@@ -9,7 +8,6 @@ import InfiniteGroupMembers from './InfiniteGroupMembers'
 import InfiniteGroupRequests from './InfiniteGroupRequests'
 import { useGroupDetails } from '@/context/GroupsContext'
 import InitGroupPostsStore from '@/context/InitGroupPosts'
-import CreateGroup from '@/app/community/create-group/page'
 import PostCreate from '@/app/community/PostCreate'
 
 interface Props {

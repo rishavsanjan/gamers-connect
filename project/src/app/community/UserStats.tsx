@@ -1,3 +1,6 @@
+'use client'
+import { useLoginModal } from '@/context/LoginModalContext'
+import { useUser } from '@/context/UserContext'
 import Link from 'next/link'
 import React from 'react'
 import { RiBarChart2Fill } from 'react-icons/ri'
@@ -9,6 +12,8 @@ interface Props {
 }
 
 const UserStats: React.FC<Props> = ({ postCount, followers, xp }) => {
+    const { user } = useUser();
+    const { openLoginModal } = useLoginModal();
     return (
         <div className="bg-white dark:bg-[#1E1538] rounded-xl p-6 shadow-lg border border-gray-200 dark:border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#D9008F]/10 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
@@ -30,13 +35,28 @@ const UserStats: React.FC<Props> = ({ postCount, followers, xp }) => {
                     <span className="text-xl font-bold text-green-400">{xp || 0}</span>
                 </div>
             </div>
-            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-white/10">
-                <Link
-                    href="/profile"
-                    className="text-sm text-center block text-gray-500 dark:text-[#A799CC] hover:text-[#D9008F] transition-colors"
-                >
-                    View full profile
-                </Link>
+            <div className="mt-6 pt-4 border-t border-gray-100 dark:border-white/10 flex justify-center">
+                {
+                    user ?
+                        <Link
+                            href="/profile"
+                            className="text-sm text-center block text-gray-500 dark:text-[#A799CC] hover:text-[#D9008F] transition-colors cursor-pointer"
+                        >
+                            View full profile
+                        </Link>
+                        :
+                        <button onClick={() => {
+                            if (!user) {
+                                openLoginModal();
+                                return;
+                            }
+                        }}
+                            className="text-sm text-center block text-gray-500 dark:text-[#A799CC] hover:text-[#D9008F] transition-colors  cursor-pointer items-center self-center"
+                        >
+                            Log in to view stats
+                        </button>
+                }
+
 
 
 

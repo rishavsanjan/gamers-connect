@@ -223,7 +223,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
                 <div className='mb-6'>
                     <label className="mb-2 block text-sm text-gray-400">Select Images</label>
 
-                    <label className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20 bg-gray-50 dark:bg-[#4C1D95]/50 hover:bg-gray-100 dark:hover:bg-[#5B21B6] hover:border-primary dark:hover:border-primary/50 text-gray-500 dark:text-white/60 transition-all group w-32">
+                    <label className="flex flex-col items-center justify-center aspect-video rounded-xl border-2 border-dashed border-gray-300 dark:border-white/20 bg-gray-50 dark:bg-[#4C1D95]/50 hover:bg-gray-100 dark:hover:bg-[#5B21B6] hover:border-primary dark:hover:border-primary/50 text-gray-500 dark:text-white/60 transition-all group w-32 cursor-pointer">
 
                         <input
                             type="file"
@@ -249,7 +249,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
                                     <button
                                         type="button"
                                         onClick={() => handleRemoveImage(index)}
-                                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
+                                        className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition cursor-pointer"
                                     >
                                         ✕
                                     </button>
@@ -272,7 +272,10 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
                                     <span>{getYearFromUnix(selectedGame.first_release_date)}</span>
                                 </div>
                             </div>
-                            <button onClick={() => { setSelectedGame(null) }}>
+                            <button
+                                className='cursor-pointer'
+                                onClick={() => { setSelectedGame(null) }}
+                            >
                                 <GrClose size={20} />
                             </button>
                         </div>
@@ -309,7 +312,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
                 <div className="flex space-x-4">
                     <button
                         onClick={() => setShowPostModal(false)}
-                        className="flex-1 rounded-xl bg-white/10 py-3 font-semibold transition hover:bg-white/20"
+                        className="flex-1 rounded-xl bg-white/10 py-3 font-semibold transition hover:bg-white/20 cursor-pointer"
                     >
                         Cancel
                     </button>

@@ -80,6 +80,8 @@ export default function CTA() {
         setPage(1)
         setGames([])
         setHasMore(true);
+        setPlatform('');
+        setPlatformId(0);
 
     }
 
@@ -89,6 +91,8 @@ export default function CTA() {
         if (contentRef.current) {
             contentRef.current.scrollTo({ top: 0, behavior: 'instant' });
         }
+        setPlatform('');
+        setPlatformId(0);
         setCategory('')
         setPage(1)
         setGames([])
@@ -99,6 +103,7 @@ export default function CTA() {
     const onPlatformChange = (selectedPlatformId: number) => {
         setPlatformId(selectedPlatformId)
         setPlatform('')
+        setGenreCategory(0)
         setPage(1)
         setGames([])
         setHasMore(true)
@@ -123,7 +128,7 @@ export default function CTA() {
             <main
                 ref={contentRef}
                 className="p-2 md:p-4 w-full md:w-[80%] lg:w-[85%] flex flex-col md:h-screen md:overflow-y-auto hide-scrollbar"     >
-                <h1 className="text-2xl md:text-3xl  lg:text-5xl font-bold px-2 md:px-4 py-4 md:py-6 capitalize">
+                <h1 className="text-2xl md:text-3xl  lg:text-5xl font-bold px-2 md:px-4 py-4 md:py-6 capitalize ">
                     {category === 'top250' && 'Top 250'}
                     {category === 'thisweek' && 'This Week'}
                     {category === 'last30days' && 'Last 30 Days'}
