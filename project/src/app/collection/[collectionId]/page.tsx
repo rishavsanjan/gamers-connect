@@ -6,55 +6,36 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 export async function generateMetadata(
-    { params }: { params: { collectionId: string } }
+    { params }: { params: Promise<{ collectionId: string }> }
 ): Promise<Metadata> {
+    const { collectionId } = await params;
+
     const collection = await prisma.collection.findUnique({
-        where: { id: params.collectionId },
+        where: { id: collectionId },
         select: { name: true },
     });
 
     return {
-        title: collection?.name
-            ? `${collection.name} | GamersConnect`
-            : "Collection | GamersConnect",
+        title: collection?.name ? `${collection.name} | GamersConnect` : "Collection | GamersConnect",
     };
 }
 
-// interface Props {
-//     params: { collectionId: string }
-// }
+const page = async ({ params }: { params: Promise<{ collectionId: string }> }) => {
+    const { collectionId } = await params;
 
-const page = async ({ params }: { params: { collectionId: string } }) => {
-
-    const { collectionId } =  params;
     const session = await auth();
     const userId = session?.user.id;
 
-
     const collection = await prisma.collection.findUnique({
-
-        where: {
-            id: collectionId
-        },
-
+        where: { id: collectionId },
         include: {
-            _count: {
-                select: {
-                    games: true
-                }
-            },
+            _count: { select: { games: true } },
             games: {
-                include: {
-                    genres: true,
-                    platforms: true
-                },
+                include: { genres: true, platforms: true },
                 take: 5
             }
         },
-
     })
-
-
 
     if (!collection) {
         notFound();
@@ -66,11 +47,16 @@ const page = async ({ params }: { params: { collectionId: string } }) => {
 
     const visibility = collection.visibility === 'PUBLIC' ? true : false
 
-
     return (
         <div>
             {/* @ts-ignore */}
-            <InfiniteCollectionGamesList games={games} collectionId={collectionId} totalGames={collection._count.games} visible={visibility} collection={collection} />
+            <InfiniteCollectionGamesList initialGames={games}
+                collectionId={collectionId}
+                userId={userId}
+                gamesCount={collection._count.games}
+                visibility={visibility}
+                collectionName={collection.name}
+            />
         </div>
     )
 }
