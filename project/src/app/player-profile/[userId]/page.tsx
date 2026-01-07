@@ -11,9 +11,9 @@ import PrivateProfile from './PrivateProfile';
 import { Metadata } from 'next';
 
 export async function generateMetadata(
-    { params }: { params: { userId: string } }
+    { params }: { params: Promise< { userId: string }> }
 ): Promise<Metadata> {
-    const { userId } = params;
+    const { userId } = await params;
     const user = await prisma.user.findUnique({
         where: {
             id: userId
@@ -32,9 +32,9 @@ export async function generateMetadata(
 
 
 const PlayerProfile = async ({ params }: {
-    params: { userId: string }
+    params:Promise< { userId: string }>
 }) => {
-    const { userId } =  params;
+    const { userId } =await  params;
     const session = await auth().catch(() => null);
     const loggedInId = session?.user.id;
 

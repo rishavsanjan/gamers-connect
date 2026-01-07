@@ -22,7 +22,7 @@ export async function generateMetadata(
 
 const page = async ({ params }: { params: Promise<{ collectionId: string }> }) => {
     const { collectionId } = await params;
-
+    console.log(collectionId)
     const session = await auth();
     const userId = session?.user.id;
 
@@ -37,6 +37,8 @@ const page = async ({ params }: { params: Promise<{ collectionId: string }> }) =
         },
     })
 
+    console.log(collection)
+
     if (!collection) {
         notFound();
     }
@@ -50,13 +52,7 @@ const page = async ({ params }: { params: Promise<{ collectionId: string }> }) =
     return (
         <div>
             {/* @ts-ignore */}
-            <InfiniteCollectionGamesList initialGames={games}
-                collectionId={collectionId}
-                userId={userId}
-                gamesCount={collection._count.games}
-                visibility={visibility}
-                collectionName={collection.name}
-            />
+            <InfiniteCollectionGamesList games={games} collectionId={collectionId} totalGames={collection._count.games} visible={visibility} collection={collection} />
         </div>
     )
 }

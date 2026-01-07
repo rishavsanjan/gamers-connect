@@ -8,22 +8,22 @@ import { Metadata } from 'next'
 
 
 export async function generateMetadata(
-    { params }: { params: { tagId: string } }
+    { params }: { params: Promise<{ tagId: string }> }
 ): Promise<Metadata> {
-
+    const { tagId } = await params;
     return {
-        title: `${params.tagId}`
+        title: `${tagId}`
 
     };
 }
 
 
 
-export default async function HashtagPosts({ params }: { params: { tagId: string } }) {
+export default async function HashtagPosts({ params }: { params: Promise<{ tagId: string }> }) {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
 
-    const { tagId: tag } =  params;
+    const { tagId: tag } = await params;
     const hashtagPosts = await prisma.hashtag.findUnique({
         where: { name: tag },
         include: {

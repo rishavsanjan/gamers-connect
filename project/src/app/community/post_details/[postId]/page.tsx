@@ -20,10 +20,10 @@ export const metadata = {
     description: 'Shows detail of a selected post'
 }
 
-const PostDetails = async ({ params }: { params: { postId: string } }) => {
+const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) => {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
-    const { postId } =  params;
+    const { postId } = await params;
 
 
     let posts = await prisma.post.findFirst({

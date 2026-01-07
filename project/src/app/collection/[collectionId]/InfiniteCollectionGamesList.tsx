@@ -3,6 +3,7 @@ import ProfileGameList from '@/app/profile/ProfileGameList';
 import { ProfileGame } from '@/app/types/game';
 import { Collection } from '@prisma/client'
 import axios from 'axios';
+import { notFound } from 'next/navigation';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
 
@@ -20,6 +21,10 @@ const InfiniteCollectionGamesList: React.FC<Props> = ({ games, totalGames, colle
     const [nextPage, setNextPage] = useState(2);
     const [loading, setLoading] = useState(false);
     const [visibility, setVisibility] = useState(visible);
+
+    if(!collection) {
+        return notFound();
+    }
 
 
     const toggleVisibility = async () => {

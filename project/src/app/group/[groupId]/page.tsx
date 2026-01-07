@@ -8,10 +8,11 @@ import PrivateGroupPage from './PrivateGroup';
 import { Metadata } from 'next';
 
 export async function generateMetadata(
-    { params }: { params: { groupId: string } }
+    { params }: { params: Promise<{ groupId: string }> }
 ): Promise<Metadata> {
+    const {groupId} = await params;
     const group = await prisma.group.findUnique({
-        where: { id: params.groupId },
+        where: { id: groupId },
         select: { name: true },
     });
 
@@ -24,8 +25,8 @@ export async function generateMetadata(
 
 
 
-const GroupPage = async ({ params }: { params: { groupId: string } }) => {
-    const { groupId } =  params;
+const GroupPage = async ({ params }: { params: Promise<{ groupId: string }> }) => {
+    const { groupId } =await params;
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
 

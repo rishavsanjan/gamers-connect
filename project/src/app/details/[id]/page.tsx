@@ -11,9 +11,9 @@ import { Metadata } from 'next';
 
 
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: { params:Promise< { id: string }> }
 ): Promise<Metadata> {
-  const { id } = params;
+  const { id } =await params;
   const game: Game = await getGameName(id);
 
   return {
@@ -23,9 +23,9 @@ export async function generateMetadata(
   };
 }
 
-const GameDetails = async ({ params }: { params: { id: string } }) => {
+const GameDetails = async ({ params }: { params:Promise< { id: string }> }) => {
 
-  const { id } =  params;
+  const { id } = await params;
   const game: Game = await getGameDetails(id);
   const imgUrl = game.cover?.url
     ? `https:${game.cover.url.replace("t_thumb", "t_screenshot_med")}`
