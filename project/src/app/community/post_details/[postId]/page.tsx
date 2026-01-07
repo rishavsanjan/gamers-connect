@@ -17,6 +17,11 @@ interface Props {
     params: Promise<{ postId: string }>
 }
 
+export const metadata = {
+    title: 'Post Details',
+    description: 'Shows detail of a selected post'
+}
+
 const PostDetails: React.FC<Props> = async ({ params }) => {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;

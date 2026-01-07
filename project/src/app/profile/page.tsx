@@ -7,6 +7,11 @@ import { Facebook, Instagram, Pencil, Plus, Twitch, Twitter } from 'lucide-react
 import Link from 'next/link';
 import { BsDiscord, BsSteam, BsYoutube } from 'react-icons/bs';
 
+export const metadata =  {
+  title : 'Profile',
+  description : 'Logged in user profile'
+}
+
 const Profile = async () => {
   const session = await auth();
   if (!session?.user.username) {

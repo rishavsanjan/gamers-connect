@@ -5,7 +5,22 @@ import GroupHeader from './GroupHeader';
 import { auth } from '@/auth';
 import { GroupDetailsProvider } from '@/context/GroupsContext';
 import PrivateGroupPage from './PrivateGroup';
+import { Metadata } from 'next';
 
+export async function generateMetadata(
+  { params }: { params: { groupId: string } }
+): Promise<Metadata> {
+  const group = await prisma.group.findUnique({
+    where: { id: params.groupId },
+    select: { name: true },
+  });
+
+  return {
+    title: group?.name
+      ? `${group.name} | GamersConnect`
+      : "Collection | GamersConnect",
+  };
+}
 
 interface Props {
     params: Promise<{ groupId: string }>

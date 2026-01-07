@@ -194,6 +194,22 @@ export async function getCollections() {
 }
 
 
+export async function getGameName(id: string) {
+    const response = await axios.post(
+        "https://api.igdb.com/v4/games",
+        `fields name;
+          where id = ${id};`,
+        {
+            headers: {
+                "Client-ID": CLIENT_ID!,
+                "Authorization": `Bearer ${TOKEN}`,
+            },
+        }
+    );
+    return response.data[0];
+}
+
+
 
 
 

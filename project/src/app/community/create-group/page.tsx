@@ -13,6 +13,10 @@ import { useUser } from '@/context/UserContext';
 import { useLoginModal } from '@/context/LoginModalContext';
 import toast from 'react-hot-toast';
 
+export const metadata =  {
+  title : 'Create Group',
+  description : 'Create group'
+}
 
 const CreateGroup = () => {
     const { isLoggedIn } = useUser();

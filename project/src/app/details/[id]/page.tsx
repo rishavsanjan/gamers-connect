@@ -1,4 +1,4 @@
-import { getGameDetails, getGameDlcs } from '@/lib/igdb';
+import { getGameDetails, getGameDlcs, getGameName } from '@/lib/igdb';
 import React from 'react'
 import { Game } from '@/app/types/game';
 import LeftSide from '@/components/game-details/left';
@@ -6,13 +6,27 @@ import RightSide from '@/components/game-details/right';
 import GameStreams from '@/components/GameStreams';
 import Link from 'next/link';
 import SimilarDlcGameList from '@/components/SimilarDlcGameList';
+import { Metadata } from 'next';
 
 interface GameDetailProps {
-  params: Promise<{id:string}>
+  params: Promise<{ id: string }>
+}
+
+export async function generateMetadata(
+  { params }: { params: { id: string } }
+): Promise<Metadata> {
+  const { id } = params;
+  const game: Game = await getGameName(id);
+
+  return {
+    title: game?.name
+      ? `${game.name}`
+      : "Game Details",
+  };
 }
 
 const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
-    
+
   const { id } = await params;
   const game: Game = await getGameDetails(id);
   const imgUrl = game.cover?.url

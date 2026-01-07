@@ -2,6 +2,22 @@ import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import React from 'react'
 import InfiniteCollectionGamesList from './InfiniteCollectionGamesList';
+import { Metadata } from 'next';
+
+export async function generateMetadata(
+  { params }: { params: { collectionId: string } }
+): Promise<Metadata> {
+  const collection = await prisma.collection.findUnique({
+    where: { id: params.collectionId },
+    select: { name: true },
+  });
+
+  return {
+    title: collection?.name
+      ? `${collection.name} | GamersConnect`
+      : "Collection | GamersConnect",
+  };
+}
 
 interface Props {
     params: Promise<{ collectionId: string }>

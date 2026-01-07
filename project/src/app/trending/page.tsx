@@ -2,6 +2,11 @@ import React from 'react'
 import AnticipatedGames from './AnticipatedGames'
 import Trending from './Trending'
 
+export const metadata = {
+    title : 'Trending',
+    description : 'Shows trending games'
+}
+
 export default function TrendingSection() {
 
     return (

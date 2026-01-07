@@ -3,12 +3,24 @@ import { prisma } from '@/lib/prisma'
 import { auth } from '@/auth'
 import { ArrowLeft } from 'lucide-react'
 import InfiniteHashTagFeed from './InfiniteHashTagFeed'
-import { PostFeedProvider } from '@/context/PostsContext'
 import InitPosts from '@/context/InitPosts'
+import { Metadata } from 'next'
 
 interface PageProps {
     params: Promise<{ tagId: string }>
 }
+
+export async function generateMetadata(
+  { params }: { params: { tagId: string } }
+): Promise<Metadata> {
+
+  return {
+    title: `${params.tagId}`
+      
+  };
+}
+
+
 
 export default async function HashtagPosts({ params }: PageProps) {
     const session = await auth().catch(() => null);

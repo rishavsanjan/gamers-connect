@@ -4,7 +4,6 @@ import { Users } from 'lucide-react';
 import InfiniteHomePostsFeed from '@/components/community/InfinitePostsHomeFeed';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
-import AddPostModal from '@/components/community/AddPostModal';
 import SearchCommunity from './SearchCommunity';
 import SuggestedGroups from './SuggestedGroups';
 import { PostFeedProvider } from '@/context/PostsContext';
@@ -13,6 +12,11 @@ import TopUsers from './TopUsers';
 import TrendingTags from './TrendingTags';
 import InitPosts from '@/context/InitPosts';
 import PostCreate from './PostCreate';
+
+export const metadata =  {
+  title : 'Community',
+  description : 'Shows Community'
+}
 
 export default async function GamelyCommunity() {
 

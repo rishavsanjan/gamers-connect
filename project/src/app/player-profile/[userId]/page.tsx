@@ -8,7 +8,27 @@ import Link from 'next/link';
 import { BsDiscord, BsSteam, BsYoutube } from 'react-icons/bs';
 import { Facebook, Instagram, Twitch, Twitter } from 'lucide-react';
 import PrivateProfile from './PrivateProfile';
+import { Metadata } from 'next';
 
+export async function generateMetadata(
+    { params }: { params: { userId: string } }
+): Promise<Metadata> {
+    const { userId } = params;
+    const user = await prisma.user.findUnique({
+        where: {
+            id: userId
+        },
+        select: {
+            username: true
+        }
+    })
+
+    return {
+        title: user?.username
+            ? `${user.username}`
+            : "Game Details",
+    };
+}
 interface Props {
     params: Promise<{ userId: string }>
 }
