@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { X } from 'lucide-react';
 
 import { LuGamepad2 } from 'react-icons/lu';
@@ -13,12 +13,12 @@ import { useUser } from '@/context/UserContext';
 import { useLoginModal } from '@/context/LoginModalContext';
 import toast from 'react-hot-toast';
 
-export const metadata =  {
-  title : 'Create Group',
-  description : 'Create group'
-}
+
 
 const CreateGroup = () => {
+    useEffect(() => {
+            document.title = "Create Group";
+        }, []);
     const { isLoggedIn } = useUser();
     const { openLoginModal } = useLoginModal();
     const [groupName, setGroupName] = useState('');
