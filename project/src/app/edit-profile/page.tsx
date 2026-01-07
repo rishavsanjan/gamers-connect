@@ -13,13 +13,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import toast from 'react-hot-toast';
 import SocialOptions from './SocialOptions';
 
-export const metadata =  {
-  title : 'Edit Profile',
-  description : 'Edit user profile'
-}
+
 
 
 const EditProfilePage: React.FC = () => {
+    useEffect(() => {
+        document.title = "Edit Profile";
+    }, []);
     const [username, setUsername] = useState('');
     const [realName, setRealName] = useState('');
     const [bio, setBio] = useState('');
