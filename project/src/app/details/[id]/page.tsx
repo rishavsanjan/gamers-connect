@@ -9,7 +9,7 @@ import SimilarDlcGameList from '@/components/SimilarDlcGameList';
 import { Metadata } from 'next';
 
 interface GameDetailProps {
-  params: Promise<{ id: string }>
+  params:{ id: string }
 }
 
 export async function generateMetadata(

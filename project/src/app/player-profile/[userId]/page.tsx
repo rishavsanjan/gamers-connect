@@ -30,7 +30,7 @@ export async function generateMetadata(
     };
 }
 interface Props {
-    params: Promise<{ userId: string }>
+    params: { userId: string }
 }
 
 const PlayerProfile: React.FC<Props> = async ({ params }) => {

@@ -14,7 +14,7 @@ import CopyButton from '@/components/CopyButton';
 import RelatedPosts from './RelatedPosts';
 
 interface Props {
-    params: Promise<{ postId: string }>
+    params: { postId: string }
 }
 
 export const metadata = {

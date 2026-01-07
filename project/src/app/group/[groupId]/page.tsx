@@ -23,7 +23,7 @@ export async function generateMetadata(
 }
 
 interface Props {
-    params: Promise<{ groupId: string }>
+    params: { groupId: string }
 }
 
 const GroupPage: React.FC<Props> = async ({ params }) => {

@@ -7,17 +7,17 @@ import InitPosts from '@/context/InitPosts'
 import { Metadata } from 'next'
 
 interface PageProps {
-    params: Promise<{ tagId: string }>
+    params: { tagId: string }
 }
 
 export async function generateMetadata(
-  { params }: { params: { tagId: string } }
+    { params }: { params: { tagId: string } }
 ): Promise<Metadata> {
 
-  return {
-    title: `${params.tagId}`
-      
-  };
+    return {
+        title: `${params.tagId}`
+
+    };
 }
 
 
@@ -123,8 +123,8 @@ export default async function HashtagPosts({ params }: PageProps) {
                     </div> */}
                 </div>
             </header>
-                <InitPosts posts={initialPosts}/>
-                <InfiniteHashTagFeed tag={tag}  postCount={postCount} recentPostCount={recentPostCount} />
+            <InitPosts posts={initialPosts} />
+            <InfiniteHashTagFeed tag={tag} postCount={postCount} recentPostCount={recentPostCount} />
 
 
 
