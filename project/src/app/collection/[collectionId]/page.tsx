@@ -20,11 +20,11 @@ export async function generateMetadata(
     };
 }
 
-interface Props {
-    params: { collectionId: string }
-}
+// interface Props {
+//     params: { collectionId: string }
+// }
 
-const page: React.FC<Props> = async ({ params }) => {
+const page = async ({ params }: { params: { collectionId: string } }) => {
 
     const { collectionId } = await params;
     const session = await auth();

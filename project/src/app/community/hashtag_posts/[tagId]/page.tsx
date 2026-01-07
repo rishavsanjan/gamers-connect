@@ -6,9 +6,6 @@ import InfiniteHashTagFeed from './InfiniteHashTagFeed'
 import InitPosts from '@/context/InitPosts'
 import { Metadata } from 'next'
 
-interface PageProps {
-    params: { tagId: string }
-}
 
 export async function generateMetadata(
     { params }: { params: { tagId: string } }
@@ -22,7 +19,7 @@ export async function generateMetadata(
 
 
 
-export default async function HashtagPosts({ params }: PageProps) {
+export default async function HashtagPosts({ params }: { params: { tagId: string } }) {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
 

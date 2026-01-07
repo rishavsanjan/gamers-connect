@@ -29,11 +29,11 @@ export async function generateMetadata(
             : "Game Details",
     };
 }
-interface Props {
-    params: { userId: string }
-}
 
-const PlayerProfile: React.FC<Props> = async ({ params }) => {
+
+const PlayerProfile = async ({ params }: {
+    params: { userId: string }
+}) => {
     const { userId } = await params;
     const session = await auth().catch(() => null);
     const loggedInId = session?.user.id;

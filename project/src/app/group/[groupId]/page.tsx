@@ -8,25 +8,23 @@ import PrivateGroupPage from './PrivateGroup';
 import { Metadata } from 'next';
 
 export async function generateMetadata(
-  { params }: { params: { groupId: string } }
+    { params }: { params: { groupId: string } }
 ): Promise<Metadata> {
-  const group = await prisma.group.findUnique({
-    where: { id: params.groupId },
-    select: { name: true },
-  });
+    const group = await prisma.group.findUnique({
+        where: { id: params.groupId },
+        select: { name: true },
+    });
 
-  return {
-    title: group?.name
-      ? `${group.name} | GamersConnect`
-      : "Collection | GamersConnect",
-  };
+    return {
+        title: group?.name
+            ? `${group.name} | GamersConnect`
+            : "Collection | GamersConnect",
+    };
 }
 
-interface Props {
-    params: { groupId: string }
-}
 
-const GroupPage: React.FC<Props> = async ({ params }) => {
+
+const GroupPage = async ({ params }: { params: { groupId: string } }) => {
     const { groupId } = await params;
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
@@ -226,8 +224,8 @@ const GroupPage: React.FC<Props> = async ({ params }) => {
         const isAdmin = await prisma.groupMember.findFirst({
             where: {
                 id: groupId,
-                userId:session.user.id,
-                role:'ADMIN'
+                userId: session.user.id,
+                role: 'ADMIN'
             },
             select: { id: true }
         });

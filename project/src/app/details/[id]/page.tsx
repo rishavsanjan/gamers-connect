@@ -8,9 +8,7 @@ import Link from 'next/link';
 import SimilarDlcGameList from '@/components/SimilarDlcGameList';
 import { Metadata } from 'next';
 
-interface GameDetailProps {
-  params:{ id: string }
-}
+
 
 export async function generateMetadata(
   { params }: { params: { id: string } }
@@ -25,7 +23,7 @@ export async function generateMetadata(
   };
 }
 
-const GameDetails: React.FC<GameDetailProps> = async ({ params }) => {
+const GameDetails = async ({ params }: { params: { id: string } }) => {
 
   const { id } = await params;
   const game: Game = await getGameDetails(id);

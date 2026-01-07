@@ -13,16 +13,14 @@ import Link from 'next/link';
 import CopyButton from '@/components/CopyButton';
 import RelatedPosts from './RelatedPosts';
 
-interface Props {
-    params: { postId: string }
-}
+
 
 export const metadata = {
     title: 'Post Details',
     description: 'Shows detail of a selected post'
 }
 
-const PostDetails: React.FC<Props> = async ({ params }) => {
+const PostDetails = async ({ params }: { params: { postId: string } }) => {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
     const { postId } = await params;
