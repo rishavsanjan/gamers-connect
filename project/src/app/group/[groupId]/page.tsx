@@ -25,7 +25,7 @@ export async function generateMetadata(
 
 
 const GroupPage = async ({ params }: { params: { groupId: string } }) => {
-    const { groupId } = await params;
+    const { groupId } =  params;
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
 

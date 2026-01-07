@@ -26,7 +26,7 @@ export async function generateMetadata(
 
 const page = async ({ params }: { params: { collectionId: string } }) => {
 
-    const { collectionId } = await params;
+    const { collectionId } =  params;
     const session = await auth();
     const userId = session?.user.id;
 

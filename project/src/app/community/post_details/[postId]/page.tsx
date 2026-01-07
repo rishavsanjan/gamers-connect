@@ -23,7 +23,7 @@ export const metadata = {
 const PostDetails = async ({ params }: { params: { postId: string } }) => {
     const session = await auth().catch(() => null);
     const userId = session?.user?.id ?? null;
-    const { postId } = await params;
+    const { postId } =  params;
 
 
     let posts = await prisma.post.findFirst({

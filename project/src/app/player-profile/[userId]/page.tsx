@@ -34,7 +34,7 @@ export async function generateMetadata(
 const PlayerProfile = async ({ params }: {
     params: { userId: string }
 }) => {
-    const { userId } = await params;
+    const { userId } =  params;
     const session = await auth().catch(() => null);
     const loggedInId = session?.user.id;
 
