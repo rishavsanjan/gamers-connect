@@ -6,15 +6,17 @@ import { Game } from "@/app/types/game";
 import { FadeLoader } from "react-spinners";
 import { useUser } from "@/context/UserContext";
 import { useLoginModal } from "@/context/LoginModalContext";
+import { GameStatus, UserPlatform } from "@prisma/client";
 
 interface gameStatus {
+    exists: boolean,
     inMyGames: {
-        status: string,
-        owned_platform: string
+        status: GameStatus | null,
+        owned_platform: UserPlatform| null
     } | null,
     inPlaylist: boolean,
     rated: {
-        user_rating: number
+        user_rating: number | null
     } | null,
 }
 

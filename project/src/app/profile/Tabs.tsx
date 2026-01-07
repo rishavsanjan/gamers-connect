@@ -23,7 +23,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div>
                 <button
                     onClick={() => { setActiveTab('overview') }}
-                    className={`${activeTab === 'overview' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'overview' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >
                     Overview
                 </button>
@@ -31,7 +31,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('playlist'); setGameTab('playlist') }}
-                    className={`${activeTab === 'playlist' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'playlist' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Playlist</button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{playlistCount || 0}</span>
             </div>
@@ -39,7 +39,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('owned'); setGameTab('myGames') }}
-                    className={`${activeTab === 'owned' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'owned' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Owned</button>
                 <span className='absolute -top-3 -right-4 text-gray-500 font-extralight'>{ownedGamesCount || 0}</span>
 
@@ -48,7 +48,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('ratings'); setGameTab('ratings') }}
-                    className={`${activeTab === 'ratings' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'ratings' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Ratings</button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{ratingsCount || 0}</span>
 
@@ -56,7 +56,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('post') }}
-                    className={`${activeTab === 'post' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'post' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Posts
                 </button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{postsCount || 0}</span>
@@ -66,7 +66,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('collection') }}
-                    className={`${activeTab === 'collection' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'collection' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Collection</button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{collectionCount || 0}</span>
 
@@ -75,7 +75,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('bookmark') }}
-                    className={`${activeTab === 'bookmark' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'bookmark' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Bookmarks
                 </button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{bookmarkCount || 0}</span>
@@ -85,7 +85,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('follower') }}
-                    className={`${activeTab === 'follower' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'follower' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Followers
                 </button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{followerCountState || 0}</span>
@@ -95,7 +95,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('following') }}
-                    className={`${activeTab === 'following' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'following' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Following
                 </button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{followingrCountState || 0}</span>
@@ -105,7 +105,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('achievements') }}
-                    className={`${activeTab === 'achievements' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'achievements' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Achievements
                 </button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{achievementsCount || 0}</span>
@@ -114,7 +114,7 @@ const Tabs: React.FC<Props> = ({ setActiveTab, setGameTab, activeTab, ownedGames
             <div className='relative '>
                 <button
                     onClick={() => { setActiveTab('groups') }}
-                    className={`${activeTab === 'groups' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out transition-all duration-300 text-gray-500 font-medium text-xl`}
+                    className={`${activeTab === 'groups' ? 'border-b border-white text-white ' : 'hover:border-gray-400 hover:border-b-2 '} ease-in-out cursor-pointer transition-all duration-300 text-gray-500 font-medium text-xl`}
                 >Groups
                 </button>
                 <span className='absolute -top-2 -right-3 text-gray-500 font-extralight'>{groupsCount || 0}</span>

@@ -1,15 +1,17 @@
 'use client'
 import axios from "axios"
 import { Game } from "../types/game"
+import { GameStatus, UserPlatform } from "@prisma/client"
 
 interface gameStatus {
+    exists: boolean,
     inMyGames: {
-        status: string,
-        owned_platform: string
+        status: GameStatus | null,
+        owned_platform: UserPlatform | null
     } | null,
     inPlaylist: boolean,
     rated: {
-        user_rating: number
+        user_rating: number | null
     } | null,
 }
 
@@ -17,7 +19,8 @@ interface gameStatus {
 
 
 
-export const addToMyGames = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, owned_platform: string, status: string) => {
+
+export const addToMyGames = async (game: Game, model: string, setStatus: React.Dispatch<React.SetStateAction<gameStatus>>, setLoading: React.Dispatch<React.SetStateAction<boolean>>, owned_platform: UserPlatform | null, status: GameStatus | null) => {
     setLoading(true)
     setStatus((prev) => ({
         ...prev, inMyGames: {

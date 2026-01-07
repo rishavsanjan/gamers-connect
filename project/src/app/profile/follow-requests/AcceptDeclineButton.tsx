@@ -108,7 +108,7 @@ const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests, setInvite
             <button
                 onClick={handleDecline}
                 disabled={declining}
-                className="flex-1 sm:flex-none h-10 px-4 rounded-lg border border-slate-700 text-slate-300 font-bold text-sm hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 w-32">
+                className="flex-1 sm:flex-none h-10 px-4 rounded-lg border border-slate-700 text-slate-300 font-bold text-sm hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 w-32 cursor-pointer">
                 {
                     declining ?
                         <ClipLoader color='white' size={20} />
@@ -124,7 +124,7 @@ const AcceptDeclineButton: React.FC<Props> = ({ senderId, setRequests, setInvite
             <button
                 onClick={handleAccept}
                 disabled={accepting}
-                className="flex-1 sm:flex-none h-10 px-6 rounded-lg bg-[#3713ec] hover:bg-[#3713ec]/90 text-white font-bold text-sm shadow-lg shadow-[#3713ec]/20 transition-all flex items-center justify-center gap-2 w-32">
+                className="flex-1 sm:flex-none h-10 px-6 rounded-lg bg-[#3713ec] hover:bg-[#3713ec]/90 text-white font-bold text-sm shadow-lg shadow-[#3713ec]/20 transition-all flex items-center justify-center gap-2 w-32 cursor-pointer">
                 {
                     accepting ?
                         <ClipLoader color='white' size={20} />

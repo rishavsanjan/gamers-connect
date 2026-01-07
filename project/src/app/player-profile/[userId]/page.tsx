@@ -17,7 +17,6 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
     const { userId } = await params;
     const session = await auth().catch(() => null);
     const loggedInId = session?.user.id;
-    console.log(session?.user.id)
 
 
     const user = await prisma.user.findUnique({
@@ -242,7 +241,7 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
         <div className=''>
             <div className='flex flex-col items-center gap-4'>
                 <div className='flex flex-col items-center  justify-center mt-4 gap-4 '>
-                    <div className={`${user?.avatar ? '' : 'bg-purple-500  w-18 h-18 rounded-full'}  `}>
+                    <div className={`${user?.avatar ? '' : 'bg-purple-500 p-4 m-4 w-18 h-18 rounded-full'}  `}>
                         {
                             user?.avatar ?
                                 <>
@@ -250,7 +249,7 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
                                 </>
                                 :
                                 <>
-                                    <h1 className='text-4xl text-center'>{user?.username[0].toUpperCase()}</h1>
+                                    <h1 className='text-4xl text-center'>{user.username[0].toUpperCase()}</h1>
                                 </>
                         }
 
@@ -259,7 +258,7 @@ const PlayerProfile: React.FC<Props> = async ({ params }) => {
 
                         <h1 className='md:text-5xl text-3xl'>{user.username ?? 'Anynomus'}</h1>
                         <div>
-                            <FollowCard isFollowing={isFollowing} userId={userId} />
+                            <FollowCard isFollowing={isFollowing} userId={userId} userPrivacy={user.privacy} />
                         </div>
                     </div>
 

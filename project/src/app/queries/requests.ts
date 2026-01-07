@@ -77,5 +77,68 @@ export const handleAddRequest = async ({
 }
 
 
+interface Requests {
+  id: string,
+  name: string | null,
+  username: string,
+  avatar: string | null,
+  xp: number,
+  createdAt: Date
+
+}
+
+interface RequestsResponse {
+  requests: Requests[],
+  nextPage?: number
+}
+
+
+export const fetchRequests = async ({
+  pageParam = 1,
+  queryKey
+}: {
+  pageParam?: number,
+  queryKey: string[]
+}): Promise<RequestsResponse> => {
+
+  const res = await axios.post<RequestsResponse>(`/api/private/follow-group-requests/fetch-follow-requests?page=${pageParam}`)
+
+  return {
+    requests: res.data.requests,
+    nextPage: res.data.requests.length > 0 ? pageParam + 1 : undefined
+  }
+}
+
+interface Invites {
+  id: string,
+  name: string,
+  coverImage: string | null,
+  createdAt: Date
+
+}
+
+interface InviteResponse {
+  invites: Invites[],
+  nextPage?: number
+
+}
+
+export const fetchInvites = async ({
+  pageParam = 1,
+  queryKey
+}: {
+  pageParam?: number,
+  queryKey: string[]
+}): Promise<InviteResponse> => {
+
+  const res = await axios.post<InviteResponse>(`/api/private/follow-group-requests/fetch-user-invite?page=${pageParam}`)
+
+  return {
+    invites: res.data.invites,
+    nextPage: res.data.nextPage
+  }
+}
+
+
 
 

@@ -3,7 +3,6 @@ import { addToMyGames, addToPlayList, removeFromMyGame, removeFromPlayList } fro
 import { Game } from "@/app/types/game"
 import { useEffect, useRef, useState } from "react"
 import axios from "axios"
-import { ClipLoader, FadeLoader } from "react-spinners"
 import { IoGameController } from "react-icons/io5"
 import { LuGamepad2 } from "react-icons/lu"
 import RatingSlider from "./RatingSlider"
@@ -13,32 +12,31 @@ import { GoCheck } from "react-icons/go";
 import { useUser } from "@/context/UserContext"
 import { useLoginModal } from "@/context/LoginModalContext"
 import ShareAsPost from "./ShareAsPost"
+import { GameStatus, UserPlatform } from '@prisma/client';
 
 interface AddMyGameButtonProps {
-    game: Game
+    game: Game,
+    userGameStatus: gameStatus
 }
 
 interface gameStatus {
+    exists: boolean,
     inMyGames: {
-        status: string,
-        owned_platform: string
+        status: GameStatus | null,
+        owned_platform: UserPlatform | null
     } | null,
     inPlaylist: boolean,
     rated: {
-        user_rating: number
+        user_rating: number | null
     } | null,
 }
 
 
 
-export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
+export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game, userGameStatus }) => {
     const { isLoggedIn } = useUser();
     const { openLoginModal } = useLoginModal();
-    const [status, setStatus] = useState<gameStatus>({
-        inMyGames: null,
-        inPlaylist: false,
-        rated: null,
-    });
+    const [status, setStatus] = useState<gameStatus>(userGameStatus);
     const [showPlatformModal, setShowPlatformModal] = useState(false);
     const [showStatusModal, setShowStatusModal] = useState(false);
     const [ownGame, setOwnedGame] = useState({
@@ -49,28 +47,14 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
     const [playlistLoading, setPlaylistLoading] = useState(false);
     const [collectionModal, setCollectionModal] = useState(false);
     const collectionRef = useRef<HTMLDivElement>(null);
-    const platforms = [
+    const platforms: UserPlatform[] = [
         'WINDOWS', 'PLAYSTATION', 'XBOX', 'NINTENDO',
         'MAC', 'LINUX', 'IOS', 'ANDROID', 'ARCADE', 'WII'
     ];
-    const [currentGameStatus, setCurrentGameStatus] = useState('');
-    const gameStatuses = ['NOT_STARTED', 'PLAYING', 'COMPLETED', 'ABANDONED'];
+    const gameStatuses:GameStatus[] = ['NOT_STARTED', 'PLAYING', 'COMPLETED', 'ABANDONED'];
     const [shareAsPost, setShareAsPost] = useState(false);
     const [sharePayload, setSharePayload] = useState<any>(null);
 
-
-
-    useEffect(() => {
-        setLoading(true);
-        setPlaylistLoading(true);
-        const fetchStatus = async () => {
-            const res = await axios.get(`/api/private/checkGameStatus?igdb_id=${game.id}`);
-            setStatus(res.data);
-            setLoading(false);
-            setPlaylistLoading(false);
-        };
-        fetchStatus();
-    }, [game]);
 
     console.log(status)
     useEffect(() => {
@@ -319,13 +303,10 @@ export const AddMyGameButton: React.FC<AddMyGameButtonProps> = ({ game }) => {
                                             openLoginModal();
                                             return;
                                         }
-
-
-                                        setCurrentGameStatus(gameStatus)
                                         setOwnedGame(prev => ({ ...prev, status: gameStatus }));
 
                                         setShowStatusModal(false);
-                                        addToMyGames(game, 'myGame', setStatus, setLoading, ownGame.owned_platform, gameStatus);
+                                        addToMyGames(game, 'myGame', setStatus, setLoading, ownGame.owned_platform as UserPlatform, gameStatus);
                                         setSharePayload({
                                             type: "myGame",
                                             gameId: game.id,

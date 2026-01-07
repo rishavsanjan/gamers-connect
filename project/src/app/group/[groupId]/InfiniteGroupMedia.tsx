@@ -1,8 +1,6 @@
 import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll';
 import { fetchGroupMedia } from '@/app/queries/posts';
-import { Post } from '@prisma/client'
 import { useInfiniteQuery } from '@tanstack/react-query';
-import axios from 'axios';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ClipLoader } from 'react-spinners';

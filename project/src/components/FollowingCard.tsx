@@ -1,8 +1,9 @@
 import { Follower } from '@/app/types/follower'
 import { addFollow } from '@/app/utils/community_functions'
 import axios from 'axios'
-import {  X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import Link from 'next/link'
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners'
 
@@ -10,8 +11,8 @@ interface Props {
     user: Follower
     activeTab?: string,
     setFollowers?: React.Dispatch<React.SetStateAction<Follower[]>>
-    setFollowersCount? : React.Dispatch<React.SetStateAction<number>>
-    setFollowingCount? : React.Dispatch<React.SetStateAction<number>>
+    setFollowersCount?: React.Dispatch<React.SetStateAction<number>>
+    setFollowingCount?: React.Dispatch<React.SetStateAction<number>>
 }
 
 const FollowingCard: React.FC<Props> = ({ user, activeTab, setFollowers, setFollowersCount, setFollowingCount }) => {
@@ -26,7 +27,7 @@ const FollowingCard: React.FC<Props> = ({ user, activeTab, setFollowers, setFoll
         setLoading(true);
         addFollow({ otherPersonId: userId, myId: session?.user.id });
         setFollowing(prev => !prev)
-        
+
         setLoading(false);
     }
 
@@ -45,8 +46,8 @@ const FollowingCard: React.FC<Props> = ({ user, activeTab, setFollowers, setFoll
                 setFollowers(prev => prev.filter(f => f.id !== followerId))
                 setFollowersCount(prev => prev - 1)
             }
-            
-            
+
+
 
         } catch (error) {
             console.log(error)
@@ -77,24 +78,27 @@ const FollowingCard: React.FC<Props> = ({ user, activeTab, setFollowers, setFoll
                 )}
 
                 {/* User Info */}
-                <div className='flex flex-col'>
-                    <p className='text-gray-900 dark:text-white font-medium'>
-                        {displayName}
-                    </p>
-                    {user.username && user.name && (
-                        <p className='text-gray-500 dark:text-gray-400 text-sm'>
-                            @{user.username}
+                <Link href={`${session?.user.id === user.id ? `/profile` : `/player-profile/${user.id}`} `} key={user.id}>
+                    <div className='flex flex-col'>
+                        <p className='text-gray-900 dark:text-white font-medium'>
+                            {displayName}
                         </p>
-                    )}
-                </div>
+                        {user.username && user.name && (
+                            <p className='text-gray-500 dark:text-gray-400 text-sm'>
+                                @{user.username}
+                            </p>
+                        )}
+                    </div>
+                </Link>
             </div>
 
             {/* Follow Button */}
             {
                 user.id !== session?.user.id &&
                 <button
+                    disabled={removing || loading}
                     onClick={() => handleFollow(user.id)}
-                    className={`px-4 py-2 rounded-full font-medium transition-all duration-200 ${following
+                    className={`px-4 py-2 rounded-full font-medium transition-all duration-200 cursor-pointer disabled:cursor-not-allowed ${following
                         ? 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
                         : 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm hover:shadow items-center justify-center'
                         }`}
@@ -120,7 +124,7 @@ const FollowingCard: React.FC<Props> = ({ user, activeTab, setFollowers, setFoll
                     className='hover:bg-gray-400 rounded-full p-1 ease-in-out duration-200 disabled:cursor-not-allowed' onClick={() => { handleRemoveFollower(user.id) }}>
                     {
                         removing ?
-                            <ClipLoader color='white' size={20}/>
+                            <ClipLoader color='white' size={20} />
                             :
                             <X />
                     }

@@ -51,13 +51,12 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     collectionCount,
     ratingsCount, bookmarkCount, follower, following, achievementsCount, groups, groupsCount, posts, postsCount }) => {
     const [activeTab, setActiveTab] = useState('overview');
-    const [loading, setLoading] = useState(false)
     const [playlistGames, setPlaylistGames] = useState(playlist.map(item => item.game));
     const [ownedGames, setOwnedGames] = useState(mygames.map(item => item.game));
     const [followersState, setFollowersState] = useState(follower);
-    const [followingState, setFollowingState] = useState(following);
+   // const [followingState, setFollowingState] = useState(following);
     const [followerCountState, setFollowerCountState] = useState(follower.length)
-    const [followingrCountState, setFollowingrCountState] = useState(following.length)
+  //  const [followingrCountState, setFollowingrCountState] = useState(following.length)
     const [ratedgames, setRatedGames] = useState(ratings.map(item => item.game));
     const [gameTab, setGameTab] = useState('');
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
@@ -129,7 +128,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
     return (
         <div className='flex  flex-col bg-transparent z-60'>
-            <Tabs setActiveTab={setActiveTab} setGameTab={setGameTab} activeTab={activeTab} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} ratingsCount={ratingsCount} postsCount={postsCount} collectionCount={collectionCount} bookmarkCount={bookmarkCount} followerCountState={followerCountState} followingrCountState={followingrCountState} achievementsCount={achievementsCount} groupsCount={groupsCount} />
+            <Tabs setActiveTab={setActiveTab} setGameTab={setGameTab} activeTab={activeTab} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} ratingsCount={ratingsCount} postsCount={postsCount} collectionCount={collectionCount} bookmarkCount={bookmarkCount} followerCountState={followerCountState} followingrCountState={following.length} achievementsCount={achievementsCount} groupsCount={groupsCount} />
             {
                 activeTab === 'bookmark' &&
                 <div className='p-4'>
@@ -308,7 +307,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                 activeTab === 'following' &&
                 <div className='p-4 px-8  flex flex-row flex-wrap gap-2'>
                     {
-                        followingState.map((user) => {
+                        following.map((user) => {
                             return (
                                 <FollowingCard user={user} activeTab={activeTab} />
                             )

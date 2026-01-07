@@ -2,35 +2,42 @@
 import { addFollow } from '@/app/utils/community_functions';
 import { useLoginModal } from '@/context/LoginModalContext';
 import { useUser } from '@/context/UserContext';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
 import { ClipLoader } from 'react-spinners';
 
 interface Props {
     isFollowing: boolean
     userId: string
+    userPrivacy: string
 }
 
-const FollowCard: React.FC<Props> = ({ isFollowing, userId }) => {
-    const { isLoggedIn , user} = useUser();
-    const {openLoginModal} = useLoginModal()
+const FollowCard: React.FC<Props> = ({ isFollowing, userId, userPrivacy }) => {
+    const { isLoggedIn, user } = useUser();
+    const { openLoginModal } = useLoginModal()
     const [following, setFollowing] = useState(isFollowing);
     const [loading, setLoading] = useState(false);
-
+    const router = useRouter();
     const handleFollow = async () => {
-        if(!isLoggedIn){
+        if (!isLoggedIn) {
             openLoginModal();
             return;
         }
+
         setLoading(true);
         addFollow({ otherPersonId: userId, myId: user?.id });
+        if (userPrivacy === 'PRIVATE' && isFollowing === true) {
+            router.refresh();
+        }
         setFollowing(prev => !prev)
         setLoading(false);
     }
 
     return (
         <button
+            disabled={loading}
             onClick={() => { handleFollow() }}
-            className='bg-white p-2 px-6 rounded-sm text-black hover:bg-gray-200 ease-in-out transition-all duration-200 cursor-pointer'>
+            className={`${following ? ' border-white border-2 bg-transparent text-white' : 'bg-white text-black'}  p-2 px-6 rounded-sm  ease-in-out transition-all duration-200 cursor-pointer disabled:cursor-not-allowed`}>
 
             {
                 loading ?

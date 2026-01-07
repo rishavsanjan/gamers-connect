@@ -21,19 +21,25 @@ export async function POST(req: Request) {
                 }
             })
 
+            await tx.groupMember.create({
+                data: {
+                    userId,
+                    groupId,
+                    role:'MEMBER'
+                }
+            })
+
             await tx.group.update({
                 where: {
                     id: groupId
                 },
                 data: {
                     memberCount: { increment: 1 },
-                    members: {
-                        connect: {
-                            id: userId
-                        }
-                    }
+
                 }
             })
+
+
 
             await tx.groupJoinRequest.delete({
                 where: {

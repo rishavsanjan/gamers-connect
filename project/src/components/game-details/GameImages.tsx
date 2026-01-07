@@ -15,7 +15,7 @@ const GameImages: React.FC<Props> = ({ screenshots }) => {
 
     return (
         <>
-            <div className='grid grid-cols-2 gap-4'>
+            <div className='grid grid-cols-2 gap-4 cursor-pointer'>
                 {
                     images.map((image, index) => {
                         const imgUrl = image?.url

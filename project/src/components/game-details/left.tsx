@@ -2,12 +2,82 @@ import React from 'react'
 import { Game } from '@/app/types/game';
 import { formatUnixDate } from '@/app/utils/date';
 import { AddMyGameButton } from '../AddMyGameButton';
+import { prisma } from '@/lib/prisma';
+import { auth } from '@/auth';
+import { GameStatus, UserPlatform } from '@prisma/client';
 
 interface LeftSideProps {
     game: Game
 }
 
+interface gameStatus {
+    exists: boolean,
+    inMyGames: {
+        status: GameStatus | null,
+        owned_platform: UserPlatform | null
+    } | null,
+    inPlaylist: boolean,
+    rated: {
+        user_rating: number | null
+    } | null,
+}
+
 const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
+    const session = await auth().catch(() => null);
+    // ✅ 1. Find the game by igdb_id
+    const gameDetails = await prisma.game.findUnique({
+        where: { igdb_id: game.id },
+        select: { id: true },
+    });
+
+    let status: gameStatus = {
+        exists: false,
+        inMyGames: null,
+        inPlaylist: false,
+        rated: null,
+    }
+
+    if (gameDetails && session) {
+        // ✅ 2. Check if user has this game in "My Games"
+        const myGame = await prisma.myGame.findFirst({
+            where: {
+                userId: session.user.id,
+                gameId: gameDetails.id,
+            },
+            select: {
+                status: true,
+                owned_platform: true
+            }
+        });
+
+        // ✅ 3. Check if user has this game in "Playlist"
+        const playlist = await prisma.playlist.findFirst({
+            where: {
+                userId: session.user.id,
+                gameId: gameDetails.id,
+            },
+        });
+
+        // ✅ 4. Check if user has rated this game
+        const rating = await prisma.rating.findFirst({
+            where: {
+                userId: session.user.id,
+                gameId: gameDetails.id,
+            },
+            select: {
+                user_rating: true
+            }
+        });
+
+        status = {
+            exists: true,
+            inMyGames: myGame,
+            inPlaylist: !!playlist,
+            rated: rating,
+        }
+    }
+
+
     return (
         <div className='z-100 w-full md:w-[60%] flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 md:p-8'>
             {/* Release Date Badge */}
@@ -22,7 +92,7 @@ const LeftSide: React.FC<LeftSideProps> = async ({ game }) => {
 
             {/* Add to My Games Button */}
             <div className='w-full sm:w-auto'>
-                <AddMyGameButton game={game} />
+                <AddMyGameButton game={game} userGameStatus={status}/>
             </div>
 
             {/* Rating Section */}
