@@ -77,7 +77,8 @@ export default async function HashtagPosts({ params }: { params: Promise<{ tagId
         userId: post.userId,
         updatedAt: post.updatedAt,
         type: post.type,
-        hasBookmarked: userId ? post.bookmarks.length > 0 : false
+        hasBookmarked: userId ? post.bookmarks.length > 0 : false,
+        viewCount : post.viewCount
 
     }));
 

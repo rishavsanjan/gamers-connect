@@ -123,7 +123,8 @@ const GroupPage = async ({ params }: { params: Promise<{ groupId: string }> }) =
         updatedAt: post.updatedAt,
         type: post.type,
         group: post.group,
-        hasBookmarked: userId ? post.bookmarks.length > 0 : false
+        hasBookmarked: userId ? post.bookmarks.length > 0 : false,
+        viewCount : post.viewCount
 
     }));
 

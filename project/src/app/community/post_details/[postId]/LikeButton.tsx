@@ -19,7 +19,6 @@ export default function LikeButton({ postId, hasLiked, likeCount }: LikeButtonPr
     const { openLoginModal } = useLoginModal();
 
 
-    const [loginModal, setLoginModal] = useState()
     const [liked, setLiked] = useState(hasLiked)
     const [count, setCount] = useState(likeCount)
     const [isLoading, setIsLoading] = useState(false)

@@ -53,7 +53,8 @@ export async function POST(req: Request) {
             game: post.game,
             createdAt: post.createdAt,
             mediaUrls: post.mediaUrls,
-            group: post.group
+            group: post.group,
+            viewCount : post.viewCount
         }));
 
         return NextResponse.json({ posts: result }, { status: 200 });

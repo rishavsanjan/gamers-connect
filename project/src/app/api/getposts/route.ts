@@ -382,6 +382,7 @@ export async function POST(req: Request) {
       user: post.user,
       group: post.group,
       game: post.game,
+      viewCount : post.viewCount
     }));
 
     return NextResponse.json(

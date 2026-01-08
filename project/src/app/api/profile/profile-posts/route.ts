@@ -61,7 +61,8 @@ export async function POST(req: Request) {
             userId: post.userId,
             updatedAt: post.updatedAt,
             type: post.type,
-            hasBookmarked: post.bookmarks.length > 0 || false
+            hasBookmarked: post.bookmarks.length > 0 || false,
+            viewCount : post.viewCount
 
         }))
 

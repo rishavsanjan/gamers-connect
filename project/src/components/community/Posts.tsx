@@ -1,5 +1,5 @@
 import { timeAgo } from '@/app/utils/date'
-import { Ellipsis, MessageCircle, Share2 } from 'lucide-react'
+import { Ellipsis, Eye, MessageCircle, Share2 } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
 import PostLikeButton from './PostLikeButton'
@@ -9,7 +9,7 @@ import toast from 'react-hot-toast'
 import PostSettings from '../PostSettings'
 import { useUser } from '@/context/UserContext'
 import { Post } from '@/app/types/post'
-import PostsSkeleton from '../../skeleton/PostSkeleton'
+import { FaRegEye } from 'react-icons/fa'
 
 interface Props {
     actions: {
@@ -38,6 +38,9 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
             document.removeEventListener("mousedown", handleClickOutside)
         }
     }, []);
+
+
+    console.log(posts)
 
     return (
         <div className='space-y-4'>
@@ -120,12 +123,20 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
                             )}
 
                             {/* Post Actions */}
-                            <div className="flex items-center space-x-6 border-t border-white/10 pt-4">
-                                <PostLikeButton postId={post.id} likeCount={post.likeCount} hasLiked={post.hasLiked} />
-                                <button className="flex items-center space-x-2 text-gray-400 transition hover:text-purple-400 cursor-pointer">
-                                    <MessageCircle className="h-5 w-5" />
-                                    <span>{post.commentCount}</span>
-                                </button>
+                            <div className="flex items-center justify-between space-x-6 border-t border-white/10 pt-4">
+                                <div  className='flex flex-row space-x-6'>
+                                    <PostLikeButton postId={post.id} likeCount={post.likeCount} hasLiked={post.hasLiked} />
+                                    <button className="flex items-center space-x-2 text-gray-400 transition hover:text-purple-400 cursor-pointer">
+                                        <MessageCircle className="h-5 w-5" />
+                                        <span>{post.commentCount}</span>
+                                    </button>
+                                    <div className='flex flex-row items-center text-gray-400 gap-2'>
+                                        <FaRegEye className='h-5 w-5' />
+
+                                        {post.viewCount}
+                                    </div>
+                                </div>
+
                                 <button
                                     onClick={() => {
                                         const url = `${window.location.href}/post_details/${post.id}`

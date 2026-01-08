@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Share2, MoreHorizontal, Bookmark } from 'lucide-react';
 import axios from 'axios';
 import { BsBookmarkFill } from 'react-icons/bs';
@@ -11,6 +11,29 @@ export default function PostActions({ postId, bookmark }: { postId: string; book
     const [bookmarked, setBookmarked] = useState(bookmark);
     const { isLoggedIn } = useUser();
     const { openLoginModal } = useLoginModal();
+
+    const VIEW_COOLDOWN = 5 * 60 * 1000;
+
+    useEffect(() => {
+        const key = `post_view_${postId}`;
+        const lastViewed = localStorage.getItem(key);
+        console.log('i m hit')
+        const now = Date.now();
+
+        if (lastViewed && now - Number(lastViewed) < VIEW_COOLDOWN) {
+            console.log('i m hit twice')
+            return;
+        }
+        
+
+        const timer = setTimeout( async() => {
+            await axios.post(`/api/posts/count-view`, { postId })
+            localStorage.setItem(key, now.toString());
+        }, 3000);
+
+        return () => clearTimeout(timer);
+    }, [postId]);
+
 
 
     const handleBookmark = async () => {
@@ -51,7 +74,7 @@ export default function PostActions({ postId, bookmark }: { postId: string; book
                 className="rounded-lg p-2 transition hover:bg-white/10 cursor-pointer">
                 <Share2 className="h-5 w-5" />
             </button>
-            
+
         </div>
     );
 }

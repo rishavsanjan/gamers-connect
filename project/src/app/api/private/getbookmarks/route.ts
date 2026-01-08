@@ -69,7 +69,8 @@ export async function GET(req: Request) {
                 type: post.post.type,
                 updatedAt: post.post.updatedAt,
                 gameId: post.post.gameId,
-                hasBookmarked: post.post.bookmarks.length > 0 || false
+                hasBookmarked: post.post.bookmarks.length > 0 || false,
+                viewCount:post.post.viewCount
 
             };
         })

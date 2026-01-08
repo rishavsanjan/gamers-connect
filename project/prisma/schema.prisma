@@ -265,6 +265,7 @@ model Post {
   updatedAt    DateTime    @updatedAt
   likeCount    Int         @default(0)
   commentCount Int         @default(0)
+  viewCount    Int         @default(0)
   visibility   PostPrivacy
 
   group   Group?  @relation(fields: [groupId], references: [id], onDelete: Cascade)

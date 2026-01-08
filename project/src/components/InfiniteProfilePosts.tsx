@@ -11,7 +11,6 @@ import { useUser } from '@/context/UserContext'
 import { useProfilePostsStore } from '@/zustland/profilePostsStore'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import React, { useEffect } from 'react'
-import { ClipLoader } from 'react-spinners'
 import PostsSkeleton from '../skeleton/PostSkeleton'
 
 const InfiniteProfilePosts: React.FC<Props> = () => {

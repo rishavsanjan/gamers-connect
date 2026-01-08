@@ -92,6 +92,8 @@ export default async function GamelyCommunity() {
         },
     });
 
+    console.log(getposts)
+
 
 
 
@@ -111,6 +113,7 @@ export default async function GamelyCommunity() {
         updatedAt: post.updatedAt,
         type: post.type,
         group: post.group,
+        viewCount : post.viewCount ,
         hasBookmarked: userId ? post.bookmarks.length > 0 : false
     }));
 

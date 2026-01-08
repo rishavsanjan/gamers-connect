@@ -78,7 +78,8 @@ export async function POST(req: Request) {
             userId: post.userId,
             updatedAt: post.updatedAt,
             type: post.type,
-            hasBookmarked: userId && Array.isArray(post.bookmarks) && post.bookmarks.length > 0
+            hasBookmarked: userId && Array.isArray(post.bookmarks) && post.bookmarks.length > 0,
+            viewCount : post.viewCount
         }))
 
         return NextResponse.json({ posts })

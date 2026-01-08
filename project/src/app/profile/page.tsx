@@ -7,9 +7,9 @@ import { Facebook, Instagram, Pencil, Plus, Twitch, Twitter } from 'lucide-react
 import Link from 'next/link';
 import { BsDiscord, BsSteam, BsYoutube } from 'react-icons/bs';
 
-export const metadata =  {
-  title : 'Profile',
-  description : 'Logged in user profile'
+export const metadata = {
+  title: 'Profile',
+  description: 'Logged in user profile'
 }
 
 const Profile = async () => {
@@ -136,8 +136,10 @@ const Profile = async () => {
           bookmarks: {
             where: { userId: session.user.id },
             select: { postId: true }
-          }
+          },
+          
         },
+        
 
 
 
@@ -191,7 +193,8 @@ const Profile = async () => {
       type: post.type,
       updatedAt: post.updatedAt,
       gameId: post.gameId,
-      hasBookmarked: post.bookmarks.length > 0 || false
+      hasBookmarked: post.bookmarks.length > 0 || false,
+      viewCount: post.viewCount
     }
   })
 
@@ -210,7 +213,9 @@ const Profile = async () => {
       type: post.post.type,
       updatedAt: post.post.updatedAt,
       gameId: post.post.gameId,
-      hasBookmarked: post.post.bookmarks.length > 0 || false
+      hasBookmarked: post.post.bookmarks.length > 0 || false,
+      viewCount: post.post.viewCount
+
 
     };
   });
@@ -277,8 +282,8 @@ const Profile = async () => {
   });
 
   const groups = await prisma.group.findMany({
-    where:{
-      members:{some:{userId:session.user.id}}
+    where: {
+      members: { some: { userId: session.user.id } }
     }
   })
 
