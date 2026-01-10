@@ -16,7 +16,9 @@ export async function handleLike(postId: string, setPosts?: React.Dispatch<React
         data: {
             postId
         }
-    })
+    });
+
+    console.log(response.data)
 
     if (setPosts) {
         setPosts(prev => prev.map((post) => {
@@ -167,8 +169,8 @@ export const handleGroupJoin = async ({ groupId, setGroupsState }: GroupJoinProp
 }
 
 export const uploadImageToCloudinary = async (file: File): Promise<string> => {
-    const CLOUDINARY_CLOUD_NAME = "diwmvqto3";
-    const CLOUDINARY_UPLOAD_PRESET = "crowd-app";
+    const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+    const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);

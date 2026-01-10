@@ -44,10 +44,12 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
     const [uploading, setUploading] = useState(false)
     const [images, setImages] = useState<File[]>([])
     const [previews, setPreviews] = useState<string[]>([])
-    const [visibility, setVisibility] = useState('EVERYONE')
+    const [visibility, setVisibility] = useState('EVERYONE');
 
-    const CLOUDINARY_CLOUD_NAME = 'diwmvqto3'
-    const CLOUDINARY_UPLOAD_PRESET = 'crowd-app'
+    const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
+    const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
+
+    console.log(CLOUDINARY_CLOUD_NAME)
 
     const { openLoginModal } = useLoginModal()
     const { isLoggedIn } = useUser()
