@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Post } from '../types/post'
 import { Game } from '@prisma/client'
+import { Comment } from '../types/comment'
 
 export interface PostsResponse {
     posts: Post[]
@@ -174,7 +175,7 @@ export const fetchGroupMedia = async ({
 }
 
 export const fetchProfileGames = async ({ pageParam = 1, queryKey }: { pageParam?: number, queryKey: string[] }): Promise<GameResposne> => {
-   
+
     const [, gameTab] = queryKey;
     const res = await axios.get<GameResposne>(
         `/api/private/fetchgames?page=${pageParam}&tab=${gameTab}`,
@@ -185,6 +186,30 @@ export const fetchProfileGames = async ({ pageParam = 1, queryKey }: { pageParam
     return {
         games: res.data.games,
         nextPage: res.data.games.length > 0 ? pageParam + 1 : undefined
+    }
+}
+
+interface CommentResponse {
+    comments: Comment,
+    nextPage?: number
+
+}
+
+export const fetchComments = async ({ pageParam = 1, queryKey }: { pageParam?: number, queryKey: string[] }): Promise<CommentResponse> => {
+    const [, postId] = queryKey;
+
+    const response = await axios({
+        url: `/api/getcomment?page=${pageParam}`,
+        method: 'post',
+        data: {
+            postId
+        }
+    });
+    const newComments = response.data.comments;
+
+    return {
+        comments: newComments,
+        nextPage: response.data.comments.length > 0 ? pageParam + 1 : undefined
     }
 }
 

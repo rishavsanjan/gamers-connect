@@ -131,7 +131,8 @@ export async function POST(req: Request) {
             updatedAt: newpost.updatedAt,
             type: newpost.type,
             group: newpost.group,
-            hasBookmarked: false
+            hasBookmarked: false,
+            viewCount:0
         };
 
 

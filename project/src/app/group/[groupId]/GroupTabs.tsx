@@ -58,7 +58,7 @@ const GroupTabs: React.FC<Props> = ({ groupId, posts, postCount24hrs, postCount3
                             {tab === 'Members' && ` (${memberCount})`}
 
                             {activeTab === tab && (
-                                <div className="absolute bottom-[-1px] left-0 right-0 h-[3px] bg-[#2374e1]" />
+                                <div className="absolute -bottom-px left-0 right-0 h-[3px] bg-[#2374e1]" />
                             )}
                         </li>
                     ))}

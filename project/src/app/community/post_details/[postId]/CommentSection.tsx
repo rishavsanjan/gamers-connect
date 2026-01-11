@@ -8,57 +8,36 @@ import { ClipLoader } from 'react-spinners'
 import { useUser } from '@/context/UserContext'
 import { useLoginModal } from '@/context/LoginModalContext'
 import CommentSkeleton from '@/skeleton/CommentSkeleton'
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { rollbackPostFeeds, snapshotAllPostFeeds, updatePostInAllFeeds } from '@/app/queries/postCacheHelpers'
+import { Post } from '@/app/types/post'
+import { fetchComments } from '@/app/queries/posts'
+import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 
 export default function CommentSection({ postId, initialComments }: { postId: string, initialComments: Comment[] }) {
   const { isLoggedIn } = useUser();
   const { openLoginModal } = useLoginModal();
   const [comments, setComments] = useState<Comment[]>(initialComments);
   const [commentText, setCommentText] = useState('');
-  const [commentUploading, setCommentUploading] = useState(false);
-  const [page, setPage] = useState(1)
-  const [loading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
 
-  const observer = useRef<IntersectionObserver | null>(null);
-
-  const lastPostRef = useCallback((node: HTMLDivElement) => {
-    if (loading) return
-    if (observer.current) observer.current.disconnect()
-
-    observer.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
-        setPage(prev => prev + 1)
-      }
-    })
-
-    if (node) observer.current.observe(node)
-  }, []);
-
-
-  const getComments = async () => {
-    const response = await axios({
-      url: `/api/getcomment?page=${page}`,
-      method: 'post',
-      data: {
-        postId
-      }
-    });
-    const newComments = response.data.comments;
-    setComments(prev => [...prev, ...newComments]);
-    if (newComments.length === 0) setHasMore(false);
-    setLoading(false);
-
-  }
-
+  const { data, isFetchingNextPage, hasNextPage, fetchNextPage } = useInfiniteQuery({
+    queryKey: ['comment', postId],
+    queryFn: fetchComments,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    staleTime: 1000 * 30
+  });
 
   useEffect(() => {
-    if (page === 1) return;
-    if(!hasMore) return;  
-    setLoading(true);
-    getComments();
+    if (!data) return
+
+    const allComments: Comment[] = data.pages.flatMap(c => c.comments);
+    setComments(allComments)
+  }, [data]);
+
+  const lastPostRef = useInfiniteScroll(isFetchingNextPage, hasNextPage ?? false, fetchNextPage);
 
 
-  }, [page, hasMore])
 
   function addReply(comments: Comment[], parentId: string, newReply: Comment): Comment[] {
 
@@ -81,29 +60,57 @@ export default function CommentSection({ postId, initialComments }: { postId: st
     })
   }
 
+  const queryClient = useQueryClient();
+
+  const addCommentMutation = useMutation({
+    mutationFn: async (parentId: string | null) => {
+      const res = await axios.post('/api/private/addcomment', {
+        postId,
+        content: commentText,
+        parentId,
+      })
+
+      const newComment = res.data.comment
+
+
+      return { parentId, newComment }
+    },
+
+    onMutate: async () => {
+      await queryClient.cancelQueries();
+
+      const snapshots = snapshotAllPostFeeds(queryClient);
+
+      updatePostInAllFeeds(queryClient, postId, (post: Post) => ({
+        ...post,
+        commentCount: post.commentCount + 1
+      }))
+
+      return { snapshots }
+    },
+    onSuccess: ({ parentId, newComment }) => {
+      if (parentId) {
+        setComments(prev => addReply(prev, parentId, newComment))
+      } else {
+        setComments(prev => [...prev, newComment])
+      }
+      setCommentText('')
+    },
+
+    onError: (_err, _vars, context) => {
+      rollbackPostFeeds(queryClient, context?.snapshots);
+    },
+  })
+
 
   const handleAddComment = async (parentId: string | null, content: string) => {
     if (!isLoggedIn) {
       openLoginModal();
       return;
     }
-    if (!parentId) {
-      setCommentUploading(true)
-    }
-    const res = await axios.post('/api/private/addcomment', {
-      postId,
-      content,
-      parentId,
-    })
-    const newComment = res.data.comment
 
-    if (parentId) {
-      setComments(prev => addReply(prev, parentId, newComment))
+    addCommentMutation.mutate(parentId);
 
-    } else {
-      setComments(prev => [...prev, newComment])
-    }
-    setCommentUploading(false)
   }
 
   return (
@@ -119,11 +126,11 @@ export default function CommentSection({ postId, initialComments }: { postId: st
         />
         <button
           onClick={() => { handleAddComment(null, commentText) }}
-          disabled={commentUploading || commentText.trim().length === 0}
+          disabled={addCommentMutation.isPending || commentText.trim().length === 0}
           className="ml-auto flex items-center space-x-2 rounded-lg bg-gradient-to-r disabled:cursor-not-allowed from-purple-600 to-pink-600 px-6 py-2 font-semibold transition hover:from-purple-700 hover:to-pink-700"
         >
           {
-            commentUploading ?
+            addCommentMutation.isPending ?
               <ClipLoader color='white' size={25} />
               :
               <>
@@ -138,13 +145,12 @@ export default function CommentSection({ postId, initialComments }: { postId: st
         <CommentItem key={c.id} comment={c} postId={postId} onReply={handleAddComment} />
       ))}
       {
-        loading &&
+        isFetchingNextPage &&
         <CommentSkeleton count={2} />
       }
-      <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center">
+      <div ref={lastPostRef} className="h-10 mt-10 flex flex-col justify-center items-center ">
 
-        {/* {loading && <ClipLoader color='white' size={40} />} */}
-        {/* {!hasMore && <p className="text-gray-500">No more comments</p>} */}
+        {!hasNextPage && <p className="text-gray-500">No more comments</p>}
       </div>
     </div>
   )

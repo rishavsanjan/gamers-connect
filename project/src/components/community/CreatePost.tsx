@@ -31,6 +31,8 @@ import {
 } from '../ui/select'
 
 import SearchGames from '../SearchGames'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { addPostToAllFeeds, snapshotAllPostFeeds, updatePostInAllFeeds } from '@/app/queries/postCacheHelpers'
 
 interface Props {
     setShowPostModal: React.Dispatch<SetStateAction<boolean>>
@@ -41,7 +43,6 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
     const [postContent, setPostContent] = useState('')
     const [category, setCategory] = useState('GENERAL')
     const [selectedGame, setSelectedGame] = useState<Game | null>(null)
-    const [uploading, setUploading] = useState(false)
     const [images, setImages] = useState<File[]>([])
     const [previews, setPreviews] = useState<string[]>([])
     const [visibility, setVisibility] = useState('EVERYONE');
@@ -49,7 +50,6 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
     const CLOUDINARY_CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
     const CLOUDINARY_UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!;
 
-    console.log(CLOUDINARY_CLOUD_NAME)
 
     const { openLoginModal } = useLoginModal()
     const { isLoggedIn } = useUser()
@@ -58,6 +58,7 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
     const setGroupPosts = useGroupPostsStore((s) => s.setPosts)
     const homePosts = usePostFeedStore((s) => s.posts)
     const groupPosts = useGroupPostsStore((s) => s.posts)
+    const p = usePostFeedStore(s => s.posts)
 
     const selectedGameData = async (id: number) => {
         const response = await axios.post('/api/private/gamedetails', { id })
@@ -78,54 +79,54 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
         return data.secure_url
     }
 
-    const handleCreatePost = async () => {
-        if (!isLoggedIn) {
-            openLoginModal()
-            return
+    const queryClient = useQueryClient();
+
+    const addPostMutation = useMutation({
+        mutationFn: async () => {
+            const hashtags =
+                postContent.match(/#\w+/g)?.map((t) => t.slice(1).toLowerCase()) ?? []
+
+            const uploadedUrls =
+                images.length > 0
+                    ? await Promise.all(images.map(uploadToCloudinary))
+                    : []
+
+            const response = await axios.post('/api/private/createpost', {
+                description: postContent,
+                name: selectedGame?.name,
+                igdb_id: selectedGame?.id,
+                summary: selectedGame?.summary,
+                storyline: selectedGame?.storyline,
+                first_release_date: selectedGame?.first_release_date,
+                total_rating: selectedGame?.total_rating,
+                cover: selectedGame?.cover,
+                game_type: selectedGame?.game_type.type,
+                genres: selectedGame?.genres,
+                platforms: selectedGame?.platforms,
+                type: category,
+                tags: hashtags,
+                mediaUrls: uploadedUrls,
+                visibility: !groupId
+                    ? visibility === 'EVERYONE'
+                        ? 'EVERYONE'
+                        : 'ONLY_FOLLOWERS'
+                    : 'GROUP',
+                groupId,
+            })
+            const newPost = response.data.formattedPost;
+            return { newPost }
+        },
+        onSuccess: ({ newPost }) => {
+            addPostToAllFeeds(queryClient, newPost)
+            if (!groupId) {
+                setHomeFeedPosts([newPost, ...homePosts])
+            } else {
+                setGroupPosts([newPost, ...groupPosts])
+            }
+
+            setShowPostModal(false)
         }
-
-        setUploading(true)
-
-        const hashtags =
-            postContent.match(/#\w+/g)?.map((t) => t.slice(1).toLowerCase()) ?? []
-
-        const uploadedUrls =
-            images.length > 0
-                ? await Promise.all(images.map(uploadToCloudinary))
-                : []
-
-        const response = await axios.post('/api/private/createpost', {
-            description: postContent,
-            name: selectedGame?.name,
-            igdb_id: selectedGame?.id,
-            summary: selectedGame?.summary,
-            storyline: selectedGame?.storyline,
-            first_release_date: selectedGame?.first_release_date,
-            total_rating: selectedGame?.total_rating,
-            cover: selectedGame?.cover,
-            game_type: selectedGame?.game_type.type,
-            genres: selectedGame?.genres,
-            platforms: selectedGame?.platforms,
-            type: category,
-            tags: hashtags,
-            mediaUrls: uploadedUrls,
-            visibility: !groupId
-                ? visibility === 'EVERYONE'
-                    ? 'EVERYONE'
-                    : 'ONLY_FOLLOWERS'
-                : 'GROUP',
-            groupId,
-        })
-
-        if (!groupId) {
-            setHomeFeedPosts([response.data.formattedPost, ...homePosts])
-        } else {
-            setGroupPosts([response.data.formattedPost, ...groupPosts])
-        }
-
-        setUploading(false)
-        setShowPostModal(false)
-    }
+    })
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
@@ -250,11 +251,17 @@ const CreatePostModal: React.FC<Props> = ({ setShowPostModal, groupId }) => {
                     </button>
 
                     <button
-                        disabled={uploading || !postContent.trim()}
-                        onClick={handleCreatePost}
+                        disabled={addPostMutation.isPending || !postContent.trim()}
+                        onClick={() => {
+                            if (!isLoggedIn) {
+                                openLoginModal()
+                                return
+                            }
+                            addPostMutation.mutate();
+                        }}
                         className="flex-1 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 py-2"
                     >
-                        {uploading ? <ClipLoader size={20} color="white" /> : 'Post'}
+                        {addPostMutation.isPending ? <ClipLoader size={20} color="white" /> : 'Post'}
                     </button>
                 </div>
             </DialogContent>

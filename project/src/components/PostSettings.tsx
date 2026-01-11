@@ -10,7 +10,7 @@ import { ClipLoader } from 'react-spinners';
 import { usePostFeedStore } from '@/zustland/postFeedStore';
 import { Post } from '@/app/types/post';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { rollbackPostFeeds, snapshotAllPostFeeds, updatePostInAllFeeds } from '@/app/queries/postCacheHelpers';
+import { removePostFromAllFeeds, rollbackPostFeeds, snapshotAllPostFeeds, updatePostInAllFeeds } from '@/app/queries/postCacheHelpers';
 
 interface PostActionsProps {
   postId: string;
@@ -28,33 +28,29 @@ export default function PostActions({ postId, hasBookmarked, postOwnerId, action
 
   const { isLoggedIn, user } = useUser();
   const { openLoginModal } = useLoginModal();
-  const [deleting, setDeleting] = useState(false);
 
-  const handleDeletePost = async () => {
-    setDeleting(true)
-    if (!isLoggedIn) {
-      openLoginModal();
-      return;
-    }
+  const queryClient = useQueryClient();
 
-    try {
+  const deletePostMutation = useMutation({
+    mutationFn: async () => {
       const response = await axios.post('/api/private/deletepost', {
         postId
       });
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries();
 
-      if (response.data.success) {
-        toast.success('Post deleted!');
-        actions.deletePost(postId);
+      const snapshots = snapshotAllPostFeeds(queryClient);
 
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setDeleting(false);
-    }
-  }
+      removePostFromAllFeeds(queryClient, postId);
 
-  const queryClient = useQueryClient();
+      return { snapshots };
+    },
+
+    onError: (_err, _vars, context) => {
+      rollbackPostFeeds(queryClient, context?.snapshots);
+    },
+  })
 
   const handleBookmarkMutation = useMutation({
     mutationFn: async () => {
@@ -88,7 +84,13 @@ export default function PostActions({ postId, hasBookmarked, postOwnerId, action
   return (
     <div className="flex flex-col items-center space-x-4">
       <button
-        onClick={() => { handleBookmarkMutation.mutate() }}
+        onClick={() => {
+          if (!isLoggedIn) {
+            openLoginModal();
+            return;
+          }
+          handleBookmarkMutation.mutate()
+        }}
         disabled={isBookmarking}
         className={`rounded-lg p-2 transition hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed  cursor-pointer ${hasBookmarked ? 'text-purple-400' : 'text-gray-400'
           }`}
@@ -112,12 +114,12 @@ export default function PostActions({ postId, hasBookmarked, postOwnerId, action
       {
         postOwnerId === user?.id &&
         <button
-          onClick={() => { handleDeletePost() }}
-          disabled={deleting}
+          onClick={() => { deletePostMutation.mutate() }}
+          disabled={deletePostMutation.isPending}
           className={`rounded-lg p-2 transition hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed }`}
         >
           {
-            deleting ?
+            deletePostMutation.isPending ?
               <ClipLoader color='red' size={23} />
               :
               <div className='flex flex-row gap-1 items-center'>

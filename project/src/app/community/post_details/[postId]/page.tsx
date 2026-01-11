@@ -209,7 +209,7 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
 
 
     return (
-        <div className="min-h-screen dark:bg-[#0F0B1E] text-gray-800 to-gray-900 text-white">
+        <div className="min-h-screen dark:bg-[#0F0B1E]  to-gray-900 text-white">
             {/* Header */}
             {/* @ts-ignore */}
             <PostCacheSeeder post={post} />
