@@ -12,6 +12,9 @@ import PostImages from '@/components/community/PostImages';
 import Link from 'next/link';
 import CopyButton from '@/components/CopyButton';
 import RelatedPosts from './RelatedPosts';
+import PostDetailsClient from './PostDetailsClient';
+import PostActionClient from './PostActionsCLient';
+import PostCacheSeeder from './PostCacheSeeder';
 
 
 
@@ -50,8 +53,10 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
             },
             Like: userId
                 ? { where: { userId } }
-                : false
-
+                : false,
+            bookmarks: userId
+                ? { where: { userId }, select: { postId: true } }
+                : false,
         }
     });
 
@@ -70,6 +75,8 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
         createdAt: posts.createdAt,
         mediaUrls: posts.mediaUrls,
         userId: posts.userId,
+        hasBookmarked: userId ? posts.bookmarks.length > 0 : false
+
     })
 
     function extractKeywords(text: string) {
@@ -109,17 +116,17 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
         orderBy: { createdAt: "desc" }
     });
 
-    let bookmark = false;
+    //let bookmark = false;
     let isRequestSent = false;
 
 
     if (session?.user?.id) {
-        bookmark = !!(await prisma.bookmark.findFirst({
-            where: {
-                userId: session.user.id,
-                postId
-            }
-        }));
+        // bookmark = !!(await prisma.bookmark.findFirst({
+        //     where: {
+        //         userId: session.user.id,
+        //         postId
+        //     }
+        // }));
 
         isRequestSent = await prisma.followRequest.count({
             where: {
@@ -204,13 +211,17 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
     return (
         <div className="min-h-screen dark:bg-[#0F0B1E] text-gray-800 to-gray-900 text-white">
             {/* Header */}
+            {/* @ts-ignore */}
+            <PostCacheSeeder post={post} />
+
             <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md">
                 <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
                     <a href="/community" className="flex items-center space-x-2 rounded-lg px-4 py-2 transition hover:bg-white/10">
                         <ArrowLeft className="h-5 w-5" />
                         <span>Back to Community</span>
                     </a>
-                    <PostActions postId={post.id} bookmark={bookmark} />
+                    <PostActionClient postId={post.id} />
+                    {/* <PostActions postId={post.id} bookmark={bookmark} /> */}
                 </div>
             </header>
 
@@ -275,11 +286,7 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
                             {/* Post Actions */}
                             <div className="flex items-center justify-between border-t border-white/10 pt-6">
                                 <div className="flex items-center space-x-6">
-                                    <LikeButton
-                                        postId={post.id}
-                                        hasLiked={post.hasLiked}
-                                        likeCount={post.likeCount}
-                                    />
+                                    <PostDetailsClient postId={post.id} />
                                     <div className="flex items-center space-x-2 text-gray-400">
                                         <MessageCircle className="h-6 w-6" />
                                         <span className="text-lg font-semibold">{post.commentCount}</span>

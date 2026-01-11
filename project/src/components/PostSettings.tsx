@@ -9,6 +9,8 @@ import { useLoginModal } from '@/context/LoginModalContext';
 import { ClipLoader } from 'react-spinners';
 import { usePostFeedStore } from '@/zustland/postFeedStore';
 import { Post } from '@/app/types/post';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { rollbackPostFeeds, snapshotAllPostFeeds, updatePostInAllFeeds } from '@/app/queries/postCacheHelpers';
 
 interface PostActionsProps {
   postId: string;
@@ -21,9 +23,8 @@ interface PostActionsProps {
   }
 }
 
-export default function PostActions({ postId, hasBookmarked, postOwnerId , actions}: PostActionsProps) {
-  const [bookmarked, setBookmarked] = useState(hasBookmarked);
-  const [isBookmarking, setIsBookmarking] = useState(false);
+export default function PostActions({ postId, hasBookmarked, postOwnerId, actions }: PostActionsProps) {
+
 
   const { isLoggedIn, user } = useUser();
   const { openLoginModal } = useLoginModal();
@@ -53,51 +54,46 @@ export default function PostActions({ postId, hasBookmarked, postOwnerId , actio
     }
   }
 
-  const handleBookmark = async () => {
-    if (!isLoggedIn) {
-      openLoginModal();
-      return;
-    }
+  const queryClient = useQueryClient();
 
-    if (isBookmarking) return;
-
-    setIsBookmarking(true);
-    const previousState = bookmarked;
-
-    // Optimistic update
-    setBookmarked(prev => !prev);
-
-    try {
-      const response = await axios.post('/api/private/handlebookmarks', {
+  const handleBookmarkMutation = useMutation({
+    mutationFn: async () => {
+      axios.post('/api/private/handlebookmarks', {
         postId
       });
+    },
+    onMutate: async () => {
+      await queryClient.cancelQueries();
 
-      if (response.data.success) {
-        toast.success(bookmarked ? 'Bookmark removed' : 'Post bookmarked');
-        actions.toggleBookmark(postId);
+      const snapshots = snapshotAllPostFeeds(queryClient);
 
-      }
+      updatePostInAllFeeds(queryClient, postId, (post: Post) => ({
+        ...post,
+        hasBookmarked: !post.hasBookmarked,
+      }));
 
-    } catch (error) {
-      // Revert on error
-      setBookmarked(previousState);
-      console.error('Bookmark error:', error);
-      toast.error('Failed to update hasBookmarked');
-    } finally {
-      setIsBookmarking(false);
-    }
-  };
+
+      return { snapshots };
+    },
+
+    onError: (_err, _vars, context) => {
+      rollbackPostFeeds(queryClient, context?.snapshots);
+    },
+  })
+
+  const isBookmarking = handleBookmarkMutation.isPending
+
 
 
   return (
     <div className="flex flex-col items-center space-x-4">
       <button
-        onClick={handleBookmark}
+        onClick={() => { handleBookmarkMutation.mutate() }}
         disabled={isBookmarking}
-        className={`rounded-lg p-2 transition hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed ${bookmarked ? 'text-purple-400' : 'text-gray-400'
+        className={`rounded-lg p-2 transition hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed  cursor-pointer ${hasBookmarked ? 'text-purple-400' : 'text-gray-400'
           }`}
       >
-        {bookmarked ? (
+        {hasBookmarked ? (
           <div className='flex flex-row gap-1 items-center'>
             <BsBookmarkFill className='h-5 w-5' />
 

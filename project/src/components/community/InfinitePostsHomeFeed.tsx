@@ -3,7 +3,7 @@ import { useInfiniteScroll } from '@/app/hooks/useInfiniteScroll'
 import { Post } from '@/app/types/post'
 import Posts from '@/components/community/Posts'
 import React, { useEffect, useState } from 'react'
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { fetchHomePosts } from '@/app/queries/posts'
 import PostsFilterButton from '../PostsFilterButton'
 import { usePostFeedStore } from '@/zustland/postFeedStore'
@@ -21,15 +21,27 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
     const [category, setCategory] = useState('');
     const { setPosts } = usePostFeedStore();
     const [feedType, setFeedType] = useState<'FORYOU' | 'FOLLOWING'>('FORYOU');
-    const queryClient = useQueryClient();
 
-    const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isFetching } = useInfiniteQuery({
+
+    const {
+        data,
+        fetchNextPage,
+        hasNextPage,
+        isFetchingNextPage,
+        isLoading,
+        isFetching,
+    } = useInfiniteQuery({
         queryKey: ['home-posts', filter, category, feedType],
         queryFn: fetchHomePosts,
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.nextPage,
-        staleTime: 1000 * 30
+
+        staleTime: 1000 * 60,     
+        gcTime: 1000 * 60 * 5,     
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
     });
+
 
 
     useEffect(() => {
@@ -44,7 +56,6 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
     }, [data, setPosts]);
 
     useEffect(() => {
-        queryClient.removeQueries({ queryKey: ['home-posts'] });
 
         setPosts([])
     }, [filter, category, feedType, setPosts])
@@ -55,7 +66,9 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
     const updatePost = usePostFeedStore((s) => s.updatePost)
     const toggleBookmark = usePostFeedStore((s) => s.toggleBookmark)
     const deletePost = usePostFeedStore((s) => s.deletePost)
-    const posts = usePostFeedStore((s) => s.posts);
+    const posts: Post[] =
+        data?.pages.flatMap(page => page.posts) ?? [];
+
 
     return (
         <div>
@@ -84,7 +97,7 @@ const InfiniteHomePostsFeed: React.FC<Props> = () => {
                     <Lottie
                         animationData={animationData}
                         loop={true}
-                       style={{width:300}}
+                        style={{ width: 300 }}
                     />
                     <div className='flex flex-col items-center'>
                         <span className='text-gray-500 text-lg font-light'>You don't have any activity yet.</span>

@@ -25,6 +25,8 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
     const [selectedPost, setSelectedPost] = useState<string | null>(null);
     const { user } = useUser();
 
+    
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (ellipsRef.current && !ellipsRef.current.contains(event.target as Node)) {

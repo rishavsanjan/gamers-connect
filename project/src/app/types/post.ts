@@ -29,7 +29,7 @@ export interface Post {
         id:string
     } | null,
     hasBookmarked:boolean
-    viewCount : number
+    viewCount: number
 }
 
 export interface HashTag {
