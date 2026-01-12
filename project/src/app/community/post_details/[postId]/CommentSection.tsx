@@ -81,6 +81,15 @@ export default function CommentSection({ postId, initialComments }: { postId: st
 
       const snapshots = snapshotAllPostFeeds(queryClient);
 
+      queryClient.setQueryData(['post', postId], (old: Post) =>
+        old
+          ? {
+            ...old,
+            commentCount: old.commentCount + 1,
+          }
+          : old
+      )
+
       updatePostInAllFeeds(queryClient, postId, (post: Post) => ({
         ...post,
         commentCount: post.commentCount + 1
@@ -92,7 +101,7 @@ export default function CommentSection({ postId, initialComments }: { postId: st
       if (parentId) {
         setComments(prev => addReply(prev, parentId, newComment))
       } else {
-        setComments(prev => [...prev, newComment])
+        setComments(prev => [newComment, ...prev])
       }
       setCommentText('')
     },

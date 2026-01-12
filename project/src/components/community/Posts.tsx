@@ -10,6 +10,7 @@ import PostSettings from '../PostSettings'
 import { useUser } from '@/context/UserContext'
 import { Post } from '@/app/types/post'
 import { FaRegEye } from 'react-icons/fa'
+import { usePathname } from 'next/navigation';
 
 interface Props {
     actions: {
@@ -24,8 +25,9 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
     const ellipsRef = useRef<HTMLDivElement | null>(null);
     const [selectedPost, setSelectedPost] = useState<string | null>(null);
     const { user } = useUser();
+    const pathname = usePathname();
 
-    
+
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -41,8 +43,18 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
         }
     }, []);
 
+    const handlePostClick = () => {
+        
+        const container = document.getElementById('post-scroll');
+        if (!container) return;
 
-    console.log(posts)
+        sessionStorage.setItem(
+            `scroll:${pathname}`,
+            container.scrollTop.toString()
+        );
+    };
+
+
 
     return (
         <div className='space-y-4'>
@@ -115,7 +127,12 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
                             </div>
 
                             {/* Post Content */}
-                            <Link href={`/community/post_details/${post.id}`} key={post.id}>
+                            <Link
+                                href={`/community/post_details/${post.id}`}
+                                key={post.id}
+                                scroll={false}
+                                onClick={() => { handlePostClick() }}
+                            >
                                 <PostDescription text={post.description} />
                             </Link>
 
@@ -126,7 +143,7 @@ const Posts: React.FC<Props> = ({ actions, posts }) => {
 
                             {/* Post Actions */}
                             <div className="flex items-center justify-between space-x-6 border-t border-white/10 pt-4">
-                                <div  className='flex flex-row space-x-6'>
+                                <div className='flex flex-row space-x-6'>
                                     <PostLikeButton postId={post.id} likeCount={post.likeCount} hasLiked={post.hasLiked} />
                                     <button className="flex items-center space-x-2 text-gray-400 transition hover:text-purple-400 cursor-pointer">
                                         <MessageCircle className="h-5 w-5" />

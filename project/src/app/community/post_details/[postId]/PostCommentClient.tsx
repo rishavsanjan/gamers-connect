@@ -1,11 +1,13 @@
-// src/app/community/post_details/[postId]/PostActionsCLient.tsx
 'use client';
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import PostActions from './PostActions';
+import PostLikeButton from '@/components/community/PostLikeButton';
 import { Post } from '@/app/types/post';
+import PostCommentCount from './PostCommentCount';
 
-export default function PostActionClient({ postId }: { postId: string }) {
+
+
+export default function PostCommentClient({ postId }: { postId: string }) {
     const queryClient = useQueryClient();
 
     const { data } = useQuery<Post>({
@@ -16,12 +18,11 @@ export default function PostActionClient({ postId }: { postId: string }) {
         staleTime: Infinity,
     });
 
+    console.log(data)
+
     if (!data) return null;
 
     return (
-        <PostActions
-            postId={data.id}
-            bookmark={data.hasBookmarked}
-        />
+        <PostCommentCount commentCount={data.commentCount} />
     );
 }

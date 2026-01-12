@@ -31,7 +31,6 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
     const [loginModal, setLoginModal] = useState(false);
     const queryClient = useQueryClient();
 
-    // ❤️ LIKE
     const likeMutation = useMutation({
         mutationFn: () => handleLike(postId),
 
@@ -64,7 +63,6 @@ const PostLikeButton: React.FC<Props> = ({ postId, hasLiked, likeCount }) => {
         },
     });
 
-    // 💔 UNLIKE
     const unlikeMutation = useMutation({
         mutationFn: () => handleRemoveLike(postId),
 

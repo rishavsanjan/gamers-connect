@@ -15,6 +15,7 @@ import RelatedPosts from './RelatedPosts';
 import PostDetailsClient from './PostDetailsClient';
 import PostActionClient from './PostActionsCLient';
 import PostCacheSeeder from './PostCacheSeeder';
+import PostCommentClient from './PostCommentClient';
 
 
 
@@ -228,7 +229,7 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
             <div className="mx-auto max-w-7xl md:px-6 md:py-8 py-2 px-2">
                 <div className="grid grid-cols-12 gap-6">
                     {/* Main Content */}
-                    <div className="col-span-12 space-y-3 lg:col-span-8 overflow-y-auto h-screen hide-scrollbar">
+                    <div className="col-span-12 space-y-3 lg:col-span-8">
                         {/* Post Card */}
                         <div className="rounded-2xl border border-purple-500/20 bg-white/5 md:p-8 p-2 backdrop-blur-lg">
                             {/* Post Header */}
@@ -287,10 +288,11 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
                             <div className="flex items-center justify-between border-t border-white/10 pt-6">
                                 <div className="flex items-center space-x-6">
                                     <PostDetailsClient postId={post.id} />
-                                    <div className="flex items-center space-x-2 text-gray-400">
+                                    <PostCommentClient postId={post.id} />
+                                    {/* <div className="flex items-center space-x-2 text-gray-400">
                                         <MessageCircle className="h-6 w-6" />
                                         <span className="text-lg font-semibold">{post.commentCount}</span>
-                                    </div>
+                                    </div> */}
                                 </div>
                                 <CopyButton />
                             </div>
@@ -301,7 +303,7 @@ const PostDetails = async ({ params }: { params: Promise<{ postId: string }> }) 
                     </div>
 
                     {/* Right Sidebar */}
-                    <div className="col-span-12 space-y-6 lg:col-span-4">
+                    <div className="col-span-12 space-y-6 lg:col-span-4 lg:sticky lg:top-24 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto hide-scrollbar">
                         <AuthorCard name={post.user.name} authorId={post.user.id} gameCount={gameCount} postCount={postCount} collectionCount={collectionCount} following={following} xp={post.user.xp} profilePicture={post?.user?.avatar} username={post.user.username} userId={session?.user.id} privacy={post.user.privacy} isRequestSent={isRequestSent} />
 
                         {/* related posts */}

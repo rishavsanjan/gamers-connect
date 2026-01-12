@@ -12,7 +12,7 @@ export default function PostCacheSeeder({ post }: { post: Post }) {
 
     useEffect(() => {
         queryClient.setQueryData(['post', post.id], post);
-    }, [post.id, queryClient]); // Only re-run if post.id changes
+    }, [post.id, queryClient]); 
 
-    return null; // This component doesn't render anything
+    return null; 
 }

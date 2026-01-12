@@ -1,5 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 
 import { ProfileTabsData } from '@/app/types/profile';
 import ProfileGameList from './ProfileGameList';
@@ -18,12 +18,12 @@ import FollowingCard from '@/components/FollowingCard';
 import ProfileAchievements from './ProfileAchievements';
 import GroupsJoinedCard from './GroupsJoinedCard';
 import InfiniteProfilePosts from '@/components/InfiniteProfilePosts';
-import { PostFeedProvider } from '@/context/PostsContext';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchProfileGames } from '../queries/posts';
 import Tabs from './Tabs';
 import InitProfilePosts from '@/context/InitProfilePosts';
 import InitProfileBookmarkPosts from '@/context/InitBookmarkPosts';
+import { useUser } from '@/context/UserContext';
 
 interface GroupsExtended extends Group {
     hasJoined: boolean
@@ -50,15 +50,19 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     ownedGamesCount,
     collectionCount,
     ratingsCount, bookmarkCount, follower, following, achievementsCount, groups, groupsCount, posts, postsCount }) => {
+
+
+
     const [activeTab, setActiveTab] = useState('overview');
     const [playlistGames, setPlaylistGames] = useState(playlist.map(item => item.game));
     const [ownedGames, setOwnedGames] = useState(mygames.map(item => item.game));
     const [followersState, setFollowersState] = useState(follower);
-   // const [followingState, setFollowingState] = useState(following);
     const [followerCountState, setFollowerCountState] = useState(follower.length)
-  //  const [followingrCountState, setFollowingrCountState] = useState(following.length)
     const [ratedgames, setRatedGames] = useState(ratings.map(item => item.game));
     const [gameTab, setGameTab] = useState('');
+    const { user } = useUser();
+
+
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
         if (!item.game.first_release_date) return acc;
 
@@ -67,6 +71,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
 
         return acc;
     }, {});
+
     const [nextPage, setNextPage] = useState(2);
 
     const platformCount = stats.reduce<Record<string, number>>((acc, item) => {
@@ -127,13 +132,13 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     }, [gameTab, data]);
 
     return (
-        <div className='flex  flex-col bg-transparent z-60'>
+        <div id="profile-scroll" className='flex  flex-col bg-transparent z-60'>
             <Tabs setActiveTab={setActiveTab} setGameTab={setGameTab} activeTab={activeTab} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} ratingsCount={ratingsCount} postsCount={postsCount} collectionCount={collectionCount} bookmarkCount={bookmarkCount} followerCountState={followerCountState} followingrCountState={following.length} achievementsCount={achievementsCount} groupsCount={groupsCount} />
             {
                 activeTab === 'bookmark' &&
                 <div className='p-4'>
-                    <InitProfileBookmarkPosts posts={bookmarkedPosts}/>
-                        <InfiniteProfileBookmarked />
+                    <InitProfileBookmarkPosts posts={bookmarkedPosts} />
+                    <InfiniteProfileBookmarked />
 
                 </div>
             }

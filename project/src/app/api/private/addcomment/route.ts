@@ -1,4 +1,3 @@
-// app/api/mygames/route.ts
 import { auth } from '@/auth';
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
@@ -44,8 +43,17 @@ export async function POST(req: Request) {
                 }
             })
 
+            const user = await prisma.user.findFirst({
+                where: {
+                    id: session.user.id
+                },
+                select: {
+                    avatar: true
+                }
+            })
 
-            return { ...addComment, user: { name: session.user.name, id: session.user.id } };
+
+            return { ...addComment, user: { name: session.user.name, id: session.user.id, avatar: user?.avatar } };
         })
 
         return NextResponse.json({ comment });

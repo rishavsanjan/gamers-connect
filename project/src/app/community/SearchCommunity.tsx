@@ -326,7 +326,7 @@ const SearchCommunity = () => {
                         <div
                             className="px-4 py-3 hover:bg-white/50 cursor-pointer transition-colors flex items-center gap-3"
 
-                        >
+                        > 
                             <div className={`${person?.avatar ? '' : 'bg-purple-500  w-12 h-12 rounded-full flex flex-row items-center justify-center'}  `}>
                                 {
                                     person?.avatar ?

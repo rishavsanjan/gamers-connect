@@ -12,10 +12,11 @@ import TopUsers from './TopUsers';
 import TrendingTags from './TrendingTags';
 import InitPosts from '@/context/InitPosts';
 import PostCreate from './PostCreate';
+import ScrollRestorer from '@/components/community/ScrollRestorer';
 
-export const metadata =  {
-  title : 'Community',
-  description : 'Shows Community'
+export const metadata = {
+    title: 'Community',
+    description: 'Shows Community'
 }
 
 export default async function GamelyCommunity() {
@@ -113,7 +114,7 @@ export default async function GamelyCommunity() {
         updatedAt: post.updatedAt,
         type: post.type,
         group: post.group,
-        viewCount : post.viewCount ,
+        viewCount: post.viewCount,
         hasBookmarked: userId ? post.bookmarks.length > 0 : false
     }));
 
@@ -219,75 +220,80 @@ export default async function GamelyCommunity() {
 
     return (
         <PostFeedProvider initialPosts={posts}>
-            <div className="bg-gray-100 dark:bg-[#0F0B1E] text-gray-800 dark:text-gray-100 font-sans h-full  flex flex-col transition-colors duration-200">
-                {/* Header */}
-                <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md ">
-                    <div className="mx-auto flex max-w-7xl items-center justify-between sm:px-6 px-1 py-4 space-x-4 ">
-                        <div className="flex items-center space-x-8">
-                            <h1 className="flex items-center space-x-2 sm:text-2xl text-lg font-bold">
-                                <Users className="sm:h-6 h-5 sm:w-6  text-purple-400" />
-                                <span>Community</span>
-                            </h1>
+            <ScrollRestorer>
+                <div className="bg-gray-100 dark:bg-[#0F0B1E] text-gray-800 dark:text-gray-100 font-sans h-full  flex flex-col transition-colors duration-200">
+                    {/* Header */}
+                    <header className="sticky top-0 z-30 border-b border-purple-500/20 bg-black/40 backdrop-blur-md ">
+                        <div className="mx-auto flex max-w-7xl items-center justify-between sm:px-6 px-1 py-4 space-x-4 ">
+                            <div className="flex items-center space-x-8">
+                                <h1 className="flex items-center space-x-2 sm:text-2xl text-lg font-bold">
+                                    <Users className="sm:h-6 h-5 sm:w-6  text-purple-400" />
+                                    <span>Community</span>
+                                </h1>
 
-                        </div>
-                        <SearchCommunity />
-                    </div>
-                </header>
-
-                <div className="mx-auto max-w-7xl md:px-6  flex ">
-
-                    <div className="grid grid-cols-12 gap-6 px-2">
-                        {/* Left Sidebar */}
-                        <div className="col-span-12 space-y-6 lg:col-span-3 py-4">
-                            {/* Create Post Card */}
-                            {/* <AddPostModal /> */}
-
-
-
-
-                            {/* Trending Topics */}
-                            <TrendingTags topTags={tags} />
-
-                            {/* Top Gamers */}
-                            <TopUsers topGamers={topGamers} />
-                        </div>
-
-                        {/* Right Sidebar for samll screens */}
-                        <div className="col-span-12  lg:col-span-3 space-y-4 lg:hidden ">
-                            {/* Quick Stats */}
-                            <UserStats postCount={myStats?._count?.Post || 0} followers={myStats?._count?.followers || 0} xp={myStats?.xp || 0} />
-
-
-                            {/* Suggested Groups */}
-                            <SuggestedGroups groups={formattedGroups} />
-                        </div>
-
-                        {/* Main Feed */}
-                        <div className=' col-span-12  lg:col-span-6 md:overflow-y-auto  hide-scrollbar h-screen'>
-                            <InitPosts posts={posts} />
-                            <div className='py-4'>
-                                <PostCreate />
                             </div>
-                            <div className="">
-                                <InfiniteHomePostsFeed />
+                            <SearchCommunity />
+                        </div>
+                    </header>
+
+                    <div className="mx-auto max-w-7xl md:px-6  flex ">
+
+                        <div className="grid grid-cols-12 gap-6 px-2">
+                            {/* Left Sidebar */}
+                            <div className="col-span-12 space-y-6 lg:col-span-3 py-4">
+                                {/* Create Post Card */}
+                                {/* <AddPostModal /> */}
+
+
+
+
+                                {/* Trending Topics */}
+                                <TrendingTags topTags={tags} />
+
+                                {/* Top Gamers */}
+                                <TopUsers topGamers={topGamers} />
+                            </div>
+
+                            {/* Right Sidebar for samll screens */}
+                            <div className="col-span-12  lg:col-span-3 space-y-4 lg:hidden ">
+                                {/* Quick Stats */}
+                                <UserStats postCount={myStats?._count?.Post || 0} followers={myStats?._count?.followers || 0} xp={myStats?.xp || 0} />
+
+
+                                {/* Suggested Groups */}
+                                <SuggestedGroups groups={formattedGroups} />
+                            </div>
+
+                            {/* Main Feed */}
+                            <div
+                                id="post-scroll"
+                                className=' col-span-12  lg:col-span-6 md:overflow-y-auto  hide-scrollbar h-screen'>
+                                <InitPosts posts={posts} />
+                                <div className='py-4'>
+                                    <PostCreate />
+                                </div>
+                                <div className="">
+                                    <InfiniteHomePostsFeed />
+                                </div>
+                            </div>
+
+
+
+
+                            {/* Right Sidebar */}
+                            <div className="col-span-12 space-y-6 lg:col-span-3 lg:flex flex-col hidden sticky py-4">
+                                {/* Quick Stats */}
+                                <UserStats postCount={myStats?._count?.Post || 0} followers={myStats?._count?.followers || 0} xp={myStats?.xp || 0} />
+
+
+                                {/* Suggested Groups */}
+                                <SuggestedGroups groups={formattedGroups} />
                             </div>
                         </div>
-
-
-
-
-                        {/* Right Sidebar */}
-                        <div className="col-span-12 space-y-6 lg:col-span-3 lg:flex flex-col hidden sticky py-4">
-                            {/* Quick Stats */}
-                            <UserStats postCount={myStats?._count?.Post || 0} followers={myStats?._count?.followers || 0} xp={myStats?.xp || 0} />
-
-
-                            {/* Suggested Groups */}
-                            <SuggestedGroups groups={formattedGroups} />
-                        </div>
                     </div>
-                </div>
-            </div >
+                </div >
+            </ScrollRestorer>
+
         </PostFeedProvider>
 
 

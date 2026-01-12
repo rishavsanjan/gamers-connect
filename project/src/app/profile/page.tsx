@@ -137,9 +137,9 @@ const Profile = async () => {
             where: { userId: session.user.id },
             select: { postId: true }
           },
-          
+
         },
-        
+
 
 
 
@@ -372,8 +372,10 @@ const Profile = async () => {
   };
 
 
+
   return (
     <div>
+
       <div className='flex items-center flex-col mb-8 mt-8 space-y-2'>
         <div className={`${user?.avatar ? '' : 'bg-purple-500 p-4 m-4 w-18 h-18 rounded-full'}  `}>
           {
@@ -488,6 +490,7 @@ const Profile = async () => {
         posts={formattedPosts}
         postsCount={postsCount}
       />
+
     </div>
   )
 }
