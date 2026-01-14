@@ -1,7 +1,8 @@
 'use client'
 import Link from 'next/link';
-import React, {  useState } from 'react';
+import React, { useState } from 'react';
 import { ProfileGame } from '@/app/types/game';
+import { usePathname } from 'next/navigation';
 
 interface GameProps {
     gamesList: ProfileGame[]
@@ -10,7 +11,7 @@ interface GameProps {
 const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
     const [hoverId, setHoverId] = useState<number>(0);
     const [selectedId, setSelectedId] = useState(0);
-
+    const pathname = usePathname();
     function formatUnixDate(timestamp: number): string {
         const date = new Date(timestamp * 1000);
         const options: Intl.DateTimeFormatOptions = {
@@ -20,6 +21,17 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
         };
         return date.toLocaleDateString("en-US", options);
     }
+
+    const handlePostClick = () => {
+
+        const container = document.getElementById('post-scroll');
+        if (!container) return;
+
+        sessionStorage.setItem(
+            `scroll:${pathname}`,
+            container.scrollTop.toString()
+        );
+    };
 
     return (
         <div className='flex flex-col items-center'>
@@ -86,7 +98,7 @@ const ProfileGameList: React.FC<GameProps> = ({ gamesList }) => {
                                     </div>
 
                                     <div className=''>
-                                        <Link href={`/details/${game.igdb_id}`} key={game.igdb_id}>
+                                        <Link href={`/details/${game.igdb_id}`} key={game.igdb_id} >
                                             <p onClick={() => { }} className='text-xl w-80 font-[var(--font-dm-sans)] font-bold hover:text-gray-400 hover:cursor-pointer'>{index + 1}.{' '} {game?.name || 'N/A'}</p>
                                         </Link>
 

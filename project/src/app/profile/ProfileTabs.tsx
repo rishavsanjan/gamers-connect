@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useLayoutEffect, useState } from 'react';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 import { ProfileTabsData } from '@/app/types/profile';
 import ProfileGameList from './ProfileGameList';
@@ -51,9 +52,15 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     collectionCount,
     ratingsCount, bookmarkCount, follower, following, achievementsCount, groups, groupsCount, posts, postsCount }) => {
 
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
 
+    // Initialize activeTab from URL or default to 'overview'
+    const [activeTab, setActiveTab] = useState(() => {
+        return searchParams.get('tab') || 'overview';
+    });
 
-    const [activeTab, setActiveTab] = useState('overview');
     const [playlistGames, setPlaylistGames] = useState(playlist.map(item => item.game));
     const [ownedGames, setOwnedGames] = useState(mygames.map(item => item.game));
     const [followersState, setFollowersState] = useState(follower);
@@ -61,6 +68,39 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
     const [ratedgames, setRatedGames] = useState(ratings.map(item => item.game));
     const [gameTab, setGameTab] = useState('');
     const { user } = useUser();
+
+    // Initialize from URL or sessionStorage
+    const [hasLoadedFromUrl, setHasLoadedFromUrl] = useState(false);
+
+    // Update URL with both tab and page info
+    // Update URL with both tab and page info
+    const updateUrl = (tab: string, additionalParams?: Record<string, string>) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('tab', tab);
+
+        if (additionalParams) {
+            Object.entries(additionalParams).forEach(([key, value]) => {
+                params.set(key, value);
+            });
+        }
+
+        // Use native History API for instant update
+        window.history.pushState(null, '', `${pathname}?${params.toString()}`);
+    };
+
+    // Update URL when tab changes
+    const handleTabChange = (newTab: string) => {
+        setActiveTab(newTab);
+        updateUrl(newTab);
+    };
+
+    // Sync activeTab with URL changes (e.g., browser back/forward)
+    useEffect(() => {
+        const tabFromUrl = searchParams.get('tab');
+        if (tabFromUrl && tabFromUrl !== activeTab) {
+            setActiveTab(tabFromUrl);
+        }
+    }, [searchParams]);
 
 
     const yearCount = stats.reduce<Record<number, number>>((acc, item) => {
@@ -110,18 +150,15 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
         initialPageParam: 1,
         getNextPageParam: (lastPage) => lastPage.nextPage,
         staleTime: 1000 * 60,
-
-
     })
 
     useEffect(() => {
-
         if (!data) return;
         const games: Game[] = data.pages.flatMap(page =>
             //@ts-ignore
             page.games.map(item => item.game)
         );
-        console.log(games)
+
         if (gameTab === 'myGames') {
             setOwnedGames(games)
         } else if (gameTab === 'playlist') {
@@ -131,9 +168,78 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
         }
     }, [gameTab, data]);
 
+    // Restore scroll position and fetch pages when returning
+    useEffect(() => {
+        if (!hasLoadedFromUrl && searchParams.get('tab')) {
+            setHasLoadedFromUrl(true);
+
+            const currentTab = searchParams.get('tab');
+            const savedPages = searchParams.get('pages');
+            const scrollPos = searchParams.get('scroll');
+
+            if (savedPages && currentTab && (currentTab === 'playlist' || currentTab === 'owned' || currentTab === 'ratings')) {
+                const numPages = parseInt(savedPages);
+
+                // Determine gameTab based on current tab
+                let targetGameTab = '';
+                if (currentTab === 'playlist') targetGameTab = 'playlist';
+                else if (currentTab === 'owned') targetGameTab = 'myGames';
+                else if (currentTab === 'ratings') targetGameTab = 'ratings';
+
+                if (targetGameTab) {
+                    setGameTab(targetGameTab);
+
+                    // Fetch multiple pages if needed
+                    if (numPages > 1 && data) {
+                        const currentPageCount = data.pages.length;
+                        const pagesToFetch = numPages - currentPageCount;
+
+                        for (let i = 0; i < pagesToFetch; i++) {
+                            fetchNextPage();
+                        }
+                    }
+                }
+
+                // Restore scroll position after a brief delay
+                if (scrollPos) {
+                    setTimeout(() => {
+                        window.scrollTo(0, parseInt(scrollPos));
+                    }, 300);
+                }
+            }
+        }
+    }, [hasLoadedFromUrl, searchParams, data]);
+
+    // Handle load more with URL update
+    const handleLoadMore = (tabType: 'playlist' | 'myGames' | 'ratings') => {
+        setNextPage(prev => prev + 1);
+        fetchNextPage();
+
+        // Update URL with page count
+        const currentPages = data?.pages.length || 1;
+        updateUrl(activeTab, {
+            pages: String(currentPages + 1),
+            scroll: String(window.scrollY)
+        });
+    };
+
     return (
         <div id="profile-scroll" className='flex  flex-col bg-transparent z-60'>
-            <Tabs setActiveTab={setActiveTab} setGameTab={setGameTab} activeTab={activeTab} playlistCount={playlistCount} ownedGamesCount={ownedGamesCount} ratingsCount={ratingsCount} postsCount={postsCount} collectionCount={collectionCount} bookmarkCount={bookmarkCount} followerCountState={followerCountState} followingrCountState={following.length} achievementsCount={achievementsCount} groupsCount={groupsCount} />
+            <Tabs
+                handleTabChange={handleTabChange}
+                setGameTab={setGameTab}
+                activeTab={activeTab}
+                playlistCount={playlistCount}
+                ownedGamesCount={ownedGamesCount}
+                ratingsCount={ratingsCount}
+                postsCount={postsCount}
+                collectionCount={collectionCount}
+                bookmarkCount={bookmarkCount}
+                followerCountState={followerCountState}
+                followingrCountState={following.length}
+                achievementsCount={achievementsCount}
+                groupsCount={groupsCount}
+            />
             {
                 activeTab === 'bookmark' &&
                 <div className='p-4'>
@@ -164,14 +270,9 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                                 <>
                                     {
                                         playlistCount !== playlistGames.length &&
-                                        < button
+                                        <button
                                             className={`${playlistCount === playlistGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all `}
-                                            onClick={() => {
-                                                setNextPage(prev => prev + 1);
-                                                //loadMore('playlist');
-                                                fetchNextPage();
-
-                                            }}>
+                                            onClick={() => handleLoadMore('playlist')}>
                                             Load More
                                         </button>
                                     }
@@ -200,14 +301,9 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                                 <>
                                     {
                                         ownedGamesCount !== ownedGames.length &&
-                                        < button
+                                        <button
                                             className={`${ownedGamesCount === ownedGames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}
-                                            onClick={() => {
-                                                setNextPage(prev => prev + 1);
-                                                //loadMore('myGames');
-
-                                                fetchNextPage();
-                                            }}>
+                                            onClick={() => handleLoadMore('myGames')}>
                                             Load More
                                         </button>
                                     }
@@ -235,14 +331,9 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                                 <>
                                     {
                                         ratingsCount !== ratedgames.length &&
-                                        < button
+                                        <button
                                             className={`${ratingsCount === ratedgames.length && 'bg-transparent hover:bg-transparent'} hover:bg-[#FFFFFF] px-12 py-2 self-center bg-[#282828] hover:text-black ease-in-out duration-300 transition-all`}
-                                            onClick={() => {
-                                                setNextPage(prev => prev + 1);
-                                                //loadMore('ratings');
-
-                                                fetchNextPage();
-                                            }}>
+                                            onClick={() => handleLoadMore('ratings')}>
                                             Load More
                                         </button>
                                     }
@@ -301,7 +392,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     {
                         followersState.map((user) => {
                             return (
-                                <FollowingCard user={user} activeTab={activeTab} setFollowers={setFollowersState} setFollowersCount={setFollowerCountState} />
+                                <FollowingCard key={user.id} user={user} activeTab={activeTab} setFollowers={setFollowersState} setFollowersCount={setFollowerCountState} />
                             )
                         })
                     }
@@ -314,7 +405,7 @@ const ProfileTabs: React.FC<Props> = ({ ratings, mygames, playlist, collection, 
                     {
                         following.map((user) => {
                             return (
-                                <FollowingCard user={user} activeTab={activeTab} />
+                                <FollowingCard key={user.id} user={user} activeTab={activeTab} />
                             )
                         })
                     }
